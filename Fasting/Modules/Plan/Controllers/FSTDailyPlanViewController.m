@@ -1,0 +1,437 @@
+//
+//  FSTDailyPlanViewController.m
+//  Fasting
+//
+//  断食计划首页：两种状态。无计划时显示 4 种计划卡片让用户选；
+//  已选计划但未开始时显示「准备开始断食」页面（黄色提示卡 + 空圆环 + 开始按钮）。
+//
+//  UI 组装由 FSTDailyPlanPickerView / FSTDailyPlanReadyView 承担；VC 负责状态分发、
+//  topBar 创建、ready 态数据刷新（含定时器）、用户事件与导航。
+//
+
+#import "FSTDailyPlanViewController.h"
+#import "FSTPlanConfirmViewController.h"
+#import "FSTActiveFastingViewController.h"
+#import "FSTMealDetailViewController.h"
+#import "FSTPlanSelectViewController.h"
+#import "FSTDailyPlanPickerView.h"
+#import "FSTDailyPlanReadyView.h"
+#import "FSTSessionManager.h"
+#import "FSTEatingWindowService.h"
+#import "FSTDailyPlanReadyDisplayState.h"
+#import "FSTPlan.h"
+#import "FSTFastingTopBar.h"
+#import "UIButton+FSTNavCircle.h"
+#import "UIViewController+FSTTimeEditor.h"
+#import "FSTTheme.h"
+
+static const CGFloat kFSTDailyPlanTopBarHeightPicker = 84;
+static const CGFloat kFSTDailyPlanTopBarHeightReady  = 72;
+static const CGFloat kFSTDailyPlanNavButtonDiameter  = 46;
+static const CGFloat kFSTDailyPlanResetButtonWidth   = 72;
+static const CGFloat kFSTDailyPlanResetButtonHeight  = 38;
+static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
+
+@interface FSTDailyPlanViewController ()
+@property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) UIView *contentView;
+@property (nonatomic, strong, nullable) FSTFastingTopBar *topBar;
+@property (nonatomic, strong, nullable) FSTDailyPlanPickerView *pickerView;
+@property (nonatomic, strong, nullable) FSTDailyPlanReadyView *readyView;
+@property (nonatomic, assign) BOOL showingReadyState;
+@end
+
+@implementation FSTDailyPlanViewController
+
+#pragma mark - 生命周期
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self buildScrollContainer];
+    [self reloadRootContent];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    // 入口分流：
+    // (1) 已有 active 断食 — 跳过本页直接 push 到 Active 页（无动画，让用户从 App 重启时无缝回到正在进行的断食）。
+    //     同时消费 pendingActiveStartDatePrompt token：若 SessionManager 标记过"该弹起始时间编辑"，本次进入时会触发一次。
+    // (2) 在本页停留 — 重新组装内容（PickerView vs ReadyView 二选一）。
+    // topViewController 判断防止 push 链路下重复执行。
+    if ([[FSTSessionManager sharedManager] hasActiveFasting] && self.navigationController.topViewController == self) {
+        FSTActiveFastingViewController *activeFastingViewController = [FSTActiveFastingViewController new];
+        activeFastingViewController.promptsForStartTimeOnFirstAppear = [[FSTSessionManager sharedManager] consumeActiveStartDatePromptRequest];
+        [self.navigationController pushViewController:activeFastingViewController animated:NO];
+    } else if (self.navigationController.topViewController == self) {
+        [self reloadRootContent];
+    }
+    if (self.showingReadyState) [self startRefreshTimer];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self stopRefreshTimer];
+}
+
+- (void)dealloc {
+    [self stopRefreshTimer];
+}
+
+- (void)refreshTimerDidFire {
+    [self refreshReadyState];
+}
+
+#pragma mark - 容器
+
+- (void)buildScrollContainer {
+    self.scrollView = [UIScrollView new];
+    self.scrollView.alwaysBounceVertical = YES;
+    self.scrollView.showsVerticalScrollIndicator = NO;
+    [self.view addSubview:self.scrollView];
+
+    self.contentView = [UIView new];
+    [self.scrollView addSubview:self.contentView];
+
+    [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.scrollView);
+        make.width.equalTo(self.scrollView);
+    }];
+}
+
+- (void)anchorScrollViewToTopBar {
+    [self.scrollView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.topBar.mas_bottom);
+        make.left.right.bottom.equalTo(self.view);
+    }];
+}
+
+#pragma mark - 状态切换
+
+/// 根据是否有计划，渲染"计划选择列表"或"准备开始"两种状态。
+/// 根据当前 session 状态切换子视图（两套互斥的 UI）：
+///   - showingReadyState=YES — 已有 currentPlan 但没在断食：装载 ReadyView（圆环+CTA），并启动每秒刷新；
+///   - showingReadyState=NO  — 未选 plan：装载 PickerView 让用户选 4 选 1。
+/// 注意：hasActiveFasting=YES 这条分支不会在这里处理；那是 viewWillAppear 的 push 到 Active 页负责的。
+/// 这个方法只解决"本 VC 自己渲染什么"，外部跳转由调用栈决定。
+- (void)reloadRootContent {
+    [self stopRefreshTimer];
+    [self tearDownCurrentContent];
+
+    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
+    self.showingReadyState = (!sessionManager.hasActiveFasting && sessionManager.currentPlan != nil);
+    if (self.showingReadyState) {
+        [self installReadyState];
+        [self refreshReadyState];
+        [self startRefreshTimer];
+    } else {
+        [self installPickerState];
+    }
+}
+
+- (void)tearDownCurrentContent {
+    [self.pickerView removeFromSuperview];
+    self.pickerView = nil;
+    [self.readyView removeFromSuperview];
+    self.readyView = nil;
+    [self.topBar removeFromSuperview];
+    self.topBar = nil;
+}
+
+#pragma mark - 状态：选择计划
+
+- (void)installPickerState {
+    [self installPickerTopBar];
+
+    self.pickerView = [FSTDailyPlanPickerView new];
+    __weak typeof(self) weakSelf = self;
+    self.pickerView.onPlanPicked = ^(FSTPlan *picked) { [weakSelf handlePlanTapped:picked]; };
+    [self.contentView addSubview:self.pickerView];
+    [self.pickerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.contentView);
+    }];
+}
+
+- (void)installPickerTopBar {
+    UILabel *titleLabel = [UILabel new];
+    titleLabel.text      = @"断食";
+    titleLabel.font      = FSTFontBold(32);
+    titleLabel.textColor = [UIColor fst_textPrimary];
+
+    UIButton *waterButton = [self makeWaterButton];
+
+    self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:nil
+                                                  rightButtons:@[waterButton]
+                                                 centerContent:nil
+                                                 contentHeight:kFSTDailyPlanTopBarHeightPicker];
+    [self.topBar installInViewController:self];
+    [self anchorScrollViewToTopBar];
+
+    [waterButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(kFSTDailyPlanNavButtonDiameter, kFSTDailyPlanNavButtonDiameter));
+    }];
+
+    [self.topBar addSubview:titleLabel];
+    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self.topBar);
+        make.left.equalTo(self.topBar).offset(24);
+    }];
+}
+
+#pragma mark - 状态：准备开始
+
+- (void)installReadyState {
+    [self installReadyTopBar];
+
+    self.readyView = [FSTDailyPlanReadyView new];
+    [self bindReadyViewCallbacks];
+    [self.contentView addSubview:self.readyView];
+    [self.readyView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.contentView);
+    }];
+
+    FSTPlan *currentPlan = [FSTSessionManager sharedManager].currentPlan;
+    self.readyView.planName = currentPlan.name ?: @"14-10";
+}
+
+- (void)installReadyTopBar {
+    UIButton *resetButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    resetButton.backgroundColor    = [UIColor whiteColor];
+    resetButton.layer.cornerRadius = kFSTDailyPlanResetCornerRadius;
+    resetButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    resetButton.contentVerticalAlignment   = UIControlContentVerticalAlignmentCenter;
+
+    NSMutableParagraphStyle *resetParagraphStyle = [NSMutableParagraphStyle new];
+    resetParagraphStyle.alignment         = NSTextAlignmentCenter;
+    resetParagraphStyle.minimumLineHeight = 22;
+    resetParagraphStyle.maximumLineHeight = 22;
+    UIFont *resetFont = [UIFont fontWithName:@"AvenirNext-DemiBold" size:15] ?: FSTFontSemibold(15);
+    NSAttributedString *resetTitle =
+        [[NSAttributedString alloc] initWithString:@"Reset"
+                                        attributes:@{NSForegroundColorAttributeName: [UIColor fst_primaryGreen],
+                                                     NSFontAttributeName: resetFont,
+                                                     NSParagraphStyleAttributeName: resetParagraphStyle}];
+    [resetButton setAttributedTitle:resetTitle forState:UIControlStateNormal];
+    [resetButton addTarget:self action:@selector(handleResetTapped) forControlEvents:UIControlEventTouchUpInside];
+
+    UIButton *waterButton = [self makeWaterButton];
+    UIButton *bellButton  = [self makeBellButton];
+
+    self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:resetButton
+                                                  rightButtons:@[waterButton, bellButton]
+                                                 centerContent:nil
+                                                 contentHeight:kFSTDailyPlanTopBarHeightReady];
+    [self.topBar installInViewController:self];
+    [self anchorScrollViewToTopBar];
+
+    [resetButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(kFSTDailyPlanResetButtonWidth, kFSTDailyPlanResetButtonHeight));
+    }];
+    [waterButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(kFSTDailyPlanNavButtonDiameter, kFSTDailyPlanNavButtonDiameter));
+    }];
+    [bellButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(kFSTDailyPlanNavButtonDiameter, kFSTDailyPlanNavButtonDiameter));
+    }];
+}
+
+- (void)bindReadyViewCallbacks {
+    __weak typeof(self) weakSelf = self;
+    self.readyView.onBreakingFastTapped      = ^{ [weakSelf handleBreakingFastTapped]; };
+    self.readyView.onChangePlanTapped        = ^{ [weakSelf handleSoftChangePlanTapped]; };
+    self.readyView.onEditNextFastStartTapped = ^{ [weakSelf handleEditNextFastStartTapped]; };
+    self.readyView.onEditNextFastEndTapped   = ^{ [weakSelf handleEditNextFastEndTapped]; };
+    self.readyView.onStartFastingTapped      = ^{ [weakSelf handleReadyStartTapped]; };
+    self.readyView.onAbortPlanTapped         = ^{ [weakSelf handleAbortScheduledReadyTapped]; };
+    self.readyView.onLogMealTapped           = ^{ [weakSelf handleAteTapped]; };
+}
+
+#pragma mark - 导航按钮工厂
+
+- (UIButton *)makeWaterButton {
+    return [UIButton fst_navCircleButtonWithImageNamed:@"nav_water"
+                                              diameter:kFSTDailyPlanNavButtonDiameter];
+}
+
+- (UIButton *)makeBellButton {
+    UIButton *button = [UIButton fst_navCircleButtonWithImageNamed:@"nav_remind"
+                                                          diameter:kFSTDailyPlanNavButtonDiameter];
+    [button addTarget:self action:@selector(handleBellTapped) forControlEvents:UIControlEventTouchUpInside];
+    return button;
+}
+
+#pragma mark - Ready 态数据刷新与定时器
+
+- (void)refreshReadyState {
+    if (!self.showingReadyState || !self.readyView) return;
+    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
+    NSDate *now = [NSDate date];
+    NSDate *nextStartDate = [sessionManager nextFastingStartDate];
+    if ([self startScheduledFastingIfDueWithNextStartDate:nextStartDate referenceDate:now]) return;
+
+    FSTDailyPlanReadyDisplayState *state = [FSTDailyPlanReadyDisplayState stateForPlan:sessionManager.currentPlan];
+    [self applyReadyDisplayState:state];
+}
+
+- (void)applyReadyDisplayState:(FSTDailyPlanReadyDisplayState *)state {
+    self.readyView.titleText             = state.titleText;
+    self.readyView.ringPresentationState = state.ringPresentationState;
+    self.readyView.elapsedText           = state.elapsedText;
+    self.readyView.ringProgress          = state.ringProgress;
+    self.readyView.remainingText         = state.remainingText;
+    self.readyView.timeSinceLastFastText = state.timeSinceLastFastText;
+    self.readyView.nextFastStartText     = state.nextFastStartText;
+    self.readyView.nextFastEndText       = state.nextFastEndText;
+    self.readyView.primaryActionMode     = state.primaryActionMode;
+    [self.readyView applyReadyToStartLayout:state.compactLayout];
+}
+
+- (BOOL)startScheduledFastingIfDueWithNextStartDate:(NSDate *)nextStartDate referenceDate:(NSDate *)referenceDate {
+    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
+    if (sessionManager.scheduledReadySource == FSTScheduledReadySourceNone) return NO;
+    if (!nextStartDate || [nextStartDate compare:referenceDate] == NSOrderedDescending) return NO;
+
+    FSTPlan *currentPlan = sessionManager.currentPlan;
+    if (!currentPlan) {
+        [sessionManager clearScheduledReadyState];
+        [self reloadRootContent];
+        return YES;
+    }
+
+    [sessionManager startFastingWithPlan:currentPlan startDate:nextStartDate];
+    if (self.navigationController.topViewController == self) {
+        [self.navigationController pushViewController:[FSTActiveFastingViewController new] animated:YES];
+    }
+    return YES;
+}
+
+#pragma mark - 事件
+
+- (void)handleResetTapped {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"改变计划"
+                                                                              message:@"当前进度会被清空，是否继续？"
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"继续" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+        [[FSTSessionManager sharedManager] clearCurrentPlan];
+        [self reloadRootContent];
+    }]];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)handleSoftChangePlanTapped {
+    FSTPlanSelectViewController *plansViewController = [FSTPlanSelectViewController new];
+    plansViewController.modalPresentationStyle = UIModalPresentationFullScreen;
+    __weak typeof(self) weakSelf = self;
+    plansViewController.onPlanPicked = ^(FSTPlan *picked) {
+        [[FSTSessionManager sharedManager] switchToPlanPreservingState:picked];
+        [weakSelf reloadRootContent];
+    };
+    [self presentViewController:plansViewController animated:YES completion:nil];
+}
+
+- (void)handleEditNextFastStartTapped {
+    __weak typeof(self) weakSelf = self;
+    [self fst_presentTimeEditorWithTitle:@"Next fast starts"
+                             initialDate:[NSDate date]    // 默认吸附到现在，不用滚到今天
+                                onCommit:^(NSDate *pickedDate) {
+        [weakSelf applyPickedNextFastStartDate:pickedDate];
+    }];
+}
+
+- (void)handleEditNextFastEndTapped {
+    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
+    NSTimeInterval fastingWindowSeconds = MAX(1, (sessionManager.currentPlan.fastingHours ?: 14) * 3600.0);
+    NSDate *currentStartDate = [sessionManager nextFastingStartDate] ?: [NSDate date];
+    NSDate *initialDate = [currentStartDate dateByAddingTimeInterval:fastingWindowSeconds];
+    __weak typeof(self) weakSelf = self;
+    [self fst_presentTimeEditorWithTitle:@"Next fast ends"
+                             initialDate:initialDate
+                                onCommit:^(NSDate *pickedDate) {
+        // 用户实际改动的是 endDate，把它转换回 startDate 再走统一分支
+        NSDate *newStartDate = [pickedDate dateByAddingTimeInterval:-fastingWindowSeconds];
+        [weakSelf applyPickedNextFastStartDate:newStartDate];
+    }];
+}
+
+/// next-fast start 时间统一落地：未来值在 ready 子态内更新；过去值跳转到 Active 页起新断食。
+- (void)applyPickedNextFastStartDate:(NSDate *)pickedDate {
+    if (!pickedDate) return;
+    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
+    if ([pickedDate compare:[NSDate date]] == NSOrderedAscending) {
+        FSTPlan *currentPlan = sessionManager.currentPlan;
+        if (!currentPlan) return;
+        [sessionManager setNextFastingStartDate:nil];
+        [sessionManager startFastingWithPlan:currentPlan startDate:pickedDate];
+        [self.navigationController pushViewController:[FSTActiveFastingViewController new] animated:YES];
+    } else {
+        FSTScheduledReadySource source = sessionManager.scheduledReadySource;
+        [sessionManager setNextFastingStartDate:pickedDate];
+        if (source != FSTScheduledReadySourceNone) {
+            [sessionManager markScheduledReadyWithSource:source anchorDate:[NSDate date]];
+        }
+        [self refreshReadyState];
+    }
+}
+
+- (void)handleBellTapped {
+    [self showComingSoonAlertWithTitle:@"提醒" message:@"提醒功能即将到来。"];
+}
+
+- (void)handleAteTapped {
+    FSTMealDetailViewController *mealDetailViewController = [[FSTMealDetailViewController alloc] initWithMealRecord:nil];
+    mealDetailViewController.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:mealDetailViewController animated:YES];
+}
+
+- (void)handleBreakingFastTapped {
+    [self showComingSoonAlertWithTitle:@"Breaking fast" message:@"功能开发中。"];
+}
+
+- (void)showComingSoonAlertWithTitle:(NSString *)title message:(NSString *)message {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
+                                                                              message:message
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)handleAbortScheduledReadyTapped {
+    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
+    FSTScheduledReadySource source = sessionManager.scheduledReadySource;
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Abort plan?"
+                                                                              message:@"Do you want to end this scheduled fast?"
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleCancel handler:nil]];
+    __weak typeof(self) weakSelf = self;
+    [alertController addAction:[UIAlertAction actionWithTitle:@"End" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+        FSTSessionManager *manager = [FSTSessionManager sharedManager];
+        if (source == FSTScheduledReadySourcePreStart) {
+            [manager clearCurrentPlan];
+        } else if (source == FSTScheduledReadySourceFromActiveSession) {
+            [manager beginEatingWindowFromDate:[NSDate date]];
+        } else {
+            [manager clearScheduledReadyState];
+        }
+        [weakSelf reloadRootContent];
+    }]];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)handleReadyStartTapped {
+    FSTPlan *currentPlan = [FSTSessionManager sharedManager].currentPlan;
+    if (!currentPlan) {
+        [self reloadRootContent];
+        return;
+    }
+    [[FSTSessionManager sharedManager] startFastingWithPlan:currentPlan startDate:[NSDate date]];
+    FSTActiveFastingViewController *activeFastingViewController = [FSTActiveFastingViewController new];
+    activeFastingViewController.promptsForStartTimeOnFirstAppear = YES;
+    [self.navigationController pushViewController:activeFastingViewController animated:YES];
+}
+
+- (void)handlePlanTapped:(FSTPlan *)plan {
+    FSTPlanConfirmViewController *confirmViewController = [[FSTPlanConfirmViewController alloc] initWithPlan:plan];
+    [self.navigationController pushViewController:confirmViewController animated:YES];
+}
+
+@end
