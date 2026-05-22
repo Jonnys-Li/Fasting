@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 当前心情等级（与 FSTFastingRecord.feelingLevel 同义）。
 /// 取值：0 = 有点难 😣，1 = 还可以 😐，2 = 简单 😊。
-/// 注意 ⚠️ 与 FSTFastingTimelineCardView.FSTFastingRating 顺序相反（详见 FSTFastingTimelineCardView.h）。
+/// 与 FSTFastingTimelineCardView.FSTFastingRating 数值含义对齐 — 全 App 同一套约定。
 @property (nonatomic, assign) NSInteger feelingLevel;
 
 @end

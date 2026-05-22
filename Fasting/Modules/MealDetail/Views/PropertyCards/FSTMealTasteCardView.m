@@ -17,8 +17,6 @@
         _tasteLevel = 1;
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = 20;
-        self.layer.borderWidth = 1.2;
-        self.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.22].CGColor;
         [self buildSubviews];
         [self refresh];
     }
@@ -64,9 +62,6 @@
 - (UIControl *)faceButtonWithImageName:(NSString *)imageName title:(NSString *)title tag:(NSInteger)tag {
     UIControl *button = [UIControl new];
     button.tag = tag;
-    button.layer.cornerRadius = 16;
-    button.layer.borderWidth = 1.2;
-    button.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.28].CGColor;
     [button addTarget:self action:@selector(handleTasteTapped:) forControlEvents:UIControlEventTouchUpInside];
 
     UIImageView *faceImageView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
@@ -96,10 +91,7 @@
 
 - (void)refresh {
     for (UIControl *button in self.tasteButtons) {
-        BOOL isSelected = button.tag == self.tasteLevel;
-        button.alpha = isSelected ? 1.0 : 0.45;
-        button.layer.borderColor = (isSelected ? [UIColor fst_primaryGreen] : [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.28]).CGColor;
-        button.layer.borderWidth = isSelected ? 1.8 : 1.2;
+        button.alpha = button.tag == self.tasteLevel ? 1.0 : 0.45;
     }
 }
 

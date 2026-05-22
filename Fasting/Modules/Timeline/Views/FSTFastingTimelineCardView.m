@@ -45,10 +45,12 @@ static NSString *FSTTimelineCardEndTime(NSDate *startDate, NSDate *endDate) {
     return FSTTimelineCardLowercaseMeridiem([formatter stringFromDate:endDate]);
 }
 
+/// 把 record 的 feelingLevel 钳到合法范围并 cast 为 FSTFastingRating。
+/// 两个枚举数值含义已对齐（0=Hard / 1=Ok / 2=Easy），此函数只做防御性钳制。
 static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel) {
-    if (feelingLevel <= 0) return FSTFastingRatingHard;
-    if (feelingLevel >= 2) return FSTFastingRatingEasy;
-    return FSTFastingRatingOk;
+    if (feelingLevel <= FSTFastingRatingHard) return FSTFastingRatingHard;
+    if (feelingLevel >= FSTFastingRatingEasy) return FSTFastingRatingEasy;
+    return (FSTFastingRating)feelingLevel;
 }
 
 @interface FSTFastingTimelineCardView ()

@@ -14,18 +14,17 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 历史断食卡片上的难度评分（影响右上角 emoji 与配色）。
-/// 写入方：[FSTFastingTimelineCardView configureWithRecord:] 把 FSTFastingRecord.feelingLevel **翻转**为本枚举（详见下方陷阱）。
-/// 读取方：本视图内部 — 用 emoji（😊/😐/😣）与配色映射给用户视觉反馈。
+/// 写入方：[FSTFastingTimelineCardView configureWithRecord:] 直接把 FSTFastingRecord.feelingLevel
+///         cast 为本枚举（两者数值含义一致，无需翻转）。
+/// 读取方：本视图内部 — 用 emoji（😣/😐/😊）与配色映射给用户视觉反馈。
 ///
-/// ⚠️ 重要陷阱（潜在 bug，待用户决策）：
-/// 本枚举与 FSTFastingRecord.feelingLevel 的数值含义**顺序相反**：
-///   - FSTFastingRating:        0=Easy（简单）, 1=Ok, 2=Hard（有点难）
-///   - FSTFastingRecord.feelingLevel: 0=有点难, 1=还可以, 2=简单
-/// 当前 configureWithRecord: 应做 2 - feelingLevel 转换；若以后需要统一，须同步迁移历史数据。
+/// 数值含义与 FSTFastingRecord.feelingLevel **完全对齐**：0=Hard, 1=Ok, 2=Easy。
+/// AddRecord 页 FSTAddRecordFeelingCardView 的 emoji 按钮顺序也是 [有点难, 还可以, 简单]（tag=0/1/2），
+/// 整个 App 同一套数值约定，避免认知陷阱。
 typedef NS_ENUM(NSInteger, FSTFastingRating) {
-    FSTFastingRatingEasy = 0,  ///< 简单 — 历史卡显示 😊 + 绿色调。
+    FSTFastingRatingHard = 0,  ///< 有点难 — 显示 😣 + 暖色调（橙/红）。
     FSTFastingRatingOk,        ///< 还可以 — 显示 😐 + 中性色调。
-    FSTFastingRatingHard,      ///< 有点难 — 显示 😣 + 暖色调（橙/红）。
+    FSTFastingRatingEasy,      ///< 简单 — 显示 😊 + 绿色调。
 };
 
 @interface FSTFastingTimelineCardView : UIControl
@@ -47,7 +46,7 @@ typedef NS_ENUM(NSInteger, FSTFastingRating) {
 @property (nonatomic, copy, nullable) NSString *endTimeText;
 
 /// 难度评分（影响右上角 emoji 与配色）。
-/// ⚠️ 与 record.feelingLevel 顺序相反（详见上方枚举陷阱注释）；configureWithRecord 内部已做翻转。
+/// 数值含义与 record.feelingLevel 完全对齐 — configureWithRecord 直接 cast 赋值，无翻转。
 @property (nonatomic, assign) FSTFastingRating rating;
 
 /// 卡片右上角 "..." 三点被点击。约定调用方弹 ActionSheet 提供"编辑 / 删除 / 分享"等二级操作。
@@ -55,7 +54,7 @@ typedef NS_ENUM(NSInteger, FSTFastingRating) {
 
 /// 用一条 record 配置所有展示字段。
 /// 内部做的事：拆 durationSeconds → hoursText/minutesText；格式化时间 → start/endTimeText；
-/// 翻转 feelingLevel → rating（注意陷阱）；写入 titleText = record.planName。
+/// cast feelingLevel → rating（两者数值含义一致，无翻转）；写入 titleText = record.planName。
 /// 传 nil 时本视图会被清空（用于占位）。
 - (void)configureWithRecord:(nullable FSTFastingRecord *)record;
 

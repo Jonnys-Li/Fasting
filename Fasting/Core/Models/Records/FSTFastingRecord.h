@@ -54,11 +54,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 断食难度反馈（0 / 1 / 2）。
 /// 写入方：AddRecord 页 FSTAddRecordFeelingCardView 的 3 个 emoji 按钮（皱眉 / 平脸 / 笑脸）。
-/// 读取方：FSTFastingTimelineCardView.configureWithRecord: 把它转成 FSTFastingRating（注意：枚举顺序相反）。
+/// 读取方：FSTFastingTimelineCardView.configureWithRecord: 直接 cast 为 FSTFastingRating 渲染历史卡。
 /// 取值：0 = 有点难 😣，1 = 还可以 😐，2 = 简单 😊。
-///
-/// ⚠️ 与 FSTFastingRating 顺序相反（FSTFastingRating: 0=Easy/1=Ok/2=Hard）。
-/// 跨界使用时需要 `2 - feelingLevel` 翻转，详见 FSTFastingTimelineCardView.h 的陷阱注释。
+/// 与 FSTFastingRating 数值含义完全对齐，无需翻转。
 @property (nonatomic, assign) NSInteger feelingLevel;
 
 /// 用户在 AddRecord 页填的备注（FSTAddRecordNoteCardView）。
