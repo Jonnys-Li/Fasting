@@ -58,6 +58,8 @@
 + (UIColor *)fst_segmentBackground  { return [self fst_colorWithHex:0xF0F1F3]; }
 + (UIColor *)fst_chipBackground     { return [self fst_colorWithHex:0xF1F2F4]; }
 + (UIColor *)fst_mealDiaryCardBackground { return [self fst_colorWithHex:0xF6F7F9]; }
++ (UIColor *)fst_mealDiaryCardBorder    { return [self fst_colorWithHex:0xE0E2E6]; }
++ (UIColor *)fst_editPencilGray         { return [self fst_colorWithHex:0xB0B5BE]; }
 
 // Tips / Stage 阶段卡配色
 + (UIColor *)fst_stageBlue          { return [self fst_colorWithHex:0xE2EEFF]; }
@@ -66,7 +68,8 @@
 + (UIColor *)fst_tipCardYellow      { return [self fst_colorWithHex:0xFFF8D9]; }
 
 // Timeline 配色
-+ (UIColor *)fst_timelineGreen      { return [self fst_colorWithHex:0x54D9B0]; }
++ (UIColor *)fst_timelineGreen      { return [self fst_colorWithHex:0x29B78B]; }
++ (UIColor *)fst_timelineInnerGreen { return [self fst_colorWithHex:0x54D9B0]; }
 
 // 警告 / 强调
 + (UIColor *)fst_warningOrange      { return [self fst_colorWithHex:0xFF6D4A]; }

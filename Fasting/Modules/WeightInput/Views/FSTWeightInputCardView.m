@@ -5,6 +5,7 @@
 
 #import "FSTWeightInputCardView.h"
 #import "FSTWeightUnitToggleView.h"
+#import "FSTSessionManager.h"
 #import "FSTTheme.h"
 
 static const CGFloat FSTPoundsPerKilogram = 2.20462262;
@@ -56,6 +57,7 @@ static const CGFloat FSTPoundsPerKilogram = 2.20462262;
     UIControl *valueTapControl = [self buildValueTapZone];
 
     self.unitToggleView = [FSTWeightUnitToggleView new];
+    self.unitToggleView.unit = [FSTSessionManager sharedManager].preferredWeightUnit;
     __weak typeof(self) weakSelf = self;
     self.unitToggleView.onUnitChanged = ^(FSTWeightUnit unit) {
         [weakSelf refreshValue];
@@ -214,6 +216,7 @@ static const CGFloat FSTPoundsPerKilogram = 2.20462262;
 - (void)handleCloseTapped { if (self.onClose) self.onClose(); }
 
 - (void)handleSaveTapped {
+    [FSTSessionManager sharedManager].preferredWeightUnit = self.unitToggleView.unit;
     if (self.onSave) self.onSave(self.weightKg);
 }
 

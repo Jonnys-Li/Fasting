@@ -71,6 +71,7 @@ typedef NS_ENUM(NSInteger, FSTDailyPlanReadyPrimaryActionMode) {
 @property (nonatomic, copy, nullable) void (^onStartFastingTapped)(void);
 @property (nonatomic, copy, nullable) void (^onAbortPlanTapped)(void);
 @property (nonatomic, copy, nullable) void (^onLogMealTapped)(void);
+@property (nonatomic, copy, nullable) void (^onAddRecordTapped)(void);
 
 @end
 

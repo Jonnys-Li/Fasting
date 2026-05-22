@@ -23,6 +23,7 @@
 #import "FSTFastingTopBar.h"
 #import "UIButton+FSTNavCircle.h"
 #import "UIViewController+FSTTimeEditor.h"
+#import "FSTQuickAddRecordViewController.h"
 #import "FSTTheme.h"
 
 static const CGFloat kFSTDailyPlanTopBarHeightPicker = 84;
@@ -204,7 +205,7 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
     resetParagraphStyle.alignment         = NSTextAlignmentCenter;
     resetParagraphStyle.minimumLineHeight = 22;
     resetParagraphStyle.maximumLineHeight = 22;
-    UIFont *resetFont = [UIFont fontWithName:@"AvenirNext-DemiBold" size:15] ?: FSTFontSemibold(15);
+    UIFont *resetFont = FSTFontAvenirDemiBold(15);
     NSAttributedString *resetTitle =
         [[NSAttributedString alloc] initWithString:@"Reset"
                                         attributes:@{NSForegroundColorAttributeName: [UIColor fst_primaryGreen],
@@ -243,6 +244,7 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
     self.readyView.onStartFastingTapped      = ^{ [weakSelf handleReadyStartTapped]; };
     self.readyView.onAbortPlanTapped         = ^{ [weakSelf handleAbortScheduledReadyTapped]; };
     self.readyView.onLogMealTapped           = ^{ [weakSelf handleAteTapped]; };
+    self.readyView.onAddRecordTapped         = ^{ [weakSelf handleAddRecordTapped]; };
 }
 
 #pragma mark - 导航按钮工厂
@@ -381,6 +383,12 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
     FSTMealDetailViewController *mealDetailViewController = [[FSTMealDetailViewController alloc] initWithMealRecord:nil];
     mealDetailViewController.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:mealDetailViewController animated:YES];
+}
+
+- (void)handleAddRecordTapped {
+    FSTQuickAddRecordViewController *vc = [FSTQuickAddRecordViewController new];
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)handleBreakingFastTapped {

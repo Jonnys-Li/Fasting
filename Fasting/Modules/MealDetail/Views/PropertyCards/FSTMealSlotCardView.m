@@ -15,10 +15,7 @@
 - (instancetype)init {
     if ((self = [super init])) {
         _mealCategory = @"正餐";
-        self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 20;
-        self.layer.borderWidth = 1.2;
-        self.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.22].CGColor;
+        [self fst_applyMealCardStyle];
         [self buildSubviews];
         [self refresh];
     }
@@ -70,6 +67,7 @@
     UIView *iconBox = [UIView new];
     iconBox.backgroundColor = [UIColor fst_mealSlotIconBackground];
     iconBox.layer.cornerRadius = 14;
+    iconBox.userInteractionEnabled = NO;
     [tile addSubview:iconBox];
 
     UILabel *iconLabel = [UILabel new];

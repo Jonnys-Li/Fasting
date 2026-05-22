@@ -156,7 +156,7 @@ static const CGFloat kFSTFastingTimesRowPencilGap = 6;
 
 - (UILabel *)timeLabelWithColor:(UIColor *)color {
     UILabel *label = [UILabel new];
-    label.font      = [UIFont fontWithName:@"AvenirNext-DemiBold" size:15] ?: FSTFontSemibold(15);
+    label.font      = FSTFontAvenirDemiBold(15);
     label.textColor = color;
     label.text      = @"--";
     label.textAlignment = NSTextAlignmentLeft;

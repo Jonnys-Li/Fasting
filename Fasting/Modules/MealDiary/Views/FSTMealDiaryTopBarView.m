@@ -59,6 +59,7 @@
     UIView *redDotView = [UIView new];
     redDotView.backgroundColor = [UIColor fst_redDot];
     redDotView.layer.cornerRadius = 4;
+    redDotView.userInteractionEnabled = NO;
     [filterButton addSubview:redDotView];
 
     for (UIView *subview in @[backButton, dateChip, filterButton]) [self addSubview:subview];

@@ -316,6 +316,19 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
     }
 }
 
+- (UIImage *)snapshotForSharing {
+    BOOL wasModeHidden = self.modeButton.hidden;
+    self.modeButton.hidden = YES;
+
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, 0);
+    [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    self.modeButton.hidden = wasModeHidden;
+    return image;
+}
+
 - (void)emitModeTapped {
     if (self.onModeTapped) self.onModeTapped();
 }

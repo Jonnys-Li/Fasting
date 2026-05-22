@@ -4,6 +4,7 @@
 //
 
 #import "UIView+FSTLayout.h"
+#import "UIColor+FST.h"
 
 @implementation UIView (FSTLayout)
 
@@ -11,6 +12,13 @@
     self.backgroundColor = [color colorWithAlphaComponent:alpha];
     self.layer.cornerRadius = radius;
     self.layer.masksToBounds = YES;
+}
+
+- (void)fst_applyMealCardStyle {
+    self.backgroundColor = [UIColor whiteColor];
+    self.layer.cornerRadius = 20;
+    self.layer.borderWidth = 1.2;
+    self.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.22].CGColor;
 }
 
 @end

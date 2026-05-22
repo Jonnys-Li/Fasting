@@ -15,10 +15,7 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
-        self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 20;
-        self.layer.borderWidth = 1.2;
-        self.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.22].CGColor;
+        [self fst_applyMealCardStyle];
         [self buildSubviews];
         [self refresh];
     }

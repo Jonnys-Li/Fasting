@@ -32,6 +32,7 @@
     self.selectorView = [UIView new];
     self.selectorView.backgroundColor = [UIColor whiteColor];
     self.selectorView.layer.cornerRadius = 17;
+    self.selectorView.userInteractionEnabled = NO;
     [self addSubview:self.selectorView];
 
     self.bodyIconView = [self iconViewWithAssetNamed:@"nav_people"];

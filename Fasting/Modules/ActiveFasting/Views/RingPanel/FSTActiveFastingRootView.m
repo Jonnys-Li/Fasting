@@ -79,7 +79,7 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
 
     self.headlineLabel = [UILabel new];
     self.headlineLabel.text          = @"You're fasting!";
-    self.headlineLabel.font          = [UIFont fontWithName:@"AvenirNext-Bold" size:22] ?: FSTFontBold(22);
+    self.headlineLabel.font          = FSTFontAvenirBold(22);
     self.headlineLabel.textColor     = [UIColor fst_textHeading];
     self.headlineLabel.textAlignment = NSTextAlignmentCenter;
     [self.contentView addSubview:self.headlineLabel];
@@ -140,7 +140,7 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
     self.stopButton.layer.cornerRadius = kFSTActiveFastingStopCornerRadius;
     [self.stopButton setTitle:@"END FASTING" forState:UIControlStateNormal];
     [self.stopButton setTitleColor:[UIColor fst_textHeading] forState:UIControlStateNormal];
-    self.stopButton.titleLabel.font = [UIFont fontWithName:@"AvenirNext-DemiBold" size:16] ?: FSTFontBold(16);
+    self.stopButton.titleLabel.font = FSTFontAvenirDemiBold(16);
     [self.stopButton addTarget:self action:@selector(handleStopTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.stopButton];
 
@@ -170,8 +170,63 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
         make.top.equalTo(self.stopButton.mas_bottom).offset(kFSTActiveFastingTipsTopOffset);
         make.left.equalTo(self.contentView).offset(kFSTActiveFastingTipsSideInset);
         make.right.equalTo(self.contentView).offset(-kFSTActiveFastingTipsSideInset);
+    }];
+
+    // Send feedback 行 — 独立于 Tips 白色卡片之外
+    UIView *feedbackRow = [self buildFeedbackRow];
+    [self.contentView addSubview:feedbackRow];
+    [feedbackRow mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.tipsSection.mas_bottom).offset(20);
+        make.left.equalTo(self.contentView).offset(kFSTActiveFastingTipsSideInset);
+        make.right.equalTo(self.contentView).offset(-kFSTActiveFastingTipsSideInset);
+        make.height.mas_equalTo(56);
         make.bottom.equalTo(self.contentView).offset(-kFSTActiveFastingTipsBottomPadding);
     }];
+}
+
+#pragma mark - Send feedback
+
+- (UIView *)buildFeedbackRow {
+    UIView *row = [UIView new];
+    row.backgroundColor = [UIColor whiteColor];
+    row.layer.cornerRadius = 22;
+
+    UILabel *emojiLabel = [UILabel new];
+    emojiLabel.text = @"\U0001F4E9";
+    emojiLabel.font = [UIFont systemFontOfSize:28];
+    [row addSubview:emojiLabel];
+
+    UILabel *textLabel = [UILabel new];
+    textLabel.text = @"Send feedback";
+    textLabel.font = FSTFontMedium(17);
+    textLabel.textColor = [UIColor blackColor];
+    [row addSubview:textLabel];
+
+    UIImageView *chevron = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"feedback_chevron"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+    chevron.contentMode = UIViewContentModeScaleAspectFit;
+    [row addSubview:chevron];
+
+    [emojiLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(row).offset(16);
+        make.centerY.equalTo(row);
+    }];
+    [textLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(emojiLabel.mas_right).offset(10);
+        make.centerY.equalTo(row);
+    }];
+    [chevron mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(row).offset(-16);
+        make.centerY.equalTo(row);
+        make.size.mas_equalTo(CGSizeMake(8, 14));
+    }];
+
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleFeedbackTapped)];
+    [row addGestureRecognizer:tap];
+    return row;
+}
+
+- (void)handleFeedbackTapped {
+    if (self.onSendFeedbackTapped) self.onSendFeedbackTapped();
 }
 
 #pragma mark - 事件

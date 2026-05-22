@@ -4,6 +4,7 @@
 //
 
 #import "FSTAddRecordWeightCardView.h"
+#import "FSTSessionManager.h"
 #import "FSTTheme.h"
 
 @interface FSTAddRecordWeightCardView ()
@@ -137,9 +138,13 @@
 }
 
 - (void)refreshValues {
-    self.weightValueLabel.text = [NSString stringWithFormat:@"%.1f kg", self.weightKg];
-    self.initialLabel.text = [NSString stringWithFormat:@"初始: %.1f kg", self.initialWeightKg];
-    self.targetLabel.text = [NSString stringWithFormat:@"目标: %.1f kg", self.targetWeightKg];
+    static const CGFloat kLbPerKg = 2.20462262;
+    BOOL useLb = [FSTSessionManager sharedManager].preferredWeightUnit == FSTWeightUnitLb;
+    NSString *unit = useLb ? @"lb" : @"kg";
+    CGFloat factor = useLb ? kLbPerKg : 1.0;
+    self.weightValueLabel.text = [NSString stringWithFormat:@"%.1f %@", self.weightKg * factor, unit];
+    self.initialLabel.text = [NSString stringWithFormat:@"初始: %.1f %@", self.initialWeightKg * factor, unit];
+    self.targetLabel.text = [NSString stringWithFormat:@"目标: %.1f %@", self.targetWeightKg * factor, unit];
 }
 
 - (void)emitEditTapped { if (self.onEditTapped) self.onEditTapped(); }

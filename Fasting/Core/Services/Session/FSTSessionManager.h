@@ -24,6 +24,7 @@
 #import <Foundation/Foundation.h>
 #import "FSTPlan.h"
 #import "FSTFastingRecord.h"
+#import "FSTWeightUnitToggleView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -93,6 +94,9 @@ typedef NS_ENUM(NSInteger, FSTScheduledReadySource) {
 - (NSArray<FSTMealRecord *> *)allMealRecords; // 倒序
 - (void)addOrUpdateMealRecord:(FSTMealRecord *)record;
 - (void)deleteMealRecord:(FSTMealRecord *)record;
+
+// 体重单位偏好
+@property (nonatomic, assign) FSTWeightUnit preferredWeightUnit;
 
 // 准备态推导
 - (NSDate * _Nullable)latestFastingEndDate;

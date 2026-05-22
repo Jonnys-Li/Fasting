@@ -82,7 +82,7 @@
 
     self.timelineStack = [UIStackView new];
     self.timelineStack.axis = UILayoutConstraintAxisVertical;
-    self.timelineStack.spacing = 18;
+    self.timelineStack.spacing = 0;
     [contentView addSubview:self.timelineStack];
 
     [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -158,10 +158,11 @@
         detailViewController.hidesBottomBarWhenPushed = YES;
         [weakSelf.navigationController pushViewController:detailViewController animated:YES];
     };
-    for (FSTMealRecord *record in self.dayRecords) {
-        FSTMealDiaryEntryRowView *rowView = [[FSTMealDiaryEntryRowView alloc] initWithRecord:record];
+    for (NSUInteger i = 0; i < self.dayRecords.count; i++) {
+        FSTMealDiaryEntryRowView *rowView = [[FSTMealDiaryEntryRowView alloc] initWithRecord:self.dayRecords[i]];
         rowView.onCardTapped = openRecord;
         rowView.onEditTapped = openRecord;
+        rowView.hidesTopLine = (i == 0);
         [self.timelineStack addArrangedSubview:rowView];
     }
 }

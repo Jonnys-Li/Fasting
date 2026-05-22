@@ -53,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) void (^onEditEndTapped)(void);
 @property (nonatomic, copy, nullable) void (^onStopTapped)(void);
 @property (nonatomic, copy, nullable) void (^onDrinkNowTapped)(void);
+@property (nonatomic, copy, nullable) void (^onSendFeedbackTapped)(void);
 
 @end
 

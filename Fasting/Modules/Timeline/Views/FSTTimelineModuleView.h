@@ -2,29 +2,31 @@
 //  FSTTimelineModuleView.h
 //  Fasting
 //
-//  Timeline 页的"模块入口"控件 — 一组带图标、标题、摘要、CTA 文字的圆角卡。
-//  - 触发场景：Timeline VC 上一组横向滚动 / 纵向排列的模块入口（如 "今日断食"、"体重趋势"、"餐食日记"）。
-//  - 角色：UIControl 子类 — 整张卡可点击，触发标准 TouchUpInside 事件由 VC 监听并 push 对应详情页。
-//  - 数据流：init 时传入静态信息（title/icon/actionTitle）；摘要内容靠 -updateSummary:detail: 每次刷新。
+//  Timeline 页的"食物日记"入口卡：
+//  顶部 🍴 + "食物日记" + ? 徽标 + > 箭头；
+//  中部时间轴圆点 + 时间 + 食物卡片（图标 / 标签 / 表情）；
+//  底部 "+ 增加" 按钮。
 //
 
 #import <UIKit/UIKit.h>
+
+@class FSTMealRecord;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FSTTimelineModuleView : UIControl
 
-/// 初始化模块入口卡。
-/// @param title       卡顶部标题（如 "今日断食"）。
-/// @param iconName    Asset Catalog 中的图标名（左侧大图标）。
-/// @param actionTitle 卡底部 CTA 文字（如 "View detail" / "Log meal"）。
-- (instancetype)initWithTitle:(NSString *)title iconName:(NSString *)iconName actionTitle:(NSString *)actionTitle;
+/// 用最新一条记录刷新卡片内容；nil 时显示空态。
+- (void)updateWithMealRecord:(nullable FSTMealRecord *)record;
 
-/// 更新中部摘要内容。
-/// @param summary 主摘要（大字，如 "16:00 已断食"）。
-/// @param detail  副摘要（小字，如 "目标 16h / 完成度 100%"）。
-/// 由 Timeline VC 在 sessionManager 通知 / refreshTimer 触发时调用刷新。
-- (void)updateSummary:(NSString *)summary detail:(NSString *)detail;
+/// 点击 ">" 箭头（跳转列表页）。
+@property (nonatomic, copy, nullable) dispatch_block_t onChevronTapped;
+
+/// 点击 "+ 增加"（新建记录）。
+@property (nonatomic, copy, nullable) dispatch_block_t onAddTapped;
+
+/// 点击食物卡片（查看/编辑记录）。
+@property (nonatomic, copy, nullable) void (^onEntryTapped)(FSTMealRecord *record);
 
 @end
 

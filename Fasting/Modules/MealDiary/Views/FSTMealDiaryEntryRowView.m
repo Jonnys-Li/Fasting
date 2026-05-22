@@ -9,6 +9,8 @@
 
 @interface FSTMealDiaryEntryRowView ()
 @property (nonatomic, strong) FSTMealRecord *record;
+@property (nonatomic, strong) UIView *topLineView;
+@property (nonatomic, strong) UIView *bottomLineView;
 @end
 
 @implementation FSTMealDiaryEntryRowView
@@ -26,7 +28,8 @@
 /// 构建一条时间轴记录行的全部子视图。
 - (void)buildSubviews {
     UIView *dotView = [self buildTimelineDot];
-    UIView *lineView = [self buildTimelineLine];
+    self.topLineView = [self buildTimelineLine];
+    self.bottomLineView = [self buildTimelineLine];
     UILabel *timeLabel = [self buildTimeLabel];
     UIButton *editButton = [self buildEditButton];
     UIControl *cardView = [self buildCard];
@@ -35,8 +38,9 @@
     UILabel *dietChipLabel = [self pillLabelWithText:self.record.dietType ?: @"我不确定"];
     UIImageView *feelingImageView = [self buildFeelingImageView];
 
+    [self addSubview:self.topLineView];
+    [self addSubview:self.bottomLineView];
     [self addSubview:dotView];
-    [self addSubview:lineView];
     [self addSubview:timeLabel];
     [self addSubview:editButton];
     [self addSubview:cardView];
@@ -47,10 +51,16 @@
 
     [dotView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self);
-        make.top.equalTo(self).offset(4);
+        make.top.equalTo(self).offset(22);
         make.size.mas_equalTo(CGSizeMake(12, 12));
     }];
-    [lineView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.topLineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self);
+        make.centerX.equalTo(dotView);
+        make.width.equalTo(@2);
+        make.bottom.equalTo(dotView.mas_top);
+    }];
+    [self.bottomLineView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(dotView.mas_bottom);
         make.centerX.equalTo(dotView);
         make.width.equalTo(@2);
@@ -96,7 +106,7 @@
 
 - (UIView *)buildTimelineDot {
     UIView *dotView = [UIView new];
-    dotView.layer.borderColor = [UIColor fst_ringTrack].CGColor;
+    dotView.layer.borderColor = [UIColor fst_mealDiaryCardBorder].CGColor;
     dotView.layer.borderWidth = 3;
     dotView.layer.cornerRadius = 6;
     return dotView;
@@ -104,7 +114,7 @@
 
 - (UIView *)buildTimelineLine {
     UIView *lineView = [UIView new];
-    lineView.backgroundColor = [UIColor fst_ringTrack];
+    lineView.backgroundColor = [UIColor fst_mealDiaryCardBorder];
     return lineView;
 }
 
@@ -118,8 +128,9 @@
 
 - (UIButton *)buildEditButton {
     UIButton *editButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage *pencilImage = [[UIImage imageNamed:@"edit_pencil"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    UIImage *pencilImage = [[UIImage imageNamed:@"edit_pencil"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     [editButton setImage:pencilImage forState:UIControlStateNormal];
+    editButton.tintColor = [UIColor fst_editPencilGray];
     editButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
     editButton.adjustsImageWhenHighlighted = NO;
     [editButton addTarget:self action:@selector(emitEditTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -130,6 +141,8 @@
     UIControl *cardView = [UIControl new];
     cardView.backgroundColor = [UIColor fst_mealDiaryCardBackground];
     cardView.layer.cornerRadius = 18;
+    cardView.layer.borderWidth = 1.0;
+    cardView.layer.borderColor = [UIColor fst_mealDiaryCardBorder].CGColor;
     [cardView addTarget:self action:@selector(emitCardTapped) forControlEvents:UIControlEventTouchUpInside];
     return cardView;
 }
@@ -169,6 +182,9 @@
     label.textAlignment = NSTextAlignmentCenter;
     return label;
 }
+
+- (void)setHidesTopLine:(BOOL)hidesTopLine { _hidesTopLine = hidesTopLine; self.topLineView.hidden = hidesTopLine; }
+- (void)setHidesBottomLine:(BOOL)hidesBottomLine { _hidesBottomLine = hidesBottomLine; self.bottomLineView.hidden = hidesBottomLine; }
 
 #pragma mark - 事件转发
 

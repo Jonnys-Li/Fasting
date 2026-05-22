@@ -26,6 +26,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// 铅笔按钮被点击
 @property (nonatomic, copy, nullable) void (^onEditTapped)(FSTMealRecord *record);
 
+/// 是否隐藏圆点上方的连线（第一条记录设为 YES）。
+@property (nonatomic, assign) BOOL hidesTopLine;
+/// 是否隐藏圆点下方的连线（最后一条记录设为 YES）。
+@property (nonatomic, assign) BOOL hidesBottomLine;
+
 @end
 
 NS_ASSUME_NONNULL_END

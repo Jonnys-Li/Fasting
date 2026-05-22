@@ -25,6 +25,8 @@ UIFont *FSTFontRegular(CGFloat size);    ///< Regular 字重，正文用。
 UIFont *FSTFontMedium(CGFloat size);     ///< Medium 字重，副标题/列表项。
 UIFont *FSTFontSemibold(CGFloat size);   ///< Semibold 字重，按钮/卡片标题。
 UIFont *FSTFontBold(CGFloat size);       ///< Bold 字重，主标题/大数字。
+UIFont *FSTFontAvenirBold(CGFloat size);     ///< AvenirNext-Bold，fallback Bold。
+UIFont *FSTFontAvenirDemiBold(CGFloat size); ///< AvenirNext-DemiBold，fallback Semibold。
 
 // MARK: - 间距常量
 // 设计稿四档间距，业务侧不应再用裸数字。Masonry 约束、padding、margin 都直接引用。

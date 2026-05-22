@@ -74,7 +74,7 @@ static const CGFloat kFSTTimeEditorSaveHeight = 48.0;
 
     UILabel *titleLabel = [UILabel new];
     titleLabel.text = self.titleText;
-    titleLabel.font = [UIFont fontWithName:@"AvenirNext-DemiBold" size:24] ?: FSTFontBold(24);
+    titleLabel.font = FSTFontAvenirDemiBold(24);
     titleLabel.textColor = [UIColor fst_textHeading];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.adjustsFontSizeToFitWidth = YES;
@@ -104,7 +104,7 @@ static const CGFloat kFSTTimeEditorSaveHeight = 48.0;
     UIButton *saveButton = [UIButton buttonWithType:UIButtonTypeCustom];
     saveButton.backgroundColor = [UIColor fst_eatingTimeGreen];
     saveButton.layer.cornerRadius = kFSTTimeEditorSaveHeight / 2.0;
-    saveButton.titleLabel.font = [UIFont fontWithName:@"AvenirNext-DemiBold" size:20] ?: FSTFontBold(20);
+    saveButton.titleLabel.font = FSTFontAvenirDemiBold(20);
     [saveButton setTitle:@"Save" forState:UIControlStateNormal];
     [saveButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [saveButton addTarget:self action:@selector(handleSaveTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -149,7 +149,7 @@ static const CGFloat kFSTTimeEditorSaveHeight = 48.0;
     self.alignIconView.contentMode = UIViewContentModeScaleAspectFit;
     self.alignLabel = [UILabel new];
     self.alignLabel.text = self.alignChipText;
-    self.alignLabel.font = [UIFont fontWithName:@"AvenirNext-DemiBold" size:16] ?: FSTFontSemibold(16);
+    self.alignLabel.font = FSTFontAvenirDemiBold(16);
     self.alignLabel.textAlignment = NSTextAlignmentCenter;
 
     [control addSubview:self.alignIconView];

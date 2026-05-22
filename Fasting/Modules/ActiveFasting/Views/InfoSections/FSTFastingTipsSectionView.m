@@ -59,7 +59,6 @@ static NSString * const FSTFastingTipsExpandedText =
     UIView *lemonCard  = [self buildLemonCard];
     UIView *stageCard  = [self buildStageCard];
     UIView *qaCard     = [self buildQACard];
-
     [self addSubview:header];
     [self addSubview:lemonCard];
     [self addSubview:stageCard];
@@ -329,7 +328,7 @@ static NSString * const FSTFastingTipsExpandedText =
 - (NSAttributedString *)cellTitleAttributedString:(NSString *)text {
     NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
     style.lineHeightMultiple = 1.1;
-    UIFont *font = [UIFont fontWithName:@"AvenirNext-DemiBold" size:20] ?: FSTFontBold(20);
+    UIFont *font = FSTFontAvenirDemiBold(20);
     return [[NSAttributedString alloc] initWithString:text
                                            attributes:@{
         NSFontAttributeName: font,

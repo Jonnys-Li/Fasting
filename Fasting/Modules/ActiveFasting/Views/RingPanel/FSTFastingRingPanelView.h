@@ -76,6 +76,9 @@ typedef NS_ENUM(NSInteger, FSTRingPresentationState) {
 /// 约定调用方 push FSTPlanSelectViewController；选完后通过 sessionManager.switchToPlanPreservingState 切 plan。
 @property (nonatomic, copy, nullable) dispatch_block_t onPlanChipTapped;
 
+/// 生成用于分享的圆环截图（隐藏 modeButton，不含交互控件）。
+- (UIImage *)snapshotForSharing;
+
 /// 外暴露给上层做约束锚定的子视图引用（如外部需要把其他控件贴到 ring 中心或 caption 下方）。
 @property (nonatomic, strong, readonly) UIView *ringView;
 @property (nonatomic, strong, readonly) UILabel *timerCaptionLabel;

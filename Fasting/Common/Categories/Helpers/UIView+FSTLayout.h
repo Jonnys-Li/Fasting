@@ -17,6 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param radius 圆角半径
 - (void)fst_applyTintedBoxWithColor:(UIColor *)color alpha:(CGFloat)alpha radius:(CGFloat)radius;
 
+/// 绿色描边白卡公共样式（MealDetail 模块卡片通用）
+- (void)fst_applyMealCardStyle;
+
 @end
 
 NS_ASSUME_NONNULL_END

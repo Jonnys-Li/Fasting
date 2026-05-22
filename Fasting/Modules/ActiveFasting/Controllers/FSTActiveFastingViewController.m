@@ -30,7 +30,8 @@
 #import "UIColor+FST.h"
 #import "FSTActiveFastingDisplayState.h"
 #import "FSTFastingTimingService.h"
-#import <math.h>
+#import "FSTSendFeedbackViewController.h"
+#import "FSTShareCardViewController.h"
 
 static const CGFloat kFSTActiveFastingNavButtonDiameter = 46;
 static const CGFloat kFSTActiveFastingPlainIconSize     = 34;
@@ -103,10 +104,12 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 - (void)installTopBar {
     UIButton *shareButton = [UIButton fst_navPlainButtonWithImageNamed:@"nav_share"
                                                                   size:CGSizeMake(kFSTActiveFastingPlainIconSize, kFSTActiveFastingPlainIconSize)];
+    [shareButton addTarget:self action:@selector(handleShareTapped) forControlEvents:UIControlEventTouchUpInside];
     UIButton *waterButton = [UIButton fst_navCircleButtonWithImageNamed:@"nav_water"
                                                                diameter:kFSTActiveFastingNavButtonDiameter];
 
     self.segment = [FSTFastingSegmentControl new];
+    self.segment.userInteractionEnabled = NO;
 
     self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:shareButton
                                                   rightButtons:@[waterButton]
@@ -141,6 +144,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     rootView.onEditStartTapped = ^{ [weakSelf handleEditActiveStartTapped]; };
     rootView.onEditEndTapped   = ^{ [weakSelf handleEditActiveEndTapped]; };
     rootView.onStopTapped      = ^{ [weakSelf handleStopTapped]; };
+    rootView.onSendFeedbackTapped = ^{ [weakSelf handleSendFeedbackTapped]; };
 }
 
 #pragma mark - 刷新
@@ -267,6 +271,20 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     } else {
         [self.navigationController popToRootViewControllerAnimated:YES];
     }
+}
+
+- (void)handleShareTapped {
+    UIImage *ringSnapshot = [self.rootView.ringPanel snapshotForSharing];
+    FSTShareCardViewController *shareVC = [[FSTShareCardViewController alloc] initWithRingSnapshot:ringSnapshot];
+    shareVC.modalPresentationStyle = UIModalPresentationOverFullScreen;
+    shareVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self presentViewController:shareVC animated:YES completion:nil];
+}
+
+- (void)handleSendFeedbackTapped {
+    FSTSendFeedbackViewController *vc = [FSTSendFeedbackViewController new];
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)presentPlanPicker {

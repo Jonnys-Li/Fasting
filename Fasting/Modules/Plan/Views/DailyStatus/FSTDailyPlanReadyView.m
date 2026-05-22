@@ -9,6 +9,10 @@
 #import "FSTTheme.h"
 #import "UIColor+FST.h"
 
+static const CGFloat kFSTDailyPlanReadyAddRecordTopOffset = 20;
+static const CGFloat kFSTDailyPlanReadyAddRecordHeight    = 56;
+static const CGFloat kFSTDailyPlanReadyAddRecordRadius    = 22;
+
 static const CGFloat kFSTDailyPlanReadyTitleTop          = 12;
 static const CGFloat kFSTDailyPlanReadyTitleHeight       = 30;
 static const CGFloat kFSTDailyPlanReadyCardTopOffset     = 14;
@@ -33,6 +37,7 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
 @property (nonatomic, strong) FSTFastingTimesRow *nextFastTimesRow;
 @property (nonatomic, strong) UIButton *startFastingButton;
 @property (nonatomic, strong) UIButton *logMealButton;
+@property (nonatomic, strong) UIView *addRecordRow;
 @property (nonatomic, assign) BOOL readyToStartLayoutApplied;
 @end
 
@@ -54,7 +59,7 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
 
     self.eatingTitleLabel = [UILabel new];
     self.eatingTitleLabel.text          = @"Eating Time";
-    self.eatingTitleLabel.font          = [UIFont fontWithName:@"AvenirNext-Bold" size:22] ?: FSTFontBold(22);
+    self.eatingTitleLabel.font          = FSTFontAvenirBold(22);
     self.eatingTitleLabel.textColor     = [UIColor fst_textHeading];
     self.eatingTitleLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:self.eatingTitleLabel];
@@ -95,6 +100,9 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
     self.logMealButton.titleLabel.font    = FSTFontBold(20);
     [self.logMealButton addTarget:self action:@selector(handleLogMealTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.logMealButton];
+
+    self.addRecordRow = [self buildAddRecordRow];
+    [self addSubview:self.addRecordRow];
 }
 
 #pragma mark - 约束
@@ -129,6 +137,11 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
         make.top.equalTo(self.startFastingButton.mas_bottom).offset(kFSTDailyPlanReadyButtonGap);
         make.left.right.equalTo(self.startFastingButton);
         make.height.equalTo(@(kFSTDailyPlanReadyButtonHeight));
+    }];
+    [self.addRecordRow mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.logMealButton.mas_bottom).offset(kFSTDailyPlanReadyAddRecordTopOffset);
+        make.left.right.equalTo(self).inset(kFSTDailyPlanReadyCardSideInset);
+        make.height.mas_equalTo(kFSTDailyPlanReadyAddRecordHeight);
         make.bottom.equalTo(self).offset(-kFSTDailyPlanReadyBottomPadding);
     }];
 }
@@ -238,6 +251,51 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
 
 - (void)handleLogMealTapped {
     if (self.onLogMealTapped) self.onLogMealTapped();
+}
+
+- (void)handleAddRecordTapped {
+    if (self.onAddRecordTapped) self.onAddRecordTapped();
+}
+
+#pragma mark - Add Record Row
+
+- (UIView *)buildAddRecordRow {
+    UIView *row = [UIView new];
+    row.backgroundColor = [UIColor whiteColor];
+    row.layer.cornerRadius = kFSTDailyPlanReadyAddRecordRadius;
+
+    UIImageView *plusIcon = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"add_record_plus"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+    plusIcon.contentMode = UIViewContentModeScaleAspectFit;
+    [row addSubview:plusIcon];
+
+    UILabel *textLabel = [UILabel new];
+    textLabel.text = @"Add new record";
+    textLabel.font = FSTFontBold(17);
+    textLabel.textColor = [UIColor blackColor];
+    [row addSubview:textLabel];
+
+    UIImageView *chevron = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"feedback_chevron"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+    chevron.contentMode = UIViewContentModeScaleAspectFit;
+    [row addSubview:chevron];
+
+    [plusIcon mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(row).offset(16);
+        make.centerY.equalTo(row);
+        make.size.mas_equalTo(CGSizeMake(24, 24));
+    }];
+    [textLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(plusIcon.mas_right).offset(10);
+        make.centerY.equalTo(row);
+    }];
+    [chevron mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(row).offset(-16);
+        make.centerY.equalTo(row);
+        make.size.mas_equalTo(CGSizeMake(8, 14));
+    }];
+
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleAddRecordTapped)];
+    [row addGestureRecognizer:tap];
+    return row;
 }
 
 @end

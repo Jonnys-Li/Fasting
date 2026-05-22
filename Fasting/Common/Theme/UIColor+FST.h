@@ -96,6 +96,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIColor *)fst_chipBackground;
 /// #F6F7F9 饮食日记卡片底色。
 + (UIColor *)fst_mealDiaryCardBackground;
+/// #E0E2E6 饮食日记卡片描边。
++ (UIColor *)fst_mealDiaryCardBorder;
+/// #B0B5BE 饮食日记铅笔图标灰色。
++ (UIColor *)fst_editPencilGray;
 
 // MARK: - Tips / Stage 阶段卡配色
 
@@ -110,8 +114,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 // MARK: - Timeline 配色
 
-/// #54D9B0 时间线绿色圆点/徽标。
+/// #29B78B 时间线卡片外围绿色背景。
 + (UIColor *)fst_timelineGreen;
+/// #54D9B0 时间线卡片内部浅绿（圆点/面板）。
++ (UIColor *)fst_timelineInnerGreen;
 
 // MARK: - 警告 / 强调
 

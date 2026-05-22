@@ -18,7 +18,7 @@
 - (instancetype)init {
     if ((self = [super init])) {
         _date = [NSDate date];
-        [self applyMealCardStyle];
+        [self fst_applyMealCardStyle];
         [self buildSubviews];
         [self refresh];
     }
@@ -27,13 +27,6 @@
 
 - (void)setDate:(NSDate *)date { _date = date; [self refresh]; if (date) self.datePicker.date = date; }
 
-/// 公共"绿色描边白卡"样式，本模块复用。
-- (void)applyMealCardStyle {
-    self.backgroundColor = [UIColor whiteColor];
-    self.layer.cornerRadius = 20;
-    self.layer.borderWidth = 1.2;
-    self.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.22].CGColor;
-}
 
 - (void)buildSubviews {
     UILabel *titleLabel = [UILabel new];

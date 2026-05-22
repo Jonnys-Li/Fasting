@@ -15,12 +15,6 @@
 #import "FSTTheme.h"
 #import "FSTTimelineModuleView.h"
 
-/// 把日期格式化为 "今天, HH:mm" 形式。
-static NSString *FSTTimelineDateTime(NSDate *date) {
-    if (!date) return @"--";
-    return FSTFormatRelativeDateTime(date);
-}
-
 @interface FSTTimelineViewController ()
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIView *contentView;
@@ -65,8 +59,10 @@ static NSString *FSTTimelineDateTime(NSDate *date) {
         [weakSelf handleMoreFastingTapped];
     };
 
-    self.mealModuleView = [[FSTTimelineModuleView alloc] initWithTitle:@"食物日记" iconName:@"book.closed.fill" actionTitle:@"编辑"];
-    [self.mealModuleView addTarget:self action:@selector(handleMealModuleTapped) forControlEvents:UIControlEventTouchUpInside];
+    self.mealModuleView = [FSTTimelineModuleView new];
+    self.mealModuleView.onChevronTapped = ^{ [weakSelf handleMealChevronTapped]; };
+    self.mealModuleView.onAddTapped     = ^{ [weakSelf handleMealAddTapped]; };
+    self.mealModuleView.onEntryTapped   = ^(FSTMealRecord *record) { [weakSelf handleMealEntryTapped:record]; };
     [self.contentView addSubview:self.fastingModuleView];
     [self.contentView addSubview:self.mealModuleView];
 
@@ -90,7 +86,6 @@ static NSString *FSTTimelineDateTime(NSDate *date) {
     [self.mealModuleView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.fastingModuleView.mas_bottom).offset(20);
         make.left.right.equalTo(self.fastingModuleView);
-        make.height.equalTo(@190);
         make.bottom.equalTo(self.contentView).offset(-120);
     }];
 }
@@ -102,12 +97,7 @@ static NSString *FSTTimelineDateTime(NSDate *date) {
     [self.fastingModuleView configureWithRecord:fastingRecord];
 
     FSTMealRecord *mealRecord = [sessionManager allMealRecords].firstObject;
-    if (mealRecord) {
-        [self.mealModuleView updateSummary:[NSString stringWithFormat:@"%@ · %@", mealRecord.mealCategory, mealRecord.dietType]
-                                    detail:[NSString stringWithFormat:@"%@\n%@", FSTTimelineDateTime(mealRecord.date), mealRecord.detailDescription.length ? mealRecord.detailDescription : @"未添加详情"]];
-    } else {
-        [self.mealModuleView updateSummary:@"添加饮食详情" detail:@"记录正餐/零食、饮食类型、味道和图片"];
-    }
+    [self.mealModuleView updateWithMealRecord:mealRecord];
 }
 
 #pragma mark - 事件
@@ -118,10 +108,25 @@ static NSString *FSTTimelineDateTime(NSDate *date) {
     [self.navigationController pushViewController:historyViewController animated:YES];
 }
 
-- (void)handleMealModuleTapped {
+/// ">" 箭头：跳转食物日记列表页。
+- (void)handleMealChevronTapped {
     FSTMealDiaryViewController *diaryViewController = [FSTMealDiaryViewController new];
     diaryViewController.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:diaryViewController animated:YES];
+}
+
+/// "+ 增加"：新建饮食记录。
+- (void)handleMealAddTapped {
+    FSTMealDetailViewController *detailVC = [[FSTMealDetailViewController alloc] initWithMealRecord:nil];
+    detailVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:detailVC animated:YES];
+}
+
+/// 点击食物卡片：编辑该记录。
+- (void)handleMealEntryTapped:(FSTMealRecord *)record {
+    FSTMealDetailViewController *detailVC = [[FSTMealDetailViewController alloc] initWithMealRecord:record];
+    detailVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:detailVC animated:YES];
 }
 
 @end

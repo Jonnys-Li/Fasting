@@ -24,6 +24,7 @@ static NSString * const FSTScheduledReadySourceKey = @"kFSTScheduledReadySource"
 static NSString * const FSTScheduledReadyAnchorTimeKey = @"kFSTScheduledReadyAnchorTime";
 static NSString * const FSTLegacyEatingWindowFromActiveEditKey = @"kFSTEatingWindowFromActiveEdit";
 static NSString * const FSTDataMigrationVersionKey = @"kFSTDataMigrationVersion";
+static NSString * const FSTPreferredWeightUnitKey  = @"kFSTPreferredWeightUnit";
 static const NSInteger FSTCurrentDataMigrationVersion = 1;
 
 @interface FSTSessionManager ()
@@ -90,6 +91,8 @@ static const NSInteger FSTCurrentDataMigrationVersion = 1;
     if (self.scheduledReadySource == FSTScheduledReadySourceNone) {
         self.scheduledReadyAnchorDate = nil;
     }
+
+    self.preferredWeightUnit = [userDefaults integerForKey:FSTPreferredWeightUnitKey];
 
     NSArray *fastingRecordDictionaries = [userDefaults objectForKey:FSTRecordsKey];
     self.records = [NSMutableArray array];
@@ -189,6 +192,11 @@ static const NSInteger FSTCurrentDataMigrationVersion = 1;
     self.scheduledReadyAnchorDate = nil;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FSTNextStartOverrideKey];
     [self persistAllState];
+}
+
+- (void)setPreferredWeightUnit:(FSTWeightUnit)preferredWeightUnit {
+    _preferredWeightUnit = preferredWeightUnit;
+    [[NSUserDefaults standardUserDefaults] setInteger:preferredWeightUnit forKey:FSTPreferredWeightUnitKey];
 }
 
 - (void)persistAllState {

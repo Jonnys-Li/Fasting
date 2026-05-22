@@ -115,6 +115,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 
     self.dividerView = [UIView new];
     self.dividerView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.2];
+    self.dividerView.userInteractionEnabled = NO;
     [self addSubview:self.dividerView];
 
     self.hoursValueLabel = [self durationValueLabel];
@@ -127,6 +128,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     [self addSubview:self.minutesUnitLabel];
 
     self.ratingContainerView = [UIView new];
+    self.ratingContainerView.userInteractionEnabled = NO;
     [self addSubview:self.ratingContainerView];
 
     self.ratingImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_rating_ok"]];
@@ -136,10 +138,11 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     self.timelinePanelView = [UIView new];
     self.timelinePanelView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.06];
     self.timelinePanelView.layer.cornerRadius = 14.0;
+    self.timelinePanelView.userInteractionEnabled = NO;
     [self addSubview:self.timelinePanelView];
 
     self.startDotView = [UIView new];
-    self.startDotView.backgroundColor = [UIColor fst_timelineGreen];
+    self.startDotView.backgroundColor = [UIColor fst_timelineInnerGreen];
     self.startDotView.layer.cornerRadius = 4.0;
     [self.timelinePanelView addSubview:self.startDotView];
 

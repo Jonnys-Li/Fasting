@@ -17,10 +17,7 @@
     if ((self = [super init])) {
         _dietType = @"我不确定";
         _dietNames = @[@"生酮饮食", @"低碳饮食", @"混合式饮食", @"高碳饮食", @"我不确定"];
-        self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 20;
-        self.layer.borderWidth = 1.2;
-        self.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.22].CGColor;
+        [self fst_applyMealCardStyle];
         [self buildSubviews];
         [self refresh];
     }
