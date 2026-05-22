@@ -24,7 +24,7 @@
 - (instancetype)init {
     if ((self = [super init])) {
         self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 24;
+        self.layer.cornerRadius = FSTRadiusXL;
         [self buildSubviews];
         [self refreshValues];
     }
@@ -35,11 +35,11 @@
 - (void)setEndDate:(NSDate *)endDate { _endDate = endDate; [self refreshValues]; }
 - (void)setPlanName:(NSString *)planName {
     _planName = [planName copy];
-    self.planLabel.text = [NSString stringWithFormat:@"◎  断食 %@", planName ?: @"14-10"];
+    self.planLabel.text = [NSString stringWithFormat:@"◎  Fasting %@", planName ?: @"14-10"];
 }
 - (void)setEditingExistingRecord:(BOOL)editing {
     _editingExistingRecord = editing;
-    self.hintLabel.text = editing ? @"* 请选择停止断食(开始进食)的时间" : @"* 请选择开始断食(停止进食)的时间";
+    self.hintLabel.text = editing ? @"* Select when you stopped fasting" : @"* Select when you started fasting";
 }
 
 /// 构建：计划标签 + 开始/结束两行可折叠 + picker + 底部提示。
@@ -49,8 +49,8 @@
     self.planLabel.textColor = [UIColor fst_textPrimary];
     [self addSubview:self.planLabel];
 
-    UIView *startRow = [self timeRowWithTitle:@"开始" isStart:YES];
-    UIView *endRow = [self timeRowWithTitle:@"结束" isStart:NO];
+    UIView *startRow = [self timeRowWithTitle:@"Start" isStart:YES];
+    UIView *endRow = [self timeRowWithTitle:@"End" isStart:NO];
 
     self.startPicker = [self makeDatePickerWithDate:[NSDate date] action:@selector(handleStartDateChanged:)];
     self.endPicker = [self makeDatePickerWithDate:[NSDate date] action:@selector(handleEndDateChanged:)];

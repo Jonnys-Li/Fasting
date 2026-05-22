@@ -25,6 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 目标体重（kg）。来自 record.targetWeightKg；显示在卡底，编辑入口在其他设置页（当前未实现）。
 @property (nonatomic, assign) CGFloat targetWeightKg;
 
+/// Whether to display in pounds (YES) or kilograms (NO). Set by controller.
+@property (nonatomic, assign) BOOL usePounds;
+
 /// Apple Health 同步开关。
 /// 当前 App 未真正接入 HealthKit；这个开关只是把 record.appleHealthEnabled 标记位写盘，未来接入时无需迁移数据。
 @property (nonatomic, assign) BOOL appleHealthEnabled;

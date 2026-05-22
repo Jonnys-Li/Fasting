@@ -7,6 +7,7 @@
 //
 
 #import "FSTMealDiaryViewController.h"
+#import "FSTMealDiaryRootView.h"
 #import "FSTMealDiaryTopBarView.h"
 #import "FSTMealDiaryEntryRowView.h"
 #import "FSTMealDetailViewController.h"
@@ -15,10 +16,6 @@
 #import "FSTTheme.h"
 
 @interface FSTMealDiaryViewController ()
-@property (nonatomic, strong) FSTMealDiaryTopBarView *topBarView;
-@property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) UIStackView *timelineStack;
-@property (nonatomic, strong) UIButton *confirmButton;
 @property (nonatomic, strong) NSDate *selectedDate;
 @property (nonatomic, strong) NSArray<FSTMealRecord *> *dayRecords;
 @end
@@ -32,11 +29,23 @@
     return self;
 }
 
+- (void)loadView {
+    self.view = [FSTMealDiaryRootView new];
+}
+
+- (FSTMealDiaryRootView *)rootView {
+    return (FSTMealDiaryRootView *)self.view;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self buildTopBar];
-    [self buildScrollContent];
-    [self buildConfirmButton];
+
+    __weak typeof(self) weakSelf = self;
+    self.rootView.topBarView.selectedDate = self.selectedDate;
+    self.rootView.topBarView.onBackTapped = ^{ [weakSelf.navigationController popViewControllerAnimated:YES]; };
+    self.rootView.topBarView.onDateChipTapped = ^{ [weakSelf showDatePicker]; };
+    self.rootView.onConfirmTapped = ^{ [weakSelf handleConfirmTapped]; };
+
     [self reloadDayRecords];
     [self rebuildTimeline];
 
@@ -51,67 +60,6 @@
     [super viewWillAppear:animated];
     [self reloadDayRecords];
     [self rebuildTimeline];
-}
-
-#pragma mark - 子视图构建
-
-/// 顶部固定栏：使用独立 FSTMealDiaryTopBarView 组件并接线事件。
-- (void)buildTopBar {
-    self.topBarView = [FSTMealDiaryTopBarView new];
-    self.topBarView.selectedDate = self.selectedDate;
-    __weak typeof(self) weakSelf = self;
-    self.topBarView.onBackTapped = ^{ [weakSelf.navigationController popViewControllerAnimated:YES]; };
-    self.topBarView.onDateChipTapped = ^{ [weakSelf showDatePicker]; };
-    [self.view addSubview:self.topBarView];
-
-    [self.topBarView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.right.equalTo(self.view);
-        make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideTop).offset(72);
-    }];
-}
-
-/// 滚动容器及垂直 stack。
-- (void)buildScrollContent {
-    self.scrollView = [UIScrollView new];
-    self.scrollView.alwaysBounceVertical = YES;
-    self.scrollView.showsVerticalScrollIndicator = NO;
-    [self.view addSubview:self.scrollView];
-
-    UIView *contentView = [UIView new];
-    [self.scrollView addSubview:contentView];
-
-    self.timelineStack = [UIStackView new];
-    self.timelineStack.axis = UILayoutConstraintAxisVertical;
-    self.timelineStack.spacing = 0;
-    [contentView addSubview:self.timelineStack];
-
-    [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.topBarView.mas_bottom);
-        make.left.right.bottom.equalTo(self.view);
-    }];
-    [contentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.scrollView);
-        make.width.equalTo(self.scrollView);
-    }];
-    [self.timelineStack mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(contentView).offset(18);
-        make.left.right.equalTo(contentView).inset(24);
-        make.bottom.equalTo(contentView).offset(-140);
-    }];
-}
-
-/// 底部黄色"确认"按钮。
-- (void)buildConfirmButton {
-    self.confirmButton = [UIButton fst_yellowPillButtonWithTitle:@"确认"];
-    [self.confirmButton setTitleColor:[UIColor fst_textPrimary] forState:UIControlStateNormal];
-    [self.confirmButton addTarget:self action:@selector(handleConfirmTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.confirmButton];
-
-    [self.confirmButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(self.view).inset(38);
-        make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom).offset(-16);
-        make.height.equalTo(@64);
-    }];
 }
 
 #pragma mark - 数据加载
@@ -129,7 +77,7 @@
         return [rhs.date compare:lhs.date];
     }];
     self.dayRecords = matchedRecords;
-    self.topBarView.selectedDate = self.selectedDate;
+    self.rootView.topBarView.selectedDate = self.selectedDate;
 }
 
 - (void)handleRecordsChanged {
@@ -141,33 +89,44 @@
 
 /// 清空时间轴，按 dayRecords 重新生成行。空数据展示占位。
 - (void)rebuildTimeline {
-    for (UIView *subview in self.timelineStack.arrangedSubviews) {
-        [self.timelineStack removeArrangedSubview:subview];
+    UIStackView *stack = self.rootView.timelineStack;
+    for (UIView *subview in stack.arrangedSubviews) {
+        [stack removeArrangedSubview:subview];
         [subview removeFromSuperview];
     }
     if (self.dayRecords.count == 0) {
-        UILabel *emptyLabel = [UILabel fst_bodyLabelWithText:@"今天还没有饮食记录"];
+        UILabel *emptyLabel = [UILabel fst_bodyLabelWithText:@"No meal records today"];
         emptyLabel.textAlignment = NSTextAlignmentCenter;
-        [self.timelineStack addArrangedSubview:emptyLabel];
+        [stack addArrangedSubview:emptyLabel];
         return;
     }
     __weak typeof(self) weakSelf = self;
-    void (^openRecord)(FSTMealRecord *) = ^(FSTMealRecord *record) {
-        if (!record) return;
-        FSTMealDetailViewController *detailViewController = [[FSTMealDetailViewController alloc] initWithMealRecord:record];
-        detailViewController.hidesBottomBarWhenPushed = YES;
-        [weakSelf.navigationController pushViewController:detailViewController animated:YES];
-    };
     for (NSUInteger i = 0; i < self.dayRecords.count; i++) {
-        FSTMealDiaryEntryRowView *rowView = [[FSTMealDiaryEntryRowView alloc] initWithRecord:self.dayRecords[i]];
-        rowView.onCardTapped = openRecord;
-        rowView.onEditTapped = openRecord;
+        FSTMealRecord *record = self.dayRecords[i];
+        FSTMealDiaryEntryRowView *rowView = [[FSTMealDiaryEntryRowView alloc]
+            initWithCategory:record.mealCategory ?: @"Meal"
+                    dietType:record.dietType ?: @"Not sure"
+                  tasteLevel:record.tasteLevel
+                    dateText:FSTFormatRelativeDateTime(record.date ?: [NSDate date])];
+        rowView.onCardTapped = ^{
+            [weakSelf openMealRecord:record];
+        };
+        rowView.onEditTapped = ^{
+            [weakSelf openMealRecord:record];
+        };
         rowView.hidesTopLine = (i == 0);
-        [self.timelineStack addArrangedSubview:rowView];
+        [stack addArrangedSubview:rowView];
     }
 }
 
 #pragma mark - 事件
+
+- (void)openMealRecord:(FSTMealRecord *)record {
+    if (!record) return;
+    FSTMealDetailViewController *detailViewController = [[FSTMealDetailViewController alloc] initWithMealRecord:record];
+    detailViewController.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:detailViewController animated:YES];
+}
 
 - (void)handleConfirmTapped {
     [self.navigationController popViewControllerAnimated:YES];
@@ -186,7 +145,7 @@
             [self rebuildTimeline];
         }]];
     }
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:actionSheet animated:YES completion:nil];
 }
 

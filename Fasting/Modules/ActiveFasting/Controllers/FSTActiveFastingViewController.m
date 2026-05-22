@@ -23,8 +23,9 @@
 #import "FSTFastingTipsSectionView.h"
 #import "FSTFastingTopBar.h"
 #import "FSTFastingTimesRow.h"
-#import "UIButton+FSTNavCircle.h"
+#import "UIButton+FST.h"
 #import "UIViewController+FSTTimeEditor.h"
+#import "FSTTimeEditorSheetViewController.h"
 #import "UINavigationController+FSTHelpers.h"
 #import "FSTTheme.h"
 #import "UIColor+FST.h"
@@ -44,6 +45,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 @property (nonatomic, strong) FSTFastingSegmentControl *segment;
 @property (nonatomic, assign) FSTRingDisplayMode displayMode;
 @property (nonatomic, assign) BOOL fastingTargetReached;
+@property (nonatomic, assign) BOOL initialStartTimePromptDisplayed;
 @end
 
 @implementation FSTActiveFastingViewController
@@ -64,6 +66,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     [self installTopBar];
     [self bindRootViewCallbacks];
     [self refreshUI];
+    [self showInitialStartTimePromptIfNeeded];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshUI)
@@ -84,12 +87,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    // promptsForStartTimeOnFirstAppear 是一次性 token：
-    // 由 FSTDailyPlanViewController 在 push 本 VC 时通过 [sessionManager consumeActiveStartDatePromptRequest]
-    // 取出，再赋值给这个属性。在这里读一次就翻回 NO，确保只弹一次起始时间编辑器（避免 viewDidAppear 重复触发）。
-    if (!self.promptsForStartTimeOnFirstAppear) return;
-    self.promptsForStartTimeOnFirstAppear = NO;
-    [self presentInitialStartTimePrompt];
+    [self showInitialStartTimePromptIfNeeded];
 }
 
 - (void)dealloc {
@@ -202,16 +200,16 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 
 - (void)showPhaseDialog {
     BOOL targetReached = [self isCurrentFastingTargetReached];
-    NSString *title = targetReached ? @"Autophagy Starts!" : @"血糖升高";
+    NSString *title = targetReached ? @"Autophagy Starts!" : @"Blood Glucose Rise";
     NSString *message = targetReached
-        ? @"断食目标已经达成，身体开始进入自噬相关阶段。"
-        : @"断食初期血糖会有所波动，属于常见状态。继续保持当前计划。";
+        ? @"Fasting goal reached. Your body is entering the autophagy phase."
+        : @"Blood sugar fluctuation is normal in early fasting. Keep going with your plan.";
     NSString *iconName = targetReached ? @"autophagy_stage" : @"blood_glucose_stage";
     FSTModalDialogViewController *dialog =
         [[FSTModalDialogViewController alloc] initWithIconImageName:iconName
                                                               title:title
                                                             message:message
-                                                       primaryTitle:@"知道了"
+                                                       primaryTitle:@"Got it"
                                                      secondaryTitle:nil
                                                      primaryHandler:nil
                                                    secondaryHandler:nil];
@@ -231,10 +229,10 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     __weak typeof(self) weakSelf = self;
     FSTModalDialogViewController *dialog =
         [[FSTModalDialogViewController alloc] initWithIconSystemName:@"flag.fill"
-                                                               title:@"中断断食?"
-                                                             message:@"目标尚未达成。确定要提前结束?"
-                                                        primaryTitle:@"否"
-                                                      secondaryTitle:@"是"
+                                                               title:@"Stop fasting?"
+                                                             message:@"Goal not yet reached. End early?"
+                                                        primaryTitle:@"No"
+                                                      secondaryTitle:@"Yes"
                                                       primaryHandler:nil
                                                     secondaryHandler:^{
         [weakSelf proceedToFinishFasting];
@@ -346,18 +344,28 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     }];
 }
 
+- (void)showInitialStartTimePromptIfNeeded {
+    // promptsForStartTimeOnFirstAppear 是一次性 token。优先在 viewDidLoad 装载 child overlay，
+    // 让 picker 成为 ActiveFasting 首帧的一部分；viewDidAppear 只作为兜底，避免外部晚赋值时漏弹。
+    if (!self.promptsForStartTimeOnFirstAppear || self.initialStartTimePromptDisplayed) return;
+    self.promptsForStartTimeOnFirstAppear = NO;
+    self.initialStartTimePromptDisplayed = YES;
+    [self presentInitialStartTimePrompt];
+}
+
 - (void)presentInitialStartTimePrompt {
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
     NSDate *initialDate = sessionManager.activeStartDate ?: [NSDate date];
     __weak typeof(self) weakSelf = self;
-    [self fst_presentTimeEditorWithTitle:@"什么时候开始断食？"
-                             initialDate:initialDate
-                             minimumDate:nil
-                             maximumDate:nil
-                           alignChipText:nil
-                             alignedDate:nil
-                         initiallyAligned:NO
-                                 onCommit:^(NSDate *pickedDate, BOOL aligned) {
+    FSTTimeEditorSheetViewController *sheet =
+        [[FSTTimeEditorSheetViewController alloc] initWithTitle:@"When to start fasting?"
+                                                    initialDate:initialDate
+                                                    minimumDate:nil
+                                                    maximumDate:nil
+                                                  alignChipText:nil
+                                                    alignedDate:nil
+                                                initiallyAligned:NO
+                                                        onCommit:^(NSDate *pickedDate, BOOL aligned) {
         if ([pickedDate compare:[NSDate date]] == NSOrderedDescending) {
             [weakSelf enterScheduledReadyFromFutureStartDate:pickedDate source:FSTScheduledReadySourcePreStart];
         } else {
@@ -365,6 +373,13 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
             [weakSelf refreshUI];
         }
     }];
+    UIViewController *hostViewController = self.tabBarController ?: self.navigationController ?: self;
+    [hostViewController addChildViewController:sheet];
+    [hostViewController.view addSubview:sheet.view];
+    [sheet.view mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(hostViewController.view);
+    }];
+    [sheet didMoveToParentViewController:hostViewController];
 }
 
 @end

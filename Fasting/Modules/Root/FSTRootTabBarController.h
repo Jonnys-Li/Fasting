@@ -24,6 +24,8 @@ typedef NS_ENUM(NSInteger, FSTTabIndex) {
 
 @interface FSTRootTabBarController : UITabBarController <UITabBarControllerDelegate>
 
+- (void)fst_switchToTimelineSuppressingTransitionChromeWithUpdates:(dispatch_block_t)updates;
+
 @end
 
 NS_ASSUME_NONNULL_END

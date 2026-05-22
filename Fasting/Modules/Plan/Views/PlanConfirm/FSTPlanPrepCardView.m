@@ -1,7 +1,6 @@
 //
 //  FSTPlanPrepCardView.m
 //  Fasting
-//
 
 #import "FSTPlanPrepCardView.h"
 #import "FSTTheme.h"
@@ -10,8 +9,8 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
-        self.backgroundColor = [UIColor fst_planPrepBackground];
-        self.layer.cornerRadius = 14;
+        self.backgroundColor = [UIColor fst_stageBlue];
+        self.layer.cornerRadius = FSTRadiusCard;
         [self buildSubviews];
     }
     return self;
@@ -19,28 +18,42 @@
 
 - (void)buildSubviews {
     UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"💡 断食准备";
-    titleLabel.font = FSTFontBold(18);
-    titleLabel.textColor = [UIColor fst_textPrimary];
-    titleLabel.textAlignment = NSTextAlignmentCenter;
+    NSMutableParagraphStyle *titleStyle = [NSMutableParagraphStyle new];
+    titleStyle.lineHeightMultiple = 1.1;
+    titleLabel.attributedText = [[NSAttributedString alloc] initWithString:@"Prepare for fasting"
+                                                               attributes:@{
+        NSFontAttributeName: FSTFontAvenirDemiBold(20),
+        NSForegroundColorAttributeName: [UIColor fst_textHeading],
+        NSParagraphStyleAttributeName: titleStyle,
+    }];
 
     UILabel *bodyLabel = [UILabel new];
-    bodyLabel.text = @"•  吃足够的蛋白质，比如肉，鱼，豆腐和坚果。\n\n•  吃高纤维食物，比如坚果，豆类，水果和蔬菜。\n\n•  喝大量的水。\n\n•  吃天然的食物来帮助在用餐期间控制食欲。";
-    bodyLabel.font = FSTFontBold(16);
-    bodyLabel.textColor = [UIColor fst_planPrepBody];
     bodyLabel.numberOfLines = 0;
+    NSMutableParagraphStyle *bodyStyle = [NSMutableParagraphStyle new];
+    bodyStyle.lineSpacing = 6;
+    bodyLabel.attributedText = [[NSAttributedString alloc] initWithString:
+        @"\U0001F969 Eat protein-rich foods, such as meat, fish, tofu and nuts.\n"
+        @"\U0001F34E Add fiber and complex carbs from beans, fruits and vegetables.\n"
+        @"\U0001F4A7 Drink plenty of water.\n"
+        @"\U0001F96C Fill yourself with natural foods to control your appetite."
+                                                              attributes:@{
+        NSFontAttributeName: FSTFontMedium(15),
+        NSForegroundColorAttributeName: [UIColor fst_textTipBody],
+        NSParagraphStyleAttributeName: bodyStyle,
+    }];
 
     [self addSubview:titleLabel];
     [self addSubview:bodyLabel];
 
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(34);
-        make.centerX.equalTo(self);
+        make.top.equalTo(self).offset(24);
+        make.left.right.equalTo(self).inset(20);
+        make.height.mas_equalTo(30);
     }];
     [bodyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(titleLabel.mas_bottom).offset(30);
-        make.left.right.equalTo(self).inset(28);
-        make.bottom.equalTo(self).offset(-34);
+        make.top.equalTo(titleLabel.mas_bottom).offset(14);
+        make.left.right.equalTo(self).inset(20);
+        make.bottom.equalTo(self).offset(-24);
     }];
 }
 

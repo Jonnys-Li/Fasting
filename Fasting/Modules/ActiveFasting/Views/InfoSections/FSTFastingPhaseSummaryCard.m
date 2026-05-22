@@ -18,7 +18,7 @@
 - (instancetype)init {
     if ((self = [super init])) {
         self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 12;
+        self.layer.cornerRadius = FSTRadiusS;
         self.clipsToBounds = YES;
         [self buildSubviews];
         [self configureForBloodGlucoseStage];
@@ -69,7 +69,7 @@
 
 - (void)configureForBloodGlucoseStage {
     self.stageIconView.image = [UIImage imageNamed:@"blood_glucose_stage"];
-    self.titleLabel.text = @"血糖升高";
+    self.titleLabel.text = @"Blood Glucose Rise";
     self.titleLabel.font = FSTFontBold(16);
     self.titleLabel.textColor = [UIColor fst_textHeading];
     self.titleLabel.numberOfLines = 1;

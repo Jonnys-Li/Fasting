@@ -41,7 +41,7 @@
     calendarIconLabel.textAlignment = NSTextAlignmentCenter;
 
     self.dateLabel = [UILabel new];
-    self.dateLabel.font = FSTFontBold(22);
+    self.dateLabel.font = FSTFontTitle();
     self.dateLabel.textColor = [UIColor fst_textPrimary];
 
     UIImageSymbolConfiguration *symbolConfiguration = [UIImageSymbolConfiguration configurationWithPointSize:14 weight:UIImageSymbolWeightSemibold];

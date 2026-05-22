@@ -10,23 +10,19 @@
 
 #import <UIKit/UIKit.h>
 
-@class FSTMealRecord;
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FSTTimelineModuleView : UIControl
 
-/// 用最新一条记录刷新卡片内容；nil 时显示空态。
-- (void)updateWithMealRecord:(nullable FSTMealRecord *)record;
+/// Update card with formatted display data. Pass nil category to show empty state.
+- (void)updateWithCategory:(nullable NSString *)category
+                  dietType:(nullable NSString *)dietType
+                tasteLevel:(NSInteger)tasteLevel
+                  dateText:(nullable NSString *)dateText;
 
-/// 点击 ">" 箭头（跳转列表页）。
 @property (nonatomic, copy, nullable) dispatch_block_t onChevronTapped;
-
-/// 点击 "+ 增加"（新建记录）。
 @property (nonatomic, copy, nullable) dispatch_block_t onAddTapped;
-
-/// 点击食物卡片（查看/编辑记录）。
-@property (nonatomic, copy, nullable) void (^onEntryTapped)(FSTMealRecord *record);
+@property (nonatomic, copy, nullable) dispatch_block_t onEntryTapped;
 
 @end
 

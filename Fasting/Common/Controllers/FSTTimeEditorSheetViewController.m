@@ -4,13 +4,10 @@
 //
 
 #import "FSTTimeEditorSheetViewController.h"
+#import "FSTTimeEditorSheetContentView.h"
 #import "FSTTheme.h"
 
 static const CGFloat kFSTTimeEditorSheetCornerRadius = 22.0;
-static const CGFloat kFSTTimeEditorCloseSize = 34.0;
-static const CGFloat kFSTTimeEditorPickerHeightSimple = 245.0;
-static const CGFloat kFSTTimeEditorPickerHeightAligned = 305.0;
-static const CGFloat kFSTTimeEditorSaveHeight = 48.0;
 
 @interface FSTTimeEditorSheetViewController ()
 @property (nonatomic, copy) NSString *titleText;
@@ -22,10 +19,7 @@ static const CGFloat kFSTTimeEditorSaveHeight = 48.0;
 @property (nonatomic, assign) BOOL alignSelected;
 @property (nonatomic, copy) FSTTimeEditorCommitHandler onCommit;
 
-@property (nonatomic, strong) UIDatePicker *datePicker;
-@property (nonatomic, strong, nullable) UIControl *alignControl;
-@property (nonatomic, strong, nullable) UIImageView *alignIconView;
-@property (nonatomic, strong, nullable) UILabel *alignLabel;
+@property (nonatomic, strong) FSTTimeEditorSheetContentView *contentView;
 @end
 
 @implementation FSTTimeEditorSheetViewController
@@ -56,115 +50,28 @@ static const CGFloat kFSTTimeEditorSaveHeight = 48.0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self buildSubviews];
+    [self buildContentView];
     [self refreshAlignState];
 }
 
-#pragma mark - Layout
+#pragma mark - Content View
 
-- (void)buildSubviews {
-    UIView *sheetView = self.cardContainer;
-
-    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage *closeImage = [[UIImage imageNamed:@"time_editor_close"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    [closeButton setImage:closeImage forState:UIControlStateNormal];
-    closeButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
-    [closeButton addTarget:self action:@selector(handleCloseTapped) forControlEvents:UIControlEventTouchUpInside];
-    [sheetView addSubview:closeButton];
-
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.text = self.titleText;
-    titleLabel.font = FSTFontAvenirDemiBold(24);
-    titleLabel.textColor = [UIColor fst_textHeading];
-    titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.adjustsFontSizeToFitWidth = YES;
-    titleLabel.minimumScaleFactor = 0.76;
-    [sheetView addSubview:titleLabel];
-
-    self.datePicker = [UIDatePicker new];
-    self.datePicker.datePickerMode = UIDatePickerModeDateAndTime;
-    self.datePicker.date = [self clampedDate:self.alignSelected && self.alignedDate ? self.alignedDate : self.initialDate];
-    self.datePicker.minimumDate = self.minimumDate;
-    self.datePicker.maximumDate = self.maximumDate;
-    if (@available(iOS 13.4, *)) {
-        self.datePicker.preferredDatePickerStyle = UIDatePickerStyleWheels;
-    }
-    [sheetView addSubview:self.datePicker];
-
-    BOOL hasAlignChip = self.alignChipText.length > 0;
-    UIView *pickerTopAnchor = titleLabel;
-    CGFloat pickerTopOffset = hasAlignChip ? 22.0 : 28.0;
-    CGFloat pickerHeight = hasAlignChip ? kFSTTimeEditorPickerHeightAligned : kFSTTimeEditorPickerHeightSimple;
-    if (hasAlignChip) {
-        self.alignControl = [self buildAlignControl];
-        [sheetView addSubview:self.alignControl];
-        pickerTopAnchor = self.alignControl;
-    }
-
-    UIButton *saveButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    saveButton.backgroundColor = [UIColor fst_eatingTimeGreen];
-    saveButton.layer.cornerRadius = kFSTTimeEditorSaveHeight / 2.0;
-    saveButton.titleLabel.font = FSTFontAvenirDemiBold(20);
-    [saveButton setTitle:@"Save" forState:UIControlStateNormal];
-    [saveButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [saveButton addTarget:self action:@selector(handleSaveTapped) forControlEvents:UIControlEventTouchUpInside];
-    [sheetView addSubview:saveButton];
-
-    [closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(sheetView).offset(34);
-        make.right.equalTo(sheetView).offset(-30);
-        make.size.mas_equalTo(CGSizeMake(kFSTTimeEditorCloseSize, kFSTTimeEditorCloseSize));
+- (void)buildContentView {
+    self.contentView = [[FSTTimeEditorSheetContentView alloc] initWithTitle:self.titleText
+                                                             alignChipText:self.alignChipText];
+    [self.cardContainer addSubview:self.contentView];
+    [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.cardContainer);
     }];
-    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(sheetView).offset(82);
-        make.left.right.equalTo(sheetView).inset(48);
-        make.height.equalTo(@32);
-    }];
-    if (self.alignControl) {
-        [self.alignControl mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(titleLabel.mas_bottom).offset(20);
-            make.centerX.equalTo(sheetView);
-            make.height.equalTo(@34);
-        }];
-    }
-    [self.datePicker mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(pickerTopAnchor.mas_bottom).offset(pickerTopOffset);
-        make.left.right.equalTo(sheetView).inset(26);
-        make.height.equalTo(@(pickerHeight));
-    }];
-    [saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.datePicker.mas_bottom).offset(36);
-        make.left.right.equalTo(sheetView).inset(32);
-        make.height.equalTo(@(kFSTTimeEditorSaveHeight));
-        make.bottom.equalTo(sheetView.mas_safeAreaLayoutGuideBottom).offset(-34);
-    }];
-}
 
-- (UIControl *)buildAlignControl {
-    UIControl *control = [UIControl new];
-    control.layer.cornerRadius = 17;
-    [control addTarget:self action:@selector(handleAlignTapped) forControlEvents:UIControlEventTouchUpInside];
+    self.contentView.datePicker.date = [self clampedDate:self.alignSelected && self.alignedDate ? self.alignedDate : self.initialDate];
+    self.contentView.datePicker.minimumDate = self.minimumDate;
+    self.contentView.datePicker.maximumDate = self.maximumDate;
 
-    self.alignIconView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"time_align_clock"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
-    self.alignIconView.contentMode = UIViewContentModeScaleAspectFit;
-    self.alignLabel = [UILabel new];
-    self.alignLabel.text = self.alignChipText;
-    self.alignLabel.font = FSTFontAvenirDemiBold(16);
-    self.alignLabel.textAlignment = NSTextAlignmentCenter;
-
-    [control addSubview:self.alignIconView];
-    [control addSubview:self.alignLabel];
-    [self.alignIconView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(control).offset(14);
-        make.centerY.equalTo(control);
-        make.size.mas_equalTo(CGSizeMake(16, 16));
-    }];
-    [self.alignLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.alignIconView.mas_right).offset(8);
-        make.right.equalTo(control).offset(-14);
-        make.centerY.equalTo(control);
-    }];
-    return control;
+    __weak typeof(self) weakSelf = self;
+    self.contentView.onCloseTapped = ^{ [weakSelf handleCloseTapped]; };
+    self.contentView.onSaveTapped  = ^{ [weakSelf handleSaveTapped]; };
+    self.contentView.onAlignToggled = ^{ [weakSelf handleAlignTapped]; };
 }
 
 #pragma mark - State
@@ -177,14 +84,10 @@ static const CGFloat kFSTTimeEditorSaveHeight = 48.0;
 }
 
 - (void)refreshAlignState {
-    if (!self.alignControl) return;
-    UIColor *backgroundColor = self.alignSelected ? [[UIColor fst_alignSelectedGreen] colorWithAlphaComponent:0.15] : [[UIColor fst_alignUnselectedGray] colorWithAlphaComponent:0.30];
-    UIColor *textColor = self.alignSelected ? [UIColor fst_alignSelectedText] : [UIColor fst_textSecondary];
-    self.alignControl.backgroundColor = backgroundColor;
-    self.alignLabel.textColor = textColor;
-    self.datePicker.userInteractionEnabled = !self.alignSelected;
+    [self.contentView setAlignSelected:self.alignSelected];
+    self.contentView.datePicker.userInteractionEnabled = !self.alignSelected;
     if (self.alignSelected && self.alignedDate) {
-        [self.datePicker setDate:[self clampedDate:self.alignedDate] animated:YES];
+        [self.contentView.datePicker setDate:[self clampedDate:self.alignedDate] animated:YES];
     }
 }
 
@@ -196,13 +99,41 @@ static const CGFloat kFSTTimeEditorSaveHeight = 48.0;
 }
 
 - (void)handleCloseTapped {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self dismissSelfAnimated:YES completion:nil];
 }
 
 - (void)handleSaveTapped {
-    NSDate *pickedDate = self.alignSelected && self.alignedDate ? [self clampedDate:self.alignedDate] : self.datePicker.date;
+    NSDate *pickedDate = self.alignSelected && self.alignedDate ? [self clampedDate:self.alignedDate] : self.contentView.datePicker.date;
     if (self.onCommit) self.onCommit(pickedDate, self.alignSelected);
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self dismissSelfAnimated:YES completion:nil];
+}
+
+- (void)dismissSelfAnimated:(BOOL)animated completion:(void (^)(void))completion {
+    if (self.presentingViewController) {
+        [self dismissViewControllerAnimated:animated completion:completion];
+        return;
+    }
+
+    if (self.parentViewController) {
+        [self willMoveToParentViewController:nil];
+        void (^removeFromParent)(void) = ^{
+            [self.view removeFromSuperview];
+            [self removeFromParentViewController];
+            if (completion) completion();
+        };
+        if (animated) {
+            [UIView animateWithDuration:0.18 animations:^{
+                self.view.alpha = 0.0;
+            } completion:^(__unused BOOL finished) {
+                removeFromParent();
+            }];
+        } else {
+            removeFromParent();
+        }
+        return;
+    }
+
+    if (completion) completion();
 }
 
 @end

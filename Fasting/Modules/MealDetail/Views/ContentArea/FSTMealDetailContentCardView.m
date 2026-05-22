@@ -29,7 +29,7 @@
 - (void)buildSubviews {
     UIButton *imageButton = [UIButton buttonWithType:UIButtonTypeSystem];
     imageButton.backgroundColor = [UIColor fst_mealImageBackground];
-    imageButton.layer.cornerRadius = 14;
+    imageButton.layer.cornerRadius = FSTRadiusM;
     [imageButton setImage:[UIImage systemImageNamed:@"camera.fill"] forState:UIControlStateNormal];
     imageButton.tintColor = [UIColor fst_mealImageTint];
     [imageButton addTarget:self action:@selector(emitImageTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -40,7 +40,7 @@
 
     self.detailTextView = [UITextView new];
     self.detailTextView.backgroundColor = [UIColor fst_inputBackground];
-    self.detailTextView.layer.cornerRadius = 12;
+    self.detailTextView.layer.cornerRadius = FSTRadiusS;
     self.detailTextView.font = FSTFontRegular(16);
     self.detailTextView.textColor = [UIColor fst_textPrimary];
     self.detailTextView.textContainerInset = UIEdgeInsetsMake(15, 15, 15, 15);
@@ -66,7 +66,7 @@
 }
 
 - (void)refresh {
-    self.imageStatusLabel.text = self.imagePath.length ? @"已添加食物图片" : @"添加食物详情";
+    self.imageStatusLabel.text = self.imagePath.length ? @"Food photo added" : @"Add food details";
 }
 
 - (void)emitImageTapped { if (self.onImageTapped) self.onImageTapped(); }

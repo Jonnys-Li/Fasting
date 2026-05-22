@@ -19,7 +19,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor fst_ringTrackLight];
-        self.layer.cornerRadius = 17;
+        self.layer.cornerRadius = FSTRadiusChip;
         self.clipsToBounds = YES;
         [self buildSubviews];
 

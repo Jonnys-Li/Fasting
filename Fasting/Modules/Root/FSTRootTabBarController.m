@@ -9,6 +9,12 @@
 #import "FSTPlanSelectViewController.h"
 #import "FSTTheme.h"
 
+static const NSTimeInterval kFSTTabChromeSuppressionDelay = 0.12;
+
+@interface FSTRootTabBarController ()
+- (void)fst_removeAnimationsInView:(UIView *)view;
+@end
+
 @implementation FSTRootTabBarController
 
 - (void)viewDidLoad {
@@ -108,6 +114,38 @@ shouldSelectViewController:(UIViewController *)viewController {
     tabBarFrame.size.height = tabBarHeight;
     tabBarFrame.origin.y = self.view.bounds.size.height - tabBarHeight - MAX(8, safeAreaBottomInset * 0.2);
     self.tabBar.frame = tabBarFrame;
+}
+
+- (void)fst_switchToTimelineSuppressingTransitionChromeWithUpdates:(dispatch_block_t)updates {
+    UIView *transitionCover = [self.view snapshotViewAfterScreenUpdates:NO];
+    transitionCover.frame = self.view.bounds;
+    transitionCover.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    transitionCover.userInteractionEnabled = YES;
+    [self.view addSubview:transitionCover];
+
+    [UIView performWithoutAnimation:^{
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        self.selectedIndex = FSTTabIndexTimeline;
+        if (updates) updates();
+        [self.view setNeedsLayout];
+        [self.view layoutIfNeeded];
+        [self fst_removeAnimationsInView:self.view];
+        [CATransaction commit];
+    }];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kFSTTabChromeSuppressionDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [UIView performWithoutAnimation:^{
+            [transitionCover removeFromSuperview];
+        }];
+    });
+}
+
+- (void)fst_removeAnimationsInView:(UIView *)view {
+    [view.layer removeAllAnimations];
+    for (UIView *subview in view.subviews) {
+        [self fst_removeAnimationsInView:subview];
+    }
 }
 
 @end

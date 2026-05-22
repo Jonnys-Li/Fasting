@@ -15,7 +15,7 @@
 - (instancetype)init {
     if ((self = [super init])) {
         self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 24;
+        self.layer.cornerRadius = FSTRadiusXL;
         [self buildSubviews];
     }
     return self;
@@ -26,8 +26,8 @@
 
 - (void)buildSubviews {
     UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"记录";
-    titleLabel.font = FSTFontBold(20);
+    titleLabel.text = @"Notes";
+    titleLabel.font = FSTFontSubhead();
     titleLabel.textColor = [UIColor fst_textPrimary];
     [self addSubview:titleLabel];
 
@@ -35,7 +35,7 @@
     self.textView.font = FSTFontRegular(17);
     self.textView.textColor = [UIColor fst_textPrimary];
     self.textView.backgroundColor = [UIColor fst_inputBackground];
-    self.textView.layer.cornerRadius = 14;
+    self.textView.layer.cornerRadius = FSTRadiusM;
     self.textView.textContainerInset = UIEdgeInsetsMake(18, 18, 18, 18);
     [self addSubview:self.textView];
 

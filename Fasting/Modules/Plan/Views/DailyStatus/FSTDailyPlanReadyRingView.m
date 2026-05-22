@@ -70,7 +70,7 @@
     [self.toggleButton addTarget:self action:@selector(handleToggleTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.toggleButton];
 
-    self.captionLabel = [UILabel fst_centerLabelWithFont:FSTFontRegular(15) color:[UIColor fst_textSecondary]];
+    self.captionLabel = [UILabel fst_centerLabelWithFont:FSTFontBody() color:[UIColor fst_textSecondary]];
     self.valueLabel = [UILabel fst_centerLabelWithFont:[UIFont monospacedDigitSystemFontOfSize:32 weight:UIFontWeightBold]
                                                  color:[UIColor fst_textPrimary]];
 

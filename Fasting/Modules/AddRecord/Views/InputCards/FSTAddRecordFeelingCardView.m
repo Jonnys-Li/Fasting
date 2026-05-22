@@ -17,7 +17,7 @@
     if ((self = [super init])) {
         _feelingLevel = 1;
         self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 24;
+        self.layer.cornerRadius = FSTRadiusXL;
         [self buildSubviews];
         [self refreshSelection];
     }
@@ -32,8 +32,8 @@
 /// 构建：标题 + 3 个等宽感受按钮的水平 stack。
 - (void)buildSubviews {
     UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"感受如何?";
-    titleLabel.font = FSTFontBold(20);
+    titleLabel.text = @"How did it feel?";
+    titleLabel.font = FSTFontSubhead();
     titleLabel.textColor = [UIColor fst_textPrimary];
     [self addSubview:titleLabel];
 
@@ -44,7 +44,7 @@
     [self addSubview:buttonsStack];
 
     NSMutableArray *collectedButtons = [NSMutableArray array];
-    NSArray *items = @[@[@"tl_rating_hard", @"有点难"], @[@"tl_rating_ok", @"还可以"], @[@"tl_rating_easy", @"简单"]];
+    NSArray *items = @[@[@"tl_rating_hard", @"Hard"], @[@"tl_rating_ok", @"OK"], @[@"tl_rating_easy", @"Easy"]];
     for (NSInteger index = 0; index < items.count; index++) {
         UIControl *button = [self feelingButtonWithImageName:items[index][0] title:items[index][1] index:index];
         [buttonsStack addArrangedSubview:button];

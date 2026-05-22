@@ -5,7 +5,6 @@
 
 #import "FSTWeightInputCardView.h"
 #import "FSTWeightUnitToggleView.h"
-#import "FSTSessionManager.h"
 #import "FSTTheme.h"
 
 static const CGFloat FSTPoundsPerKilogram = 2.20462262;
@@ -23,7 +22,7 @@ static const CGFloat FSTPoundsPerKilogram = 2.20462262;
     if ((self = [super init])) {
         _weightKg = 70.0;
         self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 22;
+        self.layer.cornerRadius = FSTRadiusL;
         [self buildSubviews];
         [self refreshValue];
     }
@@ -44,7 +43,7 @@ static const CGFloat FSTPoundsPerKilogram = 2.20462262;
 /// 一次性创建并约束卡片里所有视图。
 - (void)buildSubviews {
     UIButton *closeButton = [self buildCloseButton];
-    UILabel *titleLabel = [UILabel fst_subtitleLabelWithText:@"体重"];
+    UILabel *titleLabel = [UILabel fst_subtitleLabelWithText:@"Weight"];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     UILabel *subtitleLabel = [UILabel fst_bodyLabelWithText:FSTFormatRelativeDay([NSDate date])];
     subtitleLabel.textAlignment = NSTextAlignmentCenter;
@@ -57,13 +56,13 @@ static const CGFloat FSTPoundsPerKilogram = 2.20462262;
     UIControl *valueTapControl = [self buildValueTapZone];
 
     self.unitToggleView = [FSTWeightUnitToggleView new];
-    self.unitToggleView.unit = [FSTSessionManager sharedManager].preferredWeightUnit;
+    self.unitToggleView.unit = self.initialUnit;
     __weak typeof(self) weakSelf = self;
     self.unitToggleView.onUnitChanged = ^(FSTWeightUnit unit) {
         [weakSelf refreshValue];
     };
 
-    UIButton *saveButton = [UIButton fst_greenPillButtonWithTitle:@"保存"];
+    UIButton *saveButton = [UIButton fst_greenPillButtonWithTitle:@"Save"];
     [saveButton addTarget:self action:@selector(handleSaveTapped) forControlEvents:UIControlEventTouchUpInside];
 
     for (UIView *subview in @[closeButton, titleLabel, subtitleLabel, valueBoxView, topLeftDotView, bottomRightDotView, self.valueLabel,
@@ -136,7 +135,7 @@ static const CGFloat FSTPoundsPerKilogram = 2.20462262;
 - (UIButton *)buildCloseButton {
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeSystem];
     closeButton.backgroundColor = [UIColor fst_ringTrack];
-    closeButton.layer.cornerRadius = 14;
+    closeButton.layer.cornerRadius = FSTRadiusM;
     UIImageSymbolConfiguration *symbolConfiguration = [UIImageSymbolConfiguration configurationWithPointSize:12 weight:UIImageSymbolWeightBold];
     [closeButton setImage:[[UIImage systemImageNamed:@"xmark"] imageWithConfiguration:symbolConfiguration] forState:UIControlStateNormal];
     closeButton.tintColor = [UIColor fst_textSecondary];
@@ -153,7 +152,7 @@ static const CGFloat FSTPoundsPerKilogram = 2.20462262;
     self.valueLabel.textColor = [UIColor fst_textPrimary];
     self.valueLabel.textAlignment = NSTextAlignmentCenter;
     self.unitSuffixLabel = [UILabel new];
-    self.unitSuffixLabel.font = FSTFontBold(20);
+    self.unitSuffixLabel.font = FSTFontSubhead();
     self.unitSuffixLabel.textColor = [UIColor fst_textSecondary];
     return valueBoxView;
 }
@@ -215,8 +214,11 @@ static const CGFloat FSTPoundsPerKilogram = 2.20462262;
 
 - (void)handleCloseTapped { if (self.onClose) self.onClose(); }
 
+- (FSTWeightUnit)currentUnit {
+    return self.unitToggleView.unit;
+}
+
 - (void)handleSaveTapped {
-    [FSTSessionManager sharedManager].preferredWeightUnit = self.unitToggleView.unit;
     if (self.onSave) self.onSave(self.weightKg);
 }
 

@@ -36,7 +36,7 @@
 - (void)buildSubviews {
     self.selectorView = [UIView new];
     self.selectorView.backgroundColor = [UIColor fst_textPrimary];
-    self.selectorView.layer.cornerRadius = 17;
+    self.selectorView.layer.cornerRadius = FSTRadiusChip;
     [self addSubview:self.selectorView];
 
     UIControl *kgChipControl = [UIControl new];

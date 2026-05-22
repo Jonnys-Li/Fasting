@@ -6,17 +6,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FSTWeightUnit.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-/// 体重单位 — 仅影响 UI 显示，业务持久化恒以 kg 存储。
-/// 写入方：用户在 FSTWeightUnitToggleView 上点击触发 unit 切换。
-/// 读取方：FSTWeightInputViewController 在写入 FSTFastingRecord.weightKg 前做单位换算（lb 时除以 2.20462）；
-///         所有 FSTFastingRecord.weightKg / initialWeightKg / targetWeightKg 始终是 kg，跨设备/迁移不依赖 unit。
-typedef NS_ENUM(NSInteger, FSTWeightUnit) {
-    FSTWeightUnitKg = 0,  ///< 公斤（默认）。
-    FSTWeightUnitLb,      ///< 磅。仅显示态切换；输入会按 0.45359237 倍率换算回 kg。
-};
 
 @interface FSTWeightUnitToggleView : UIView
 

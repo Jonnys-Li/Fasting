@@ -4,8 +4,9 @@
 //
 
 #import "FSTAddRecordWeightCardView.h"
-#import "FSTSessionManager.h"
 #import "FSTTheme.h"
+
+static const CGFloat kLbPerKg = 2.20462262;
 
 @interface FSTAddRecordWeightCardView ()
 @property (nonatomic, strong) UILabel *weightValueLabel;
@@ -21,7 +22,7 @@
         _initialWeightKg = 81.2;
         _targetWeightKg = 70.0;
         self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 24;
+        self.layer.cornerRadius = FSTRadiusXL;
         [self buildSubviews];
         [self refreshValues];
     }
@@ -35,8 +36,8 @@
 
 /// 构建：标题/今天/数值+编辑/进度条/初始+目标/Apple Health 行。
 - (void)buildSubviews {
-    UILabel *titleLabel = [self sectionTitleLabelWithText:@"当前体重"];
-    UILabel *todayLabel = [self mutedLabelWithText:@"今天"];
+    UILabel *titleLabel = [self sectionTitleLabelWithText:@"Current weight"];
+    UILabel *todayLabel = [self mutedLabelWithText:@"Today"];
 
     self.weightValueLabel = [UILabel new];
     self.weightValueLabel.font = FSTFontBold(28);
@@ -58,7 +59,7 @@
 
     UIView *healthRowView = [UIView new];
     healthRowView.backgroundColor = [UIColor fst_inputBackground];
-    healthRowView.layer.cornerRadius = 14;
+    healthRowView.layer.cornerRadius = FSTRadiusM;
 
     UILabel *healthTitleLabel = [UILabel new];
     healthTitleLabel.text = @"▣  Apple Health";
@@ -124,7 +125,7 @@
 - (UILabel *)sectionTitleLabelWithText:(NSString *)text {
     UILabel *label = [UILabel new];
     label.text = text;
-    label.font = FSTFontBold(20);
+    label.font = FSTFontSubhead();
     label.textColor = [UIColor fst_textPrimary];
     return label;
 }
@@ -137,14 +138,15 @@
     return label;
 }
 
+- (void)setUsePounds:(BOOL)usePounds { _usePounds = usePounds; [self refreshValues]; }
+
 - (void)refreshValues {
-    static const CGFloat kLbPerKg = 2.20462262;
-    BOOL useLb = [FSTSessionManager sharedManager].preferredWeightUnit == FSTWeightUnitLb;
+    BOOL useLb = self.usePounds;
     NSString *unit = useLb ? @"lb" : @"kg";
     CGFloat factor = useLb ? kLbPerKg : 1.0;
     self.weightValueLabel.text = [NSString stringWithFormat:@"%.1f %@", self.weightKg * factor, unit];
-    self.initialLabel.text = [NSString stringWithFormat:@"初始: %.1f %@", self.initialWeightKg * factor, unit];
-    self.targetLabel.text = [NSString stringWithFormat:@"目标: %.1f %@", self.targetWeightKg * factor, unit];
+    self.initialLabel.text = [NSString stringWithFormat:@"Initial: %.1f %@", self.initialWeightKg * factor, unit];
+    self.targetLabel.text = [NSString stringWithFormat:@"Target: %.1f %@", self.targetWeightKg * factor, unit];
 }
 
 - (void)emitEditTapped { if (self.onEditTapped) self.onEditTapped(); }

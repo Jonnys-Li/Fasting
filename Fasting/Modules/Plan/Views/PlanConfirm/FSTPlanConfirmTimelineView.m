@@ -31,8 +31,8 @@
     UIView *connectorLineView = [UIView new];
     connectorLineView.backgroundColor = [UIColor fst_ringTrack];
 
-    UILabel *startTitleLabel = [self titleLabelWithText:@"开始"];
-    UILabel *endTitleLabel = [self titleLabelWithText:@"结束(预计)"];
+    UILabel *startTitleLabel = [self titleLabelWithText:@"Start"];
+    UILabel *endTitleLabel = [self titleLabelWithText:@"End (est.)"];
 
     self.startValueLabel = [self valueLabelWithHighlight:YES];
     self.endValueLabel = [self valueLabelWithHighlight:NO];

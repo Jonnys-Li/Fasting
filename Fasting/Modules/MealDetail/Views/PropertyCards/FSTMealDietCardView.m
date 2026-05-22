@@ -15,8 +15,8 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
-        _dietType = @"我不确定";
-        _dietNames = @[@"生酮饮食", @"低碳饮食", @"混合式饮食", @"高碳饮食", @"我不确定"];
+        _dietType = @"Not sure";
+        _dietNames = @[@"Keto", @"Low-carb", @"Mixed", @"High-carb", @"Not sure"];
         [self fst_applyMealCardStyle];
         [self buildSubviews];
         [self refresh];
@@ -28,8 +28,8 @@
 
 - (void)buildSubviews {
     UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"饮食类型";
-    titleLabel.font = FSTFontBold(22);
+    titleLabel.text = @"Diet Type";
+    titleLabel.font = FSTFontTitle();
     titleLabel.textColor = [UIColor fst_textPrimary];
     [self addSubview:titleLabel];
 
@@ -39,11 +39,11 @@
     [self addSubview:rowsStack];
 
     NSArray *itemDescriptors = @[
-        @[@"🥑", @"生酮饮食", @"高脂肪，适量蛋白质，极少的碳水化合物"],
-        @[@"🥩", @"低碳饮食", @"大量的蛋白质和脂肪，低碳水化合物"],
-        @[@"🍱", @"混合式饮食", @"碳水化合物，蛋白质和脂肪均衡搭配"],
-        @[@"🍕", @"高碳饮食", @"大量的碳水化合物，适量蛋白质，少量脂肪"],
-        @[@"🍪", @"我不确定", @""],
+        @[@"🥑", @"Keto", @"High fat, moderate protein, very low carbs"],
+        @[@"🥩", @"Low-carb", @"High protein and fat, low carbs"],
+        @[@"🍱", @"Mixed", @"Balanced carbs, protein and fat"],
+        @[@"🍕", @"High-carb", @"High carbs, moderate protein, low fat"],
+        @[@"🍪", @"Not sure", @""],
     ];
     NSMutableArray *collectedRows = [NSMutableArray array];
     for (NSInteger index = 0; index < itemDescriptors.count; index++) {
@@ -68,7 +68,7 @@
     UIControl *row = [UIControl new];
     row.tag = tag;
     row.backgroundColor = [UIColor fst_inputBackground];
-    row.layer.cornerRadius = 14;
+    row.layer.cornerRadius = FSTRadiusM;
     row.layer.borderWidth = 1.2;
     row.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.32].CGColor;
     [row addTarget:self action:@selector(handleRowTapped:) forControlEvents:UIControlEventTouchUpInside];

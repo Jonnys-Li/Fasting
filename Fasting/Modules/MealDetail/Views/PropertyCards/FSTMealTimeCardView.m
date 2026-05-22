@@ -30,8 +30,8 @@
 
 - (void)buildSubviews {
     UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"时间";
-    titleLabel.font = FSTFontBold(22);
+    titleLabel.text = @"Time";
+    titleLabel.font = FSTFontTitle();
     titleLabel.textColor = [UIColor fst_textPrimary];
 
     self.dateLabel = [UILabel new];

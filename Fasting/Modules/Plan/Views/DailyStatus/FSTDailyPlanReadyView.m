@@ -90,14 +90,14 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
 
     self.startFastingButton = [UIButton fst_greenPillButtonWithTitle:@"Start Fasting"];
     self.startFastingButton.layer.cornerRadius = kFSTDailyPlanReadyButtonCornerRadius;
-    self.startFastingButton.titleLabel.font    = FSTFontBold(20);
+    self.startFastingButton.titleLabel.font    = FSTFontSubhead();
     [self.startFastingButton addTarget:self action:@selector(handleStartFastingTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.startFastingButton];
 
     self.logMealButton = [UIButton fst_yellowPillButtonWithTitle:@"LOG MEAL"];
     self.logMealButton.backgroundColor    = [UIColor fst_orangeCTA];
     self.logMealButton.layer.cornerRadius = kFSTDailyPlanReadyButtonCornerRadius;
-    self.logMealButton.titleLabel.font    = FSTFontBold(20);
+    self.logMealButton.titleLabel.font    = FSTFontSubhead();
     [self.logMealButton addTarget:self action:@selector(handleLogMealTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.logMealButton];
 

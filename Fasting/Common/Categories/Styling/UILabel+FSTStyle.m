@@ -11,7 +11,7 @@
 + (instancetype)fst_titleLabelWithText:(NSString *)text {
     UILabel *label = [UILabel new];
     label.text = text;
-    label.font = FSTFontBold(28);
+    label.font = FSTFontHeadline();
     label.textColor = [UIColor fst_textPrimary];
     return label;
 }
@@ -19,7 +19,7 @@
 + (instancetype)fst_subtitleLabelWithText:(NSString *)text {
     UILabel *label = [UILabel new];
     label.text = text;
-    label.font = FSTFontBold(22);
+    label.font = FSTFontTitle();
     label.textColor = [UIColor fst_textPrimary];
     return label;
 }
@@ -27,7 +27,7 @@
 + (instancetype)fst_bodyLabelWithText:(NSString *)text {
     UILabel *label = [UILabel new];
     label.text = text;
-    label.font = FSTFontRegular(15);
+    label.font = FSTFontBody();
     label.textColor = [UIColor fst_textSecondary];
     label.numberOfLines = 0;
     return label;

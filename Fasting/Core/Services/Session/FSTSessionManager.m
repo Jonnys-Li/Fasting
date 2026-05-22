@@ -4,14 +4,13 @@
 //
 
 #import "FSTSessionManager.h"
-#import "FSTFastingRecord+Persistence.h"
-#import "FSTMealRecord+Persistence.h"
-#import "FSTPlan+Persistence.h"
+#import "FSTFastingRecord.h"
+#import "FSTPlan.h"
 
 NSNotificationName const FSTSessionDidChangeNotification = @"FSTSessionDidChangeNotification";
 NSNotificationName const FSTRecordsDidChangeNotification = @"FSTRecordsDidChangeNotification";
 
-// 表示 NSUserDefaults 中持久化存储的 key；value 保持原样用于兼容历史数据。
+// NSUserDefaults persistence keys.
 static NSString * const FSTCurrentPlanKey      = @"kFSTCurrentPlan";
 static NSString * const FSTActiveStartTimeKey  = @"kFSTActiveStartTime";
 static NSString * const FSTActiveEndOverrideTimeKey = @"kFSTActiveEndOverrideTime";
@@ -22,10 +21,7 @@ static NSString * const FSTEatingWindowAnchorTimeKey = @"kFSTEatingWindowAnchorT
 static NSString * const FSTOnboardingCompletedKey = @"kFSTOnboardingCompleted";
 static NSString * const FSTScheduledReadySourceKey = @"kFSTScheduledReadySource";
 static NSString * const FSTScheduledReadyAnchorTimeKey = @"kFSTScheduledReadyAnchorTime";
-static NSString * const FSTLegacyEatingWindowFromActiveEditKey = @"kFSTEatingWindowFromActiveEdit";
-static NSString * const FSTDataMigrationVersionKey = @"kFSTDataMigrationVersion";
 static NSString * const FSTPreferredWeightUnitKey  = @"kFSTPreferredWeightUnit";
-static const NSInteger FSTCurrentDataMigrationVersion = 1;
 
 @interface FSTSessionManager ()
 @property (nonatomic, strong, readwrite, nullable) FSTPlan *currentPlan;
@@ -71,20 +67,8 @@ static const NSInteger FSTCurrentDataMigrationVersion = 1;
     NSNumber *eatingAnchorTimeInterval = [userDefaults objectForKey:FSTEatingWindowAnchorTimeKey];
     self.eatingWindowAnchorDate = eatingAnchorTimeInterval ? [NSDate dateWithTimeIntervalSince1970:eatingAnchorTimeInterval.doubleValue] : nil;
 
-    // 预约态枚举的反序列化 + 范围钳制 + 旧 Bool 一次性升迁。
-    // v0 用 FSTLegacyEatingWindowFromActiveEditKey 这个 Bool 来标记 ActiveSession-edit 来的预约；
-    // v1 改成多源枚举（FSTScheduledReadySource）。此处兼容旧数据：若新枚举为 None 但旧 Bool 为 YES，
-    // 一次性 lift 到 FromActiveSession。saveScheduledReadyStateToDefaults 会顺便 remove 旧 key，自然淘汰。
     NSNumber *scheduledSourceValue = [userDefaults objectForKey:FSTScheduledReadySourceKey];
     self.scheduledReadySource = scheduledSourceValue ? scheduledSourceValue.integerValue : FSTScheduledReadySourceNone;
-    if (self.scheduledReadySource < FSTScheduledReadySourceNone ||
-        self.scheduledReadySource > FSTScheduledReadySourceFromActiveSession) {
-        self.scheduledReadySource = FSTScheduledReadySourceNone;
-    }
-    if (self.scheduledReadySource == FSTScheduledReadySourceNone &&
-        [userDefaults boolForKey:FSTLegacyEatingWindowFromActiveEditKey]) {
-        self.scheduledReadySource = FSTScheduledReadySourceFromActiveSession;
-    }
 
     NSNumber *scheduledAnchorTimeInterval = [userDefaults objectForKey:FSTScheduledReadyAnchorTimeKey];
     self.scheduledReadyAnchorDate = scheduledAnchorTimeInterval ? [NSDate dateWithTimeIntervalSince1970:scheduledAnchorTimeInterval.doubleValue] : nil;
@@ -108,27 +92,6 @@ static const NSInteger FSTCurrentDataMigrationVersion = 1;
         if (record) [self.mealRecords addObject:record];
     }
 
-    // 旧开发数据没有 onboarding 标记时，不能让残留的 plan/active session 跳过首次选计划流程。
-    // 这里把它们一并清零，强制走 onboarding；否则 user 会绕过 PlanSelect 直接落到 Active 页，体验断层。
-    if (!self.hasCompletedOnboarding && (self.currentPlan || self.activeStartDate || self.activeEndOverrideDate)) {
-        [self clearLoadedPlanState];
-    }
-
-    [self migrateDataIfNeeded];
-}
-
-/// 数据迁移单调向前。每跨一个版本号补一段迁移代码。
-/// v1：重新序列化所有 records / mealRecords，让 Step 7 的新 key 落盘；旧 key 在下一次
-///     -saveRecordsToDefaults 的 setObject 时被覆盖，无需主动 remove。
-- (void)migrateDataIfNeeded {
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSInteger version = [userDefaults integerForKey:FSTDataMigrationVersionKey];
-    if (version >= FSTCurrentDataMigrationVersion) return;
-
-    if (self.records.count > 0) [self saveRecordsToDefaults];
-    if (self.mealRecords.count > 0) [self saveMealRecordsToDefaults];
-
-    [userDefaults setInteger:FSTCurrentDataMigrationVersion forKey:FSTDataMigrationVersionKey];
 }
 
 - (void)saveActiveStateToDefaults {
@@ -180,18 +143,6 @@ static const NSInteger FSTCurrentDataMigrationVersion = 1;
     } else {
         [userDefaults removeObjectForKey:FSTScheduledReadyAnchorTimeKey];
     }
-    [userDefaults removeObjectForKey:FSTLegacyEatingWindowFromActiveEditKey];
-}
-
-- (void)clearLoadedPlanState {
-    self.currentPlan = nil;
-    self.activeStartDate = nil;
-    self.activeEndOverrideDate = nil;
-    self.eatingWindowAnchorDate = nil;
-    self.scheduledReadySource = FSTScheduledReadySourceNone;
-    self.scheduledReadyAnchorDate = nil;
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:FSTNextStartOverrideKey];
-    [self persistAllState];
 }
 
 - (void)setPreferredWeightUnit:(FSTWeightUnit)preferredWeightUnit {

@@ -3,10 +3,10 @@
 //  Fasting
 //
 
-#import "FSTMealRecord+Persistence.h"
+#import "FSTFastingRecord.h"
 
-static NSString *const kFSTMealRecordDefaultMealCategory = @"正餐";
-static NSString *const kFSTMealRecordDefaultDietType     = @"我不确定";
+static NSString *const kFSTMealRecordDefaultMealCategory = @"Meal";
+static NSString *const kFSTMealRecordDefaultDietType     = @"Not sure";
 static const NSInteger kFSTMealRecordDefaultTasteLevel   = 1;
 
 @implementation FSTMealRecord (Persistence)

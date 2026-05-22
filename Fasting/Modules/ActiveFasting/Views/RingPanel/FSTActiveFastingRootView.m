@@ -189,7 +189,7 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
 - (UIView *)buildFeedbackRow {
     UIView *row = [UIView new];
     row.backgroundColor = [UIColor whiteColor];
-    row.layer.cornerRadius = 22;
+    row.layer.cornerRadius = FSTRadiusL;
 
     UILabel *emojiLabel = [UILabel new];
     emojiLabel.text = @"\U0001F4E9";

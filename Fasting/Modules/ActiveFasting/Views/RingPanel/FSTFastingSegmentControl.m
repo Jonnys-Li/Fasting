@@ -20,7 +20,7 @@
 - (instancetype)init {
     if ((self = [super init])) {
         self.backgroundColor = [UIColor fst_segmentBackground];
-        self.layer.cornerRadius = 17;
+        self.layer.cornerRadius = FSTRadiusChip;
         [self buildSubviews];
     }
     return self;
@@ -31,7 +31,7 @@
 - (void)buildSubviews {
     self.selectorView = [UIView new];
     self.selectorView.backgroundColor = [UIColor whiteColor];
-    self.selectorView.layer.cornerRadius = 17;
+    self.selectorView.layer.cornerRadius = FSTRadiusChip;
     self.selectorView.userInteractionEnabled = NO;
     [self addSubview:self.selectorView];
 

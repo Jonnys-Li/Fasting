@@ -43,7 +43,7 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
 - (void)setTimerCaption:(NSString *)caption { _timerCaption = [caption copy]; self.timerCaptionLabel.text = caption; }
 - (void)setTimerText:(NSString *)text       { _timerText    = [text copy];    self.timerLabel.text        = text; }
 - (void)setOvertimeTotalText:(NSString *)text { _overtimeTotalText = [text copy]; self.overtimeTotalLabel.text = text; }
-- (void)setEndText:(NSString *)text         { _endText      = [text copy];    self.endTimeLabel.text      = text; self.endCaptionLabel.text = @"结束时间"; }
+- (void)setEndText:(NSString *)text         { _endText      = [text copy];    self.endTimeLabel.text      = text; self.endCaptionLabel.text = @"End time"; }
 - (void)setPercentText:(NSString *)text     { _percentText  = [text copy];    self.percentLabel.text      = text; }
 - (void)setPlanName:(NSString *)planName    { _planName     = [planName copy]; self.planChipView.planName = planName; }
 - (void)setProgress:(CGFloat)progress       { _progress     = progress;       [self.ring setProgress:progress animated:NO]; [self refreshFlameState]; }

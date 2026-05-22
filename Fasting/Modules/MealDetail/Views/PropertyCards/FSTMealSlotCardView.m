@@ -14,7 +14,7 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
-        _mealCategory = @"正餐";
+        _mealCategory = @"Meal";
         [self fst_applyMealCardStyle];
         [self buildSubviews];
         [self refresh];
@@ -26,8 +26,8 @@
 
 - (void)buildSubviews {
     UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"正餐/零食";
-    titleLabel.font = FSTFontBold(22);
+    titleLabel.text = @"Meal/Snack";
+    titleLabel.font = FSTFontTitle();
     titleLabel.textColor = [UIColor fst_textPrimary];
     [self addSubview:titleLabel];
 
@@ -37,8 +37,8 @@
     tilesStack.spacing = 28;
     [self addSubview:tilesStack];
 
-    UIControl *mealTile = [self tileWithEmoji:@"🍽️" title:@"正餐" tag:0];
-    UIControl *snackTile = [self tileWithEmoji:@"🍎" title:@"零食" tag:1];
+    UIControl *mealTile = [self tileWithEmoji:@"🍽️" title:@"Meal" tag:0];
+    UIControl *snackTile = [self tileWithEmoji:@"🍎" title:@"Snack" tag:1];
     [tilesStack addArrangedSubview:mealTile];
     [tilesStack addArrangedSubview:snackTile];
     self.categoryTiles = @[mealTile, snackTile];
@@ -66,7 +66,7 @@
 
     UIView *iconBox = [UIView new];
     iconBox.backgroundColor = [UIColor fst_mealSlotIconBackground];
-    iconBox.layer.cornerRadius = 14;
+    iconBox.layer.cornerRadius = FSTRadiusM;
     iconBox.userInteractionEnabled = NO;
     [tile addSubview:iconBox];
 
@@ -97,7 +97,7 @@
 
 - (void)refresh {
     for (UIControl *tile in self.categoryTiles) {
-        BOOL isSelected = (tile.tag == 0 && [self.mealCategory isEqualToString:@"正餐"]) || (tile.tag == 1 && [self.mealCategory isEqualToString:@"零食"]);
+        BOOL isSelected = (tile.tag == 0 && [self.mealCategory isEqualToString:@"Meal"]) || (tile.tag == 1 && [self.mealCategory isEqualToString:@"Snack"]);
         tile.alpha = isSelected ? 1.0 : 0.45;
         tile.layer.borderColor = (isSelected ? [UIColor fst_primaryGreen] : [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.35]).CGColor;
         tile.layer.borderWidth = isSelected ? 2.0 : 1.3;
@@ -105,7 +105,7 @@
 }
 
 - (void)handleTileTapped:(UIControl *)tile {
-    self.mealCategory = tile.tag == 0 ? @"正餐" : @"零食";
+    self.mealCategory = tile.tag == 0 ? @"Meal" : @"Snack";
 }
 
 @end

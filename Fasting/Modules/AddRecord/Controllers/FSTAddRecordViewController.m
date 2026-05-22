@@ -113,6 +113,7 @@
     rootView.weightCardView.weightKg           = self.weightKg;
     rootView.weightCardView.initialWeightKg    = self.initialWeightKg;
     rootView.weightCardView.targetWeightKg     = self.targetWeightKg;
+    rootView.weightCardView.usePounds          = [FSTSessionManager sharedManager].preferredWeightUnit == FSTWeightUnitLb;
     rootView.weightCardView.appleHealthEnabled = self.appleHealthEnabled;
     rootView.feelingCardView.feelingLevel = self.feelingLevel;
     rootView.noteCardView.text            = self.editingRecord.note ?: @"";
@@ -155,10 +156,10 @@
 
 - (void)handleSaveTapped {
     if ([self.endDate compare:self.startDate] != NSOrderedDescending) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"时间不正确"
-                                                                       message:@"结束时间需要晚于开始时间。"
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Time"
+                                                                       message:@"End time must be after start time."
                                                                 preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Got it" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
         return;
     }
@@ -181,15 +182,16 @@
         [self.navigationController popViewControllerAnimated:YES];
         return;
     }
-    [sessionManager finishFastingWithRecord:record];
 
-    UITabBarController *tabBarController = self.tabBarController;
+    FSTRootTabBarController *tabBarController = (FSTRootTabBarController *)self.tabBarController;
     if ([tabBarController isKindOfClass:[FSTRootTabBarController class]]) {
-        // 保存后切换到 Timeline tab；同时把 Fasting tab 内的导航栈复位
         UINavigationController *fastingNavigationController = (UINavigationController *)tabBarController.viewControllers[FSTTabIndexFasting];
-        [fastingNavigationController popToRootViewControllerAnimated:NO];
-        tabBarController.selectedIndex = FSTTabIndexTimeline;
+        [tabBarController fst_switchToTimelineSuppressingTransitionChromeWithUpdates:^{
+            [sessionManager finishFastingWithRecord:record];
+            [fastingNavigationController popToRootViewControllerAnimated:NO];
+        }];
     } else {
+        [sessionManager finishFastingWithRecord:record];
         [self.navigationController popToRootViewControllerAnimated:YES];
     }
 }

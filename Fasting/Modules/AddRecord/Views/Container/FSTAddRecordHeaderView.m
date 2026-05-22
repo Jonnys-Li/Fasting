@@ -23,7 +23,7 @@
 - (void)setTotalSeconds:(NSTimeInterval)totalSeconds {
     _totalSeconds = totalSeconds;
     NSInteger minutes = MAX(1, (NSInteger)llround(totalSeconds / 60.0));
-    self.durationLabel.text = [NSString stringWithFormat:@"%ld 分钟", (long)minutes];
+    self.durationLabel.text = [NSString stringWithFormat:@"%ld min", (long)minutes];
 }
 
 /// 构建：山形背景色块 + 左右两个圆形按钮 + 标题 + 大数字。
@@ -41,8 +41,8 @@
     [self addSubview:trashButton];
 
     UILabel *captionLabel = [UILabel new];
-    captionLabel.text = @"总断食时间";
-    captionLabel.font = FSTFontBold(20);
+    captionLabel.text = @"Total fasting time";
+    captionLabel.font = FSTFontSubhead();
     captionLabel.textColor = [[UIColor whiteColor] colorWithAlphaComponent:0.78];
     captionLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:captionLabel];
@@ -80,7 +80,7 @@
 - (UIButton *)roundButtonWithSymbol:(NSString *)systemSymbolName {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
     button.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.78];
-    button.layer.cornerRadius = 24;
+    button.layer.cornerRadius = FSTRadiusXL;
     [button setImage:[UIImage systemImageNamed:systemSymbolName] forState:UIControlStateNormal];
     button.tintColor = [UIColor fst_textPrimary];
     return button;

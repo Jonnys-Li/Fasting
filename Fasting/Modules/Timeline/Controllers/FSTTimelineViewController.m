@@ -7,26 +7,34 @@
 //
 
 #import "FSTTimelineViewController.h"
+#import "FSTTimelineRootView.h"
+#import "FSTFastingTimelineCardView.h"
+#import "FSTTimelineModuleView.h"
 #import "FSTFastingHistoryViewController.h"
 #import "FSTMealDetailViewController.h"
 #import "FSTMealDiaryViewController.h"
 #import "FSTSessionManager.h"
-#import "FSTFastingTimelineCardView.h"
 #import "FSTTheme.h"
-#import "FSTTimelineModuleView.h"
 
 @interface FSTTimelineViewController ()
-@property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) UIView *contentView;
-@property (nonatomic, strong) FSTFastingTimelineCardView *fastingModuleView;
-@property (nonatomic, strong) FSTTimelineModuleView *mealModuleView;
+@property (nonatomic, strong, nullable) FSTMealRecord *latestMealRecord;
 @end
 
 @implementation FSTTimelineViewController
 
+#pragma mark - 生命周期
+
+- (void)loadView {
+    self.view = [FSTTimelineRootView new];
+}
+
+- (FSTTimelineRootView *)rootView {
+    return (FSTTimelineRootView *)self.view;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self buildHomeLayout];
+    [self bindCallbacks];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshHome) name:FSTRecordsDidChangeNotification object:nil];
 }
 
@@ -39,65 +47,32 @@
     [self refreshHome];
 }
 
-/// 构建：标题 + 两个模块卡纵向排列。
-- (void)buildHomeLayout {
-    self.scrollView = [UIScrollView new];
-    self.scrollView.showsVerticalScrollIndicator = NO;
-    self.scrollView.alwaysBounceVertical = YES;
-    [self.view addSubview:self.scrollView];
+#pragma mark - 回调接线
 
-    self.contentView = [UIView new];
-    [self.scrollView addSubview:self.contentView];
-
-    UILabel *titleLabel = [UILabel fst_titleLabelWithText:@"时间轴"];
-    [self.contentView addSubview:titleLabel];
-
-    self.fastingModuleView = [FSTFastingTimelineCardView new];
-    self.fastingModuleView.titleText = @"Fasting";
+- (void)bindCallbacks {
     __weak typeof(self) weakSelf = self;
-    self.fastingModuleView.onMoreTapped = ^{
+    self.rootView.fastingModuleView.onMoreTapped = ^{
         [weakSelf handleMoreFastingTapped];
     };
-
-    self.mealModuleView = [FSTTimelineModuleView new];
-    self.mealModuleView.onChevronTapped = ^{ [weakSelf handleMealChevronTapped]; };
-    self.mealModuleView.onAddTapped     = ^{ [weakSelf handleMealAddTapped]; };
-    self.mealModuleView.onEntryTapped   = ^(FSTMealRecord *record) { [weakSelf handleMealEntryTapped:record]; };
-    [self.contentView addSubview:self.fastingModuleView];
-    [self.contentView addSubview:self.mealModuleView];
-
-    [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.view.mas_safeAreaLayoutGuideTop);
-        make.left.right.bottom.equalTo(self.view);
-    }];
-    [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.scrollView);
-        make.width.equalTo(self.scrollView);
-    }];
-    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(26);
-        make.centerX.equalTo(self.contentView);
-    }];
-    [self.fastingModuleView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(titleLabel.mas_bottom).offset(34);
-        make.left.right.equalTo(self.contentView).inset(24);
-        make.height.equalTo(@244);
-    }];
-    [self.mealModuleView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.fastingModuleView.mas_bottom).offset(20);
-        make.left.right.equalTo(self.fastingModuleView);
-        make.bottom.equalTo(self.contentView).offset(-120);
-    }];
+    self.rootView.mealModuleView.onChevronTapped = ^{ [weakSelf handleMealChevronTapped]; };
+    self.rootView.mealModuleView.onAddTapped     = ^{ [weakSelf handleMealAddTapped]; };
+    self.rootView.mealModuleView.onEntryTapped   = ^{ [weakSelf handleMealEntryTapped]; };
 }
+
+#pragma mark - 数据刷新
 
 /// 根据 SessionManager 最近一条断食/饮食记录刷新两张模块卡的摘要。
 - (void)refreshHome {
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
     FSTFastingRecord *fastingRecord = [sessionManager allRecords].firstObject;
-    [self.fastingModuleView configureWithRecord:fastingRecord];
+    [self.rootView.fastingModuleView configureWithRecord:fastingRecord];
 
-    FSTMealRecord *mealRecord = [sessionManager allMealRecords].firstObject;
-    [self.mealModuleView updateWithMealRecord:mealRecord];
+    self.latestMealRecord = [sessionManager allMealRecords].firstObject;
+    FSTMealRecord *mr = self.latestMealRecord;
+    [self.rootView.mealModuleView updateWithCategory:mr.mealCategory
+                                            dietType:mr.dietType
+                                          tasteLevel:mr.tasteLevel
+                                            dateText:mr ? FSTFormatRelativeDateTime(mr.date ?: [NSDate date]) : nil];
 }
 
 #pragma mark - 事件
@@ -122,9 +97,8 @@
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 
-/// 点击食物卡片：编辑该记录。
-- (void)handleMealEntryTapped:(FSTMealRecord *)record {
-    FSTMealDetailViewController *detailVC = [[FSTMealDetailViewController alloc] initWithMealRecord:record];
+- (void)handleMealEntryTapped {
+    FSTMealDetailViewController *detailVC = [[FSTMealDetailViewController alloc] initWithMealRecord:self.latestMealRecord];
     detailVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:detailVC animated:YES];
 }

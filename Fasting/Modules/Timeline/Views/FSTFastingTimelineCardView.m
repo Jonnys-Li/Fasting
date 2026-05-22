@@ -77,7 +77,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor fst_timelineGreen];
-        self.layer.cornerRadius = 22.0;
+        self.layer.cornerRadius = FSTRadiusL;
         self.layer.masksToBounds = YES;
         [self addTarget:self action:@selector(handleMoreTapped) forControlEvents:UIControlEventTouchUpInside];
         [self buildSubviews];
@@ -97,7 +97,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     [self addSubview:self.badgeImageView];
 
     self.titleLabel = [UILabel new];
-    self.titleLabel.font = FSTFontBold(20);
+    self.titleLabel.font = FSTFontSubhead();
     self.titleLabel.textColor = [UIColor whiteColor];
     [self addSubview:self.titleLabel];
 
@@ -137,7 +137,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 
     self.timelinePanelView = [UIView new];
     self.timelinePanelView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.06];
-    self.timelinePanelView.layer.cornerRadius = 14.0;
+    self.timelinePanelView.layer.cornerRadius = FSTRadiusM;
     self.timelinePanelView.userInteractionEnabled = NO;
     [self addSubview:self.timelinePanelView];
 
@@ -185,7 +185,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 
 - (UILabel *)timelineCaptionLabelWithText:(NSString *)text {
     UILabel *label = [UILabel new];
-    label.font = FSTFontRegular(15);
+    label.font = FSTFontBody();
     label.textColor = [[UIColor whiteColor] colorWithAlphaComponent:0.75];
     label.text = text;
     return label;

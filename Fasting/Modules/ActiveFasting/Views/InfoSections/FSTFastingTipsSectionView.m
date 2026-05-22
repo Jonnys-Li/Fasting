@@ -46,7 +46,7 @@ static NSString * const FSTFastingTipsExpandedText =
 - (instancetype)init {
     if ((self = [super init])) {
         self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 22;
+        self.layer.cornerRadius = FSTRadiusL;
         self.layer.masksToBounds = YES;
         [self buildSubviews];
         [self configureForStage:FSTTipsFastingStageDuring];
@@ -99,7 +99,7 @@ static NSString * const FSTFastingTipsExpandedText =
 
     UILabel *titleLabel = [UILabel new];
     titleLabel.text = @"Tips";
-    titleLabel.font = FSTFontBold(20);
+    titleLabel.font = FSTFontSubhead();
     titleLabel.textColor = [UIColor fst_textPrimary];
     [header addSubview:titleLabel];
 
@@ -121,7 +121,7 @@ static NSString * const FSTFastingTipsExpandedText =
 - (UIView *)buildLemonCard {
     UIView *card = [UIView new];
     card.backgroundColor = [UIColor fst_tipCardYellow];
-    card.layer.cornerRadius = 18;
+    card.layer.cornerRadius = FSTRadiusCard;
     card.layer.masksToBounds = YES;
 
     UIImageView *bg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_lemon_bg"]];
@@ -145,7 +145,7 @@ static NSString * const FSTFastingTipsExpandedText =
     [drinkNow setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     drinkNow.titleLabel.font = FSTFontBold(14);
     drinkNow.backgroundColor = [UIColor fst_eatingTimeGreen];
-    drinkNow.layer.cornerRadius = 22;
+    drinkNow.layer.cornerRadius = FSTRadiusL;
     drinkNow.layer.masksToBounds = YES;
     [drinkNow addTarget:self action:@selector(handleDrinkNowTapped) forControlEvents:UIControlEventTouchUpInside];
     [card addSubview:drinkNow];
@@ -184,7 +184,7 @@ static NSString * const FSTFastingTipsExpandedText =
 
 - (UIView *)buildStageCard {
     UIView *card = [UIView new];
-    card.layer.cornerRadius = 18;
+    card.layer.cornerRadius = FSTRadiusCard;
     card.layer.masksToBounds = YES;
     _stageCard = card;
 
@@ -228,7 +228,7 @@ static NSString * const FSTFastingTipsExpandedText =
 - (UIView *)buildQACard {
     UIView *card = [UIView new];
     card.backgroundColor = [UIColor fst_stageBlue];
-    card.layer.cornerRadius = 18;
+    card.layer.cornerRadius = FSTRadiusCard;
     card.layer.masksToBounds = YES;
     _qaCard = card;
 

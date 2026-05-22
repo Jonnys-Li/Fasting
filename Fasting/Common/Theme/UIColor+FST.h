@@ -22,16 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// #39CC8F 风格主绿。用于 Active Fasting 完成态、主 CTA 按钮、绿色圆环 fill。
 + (UIColor *)fst_primaryGreen;
-/// 深一档绿。用于卡片底部内嵌阴影、按下态。
-+ (UIColor *)fst_primaryGreenDark;
 /// 圆环底色（浅灰）。Active Fasting 与 Plan Ready 圆环共用。
 + (UIColor *)fst_ringTrack;
-/// 未达成时 "END FASTING" 按钮的灰色背景。
-+ (UIColor *)fst_buttonGray;
 /// 全局页面浅灰背景（卡片之间的间隙底色）。
 + (UIColor *)fst_pageBackground;
-/// 卡片白底。所有 Card 风格组件的容器色。
-+ (UIColor *)fst_cardBackground;
 /// 主文字 #1A1A1A。标题、强调正文。
 + (UIColor *)fst_textPrimary;
 /// 副文字 #8E8E93。说明文字、时间戳、placeholder。
@@ -53,8 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIColor *)fst_amber;
 /// #FEECAC Eating Time 圆环 progress fill — 奶油色，配合 amber 箭头使用。
 + (UIColor *)fst_progressCream;
-/// #F5E0D8 计划胶囊（PlanChipPill）底色。
-+ (UIColor *)fst_peach;
 /// #FFA93F 备用主 CTA 橙。当前少量场景使用。
 + (UIColor *)fst_orangeCTA;
 /// #28D8A1 Eating Time 断食强调绿。Active Fasting 完成态按钮、断食圆环达成色。
@@ -72,9 +64,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIColor *)fst_textSubtitle;
 /// #233243 弹窗标题文字。
 + (UIColor *)fst_dialogTitle;
-/// #526A8F 计划准备卡片正文。
-+ (UIColor *)fst_planPrepBody;
-
 // MARK: - 扩展控件色
 
 /// #E3E5EA 停止按钮 / 未激活态按钮背景。
@@ -173,15 +162,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIColor *)fst_alignUnselectedGray;
 /// #008D5A 对齐选中态文字。
 + (UIColor *)fst_alignSelectedText;
-
-// MARK: - Plan 专属
-
-/// #6689E8 推荐面板蓝色卡片。
-+ (UIColor *)fst_recommendBlue;
-/// #F4A94F 推荐面板橙色卡片。
-+ (UIColor *)fst_recommendOrange;
-/// #EAF3FF 计划准备卡片底色。
-+ (UIColor *)fst_planPrepBackground;
 
 @end
 

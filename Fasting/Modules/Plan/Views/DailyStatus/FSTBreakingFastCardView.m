@@ -21,7 +21,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 12;
+        self.layer.cornerRadius = FSTRadiusS;
         self.layer.borderColor = [[UIColor fst_separator] CGColor];
         self.layer.borderWidth = 1;
         [self buildSubviews];

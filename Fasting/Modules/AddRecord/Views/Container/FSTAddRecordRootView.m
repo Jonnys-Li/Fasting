@@ -90,16 +90,16 @@ static const CGFloat kFSTAddRecordButtonCornerRadius = 29;
     self.bottomBar.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.96];
     [self addSubview:self.bottomBar];
 
-    self.cancelButton = [UIButton fst_outlineGreenPillButtonWithTitle:@"取消"];
+    self.cancelButton = [UIButton fst_outlineGreenPillButtonWithTitle:@"Cancel"];
     self.cancelButton.backgroundColor = [UIColor fst_addRecordCancelButton];
     [self.cancelButton setTitleColor:[UIColor fst_textPrimary] forState:UIControlStateNormal];
-    self.cancelButton.titleLabel.font = FSTFontBold(20);
+    self.cancelButton.titleLabel.font = FSTFontSubhead();
     self.cancelButton.layer.cornerRadius = kFSTAddRecordButtonCornerRadius;
     [self.cancelButton addTarget:self action:@selector(handleCancelTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    self.saveButton = [UIButton fst_greenPillButtonWithTitle:@"保存"];
+    self.saveButton = [UIButton fst_greenPillButtonWithTitle:@"Save"];
     self.saveButton.layer.cornerRadius = kFSTAddRecordButtonCornerRadius;
-    self.saveButton.titleLabel.font = FSTFontBold(20);
+    self.saveButton.titleLabel.font = FSTFontSubhead();
     [self.saveButton addTarget:self action:@selector(handleSaveTapped) forControlEvents:UIControlEventTouchUpInside];
 
     [self.bottomBar addSubview:self.cancelButton];

@@ -10,12 +10,25 @@ const CGFloat FSTSpacingM  = 12;
 const CGFloat FSTSpacingL  = 16;
 const CGFloat FSTSpacingXL = 24;
 
+const CGFloat FSTRadiusS    = 12;
+const CGFloat FSTRadiusM    = 14;
+const CGFloat FSTRadiusChip = 17;
+const CGFloat FSTRadiusCard = 18;
+const CGFloat FSTRadiusL    = 22;
+const CGFloat FSTRadiusXL   = 24;
+
 UIFont *FSTFontRegular(CGFloat size)  { return [UIFont systemFontOfSize:size weight:UIFontWeightRegular]; }
 UIFont *FSTFontMedium(CGFloat size)   { return [UIFont systemFontOfSize:size weight:UIFontWeightMedium]; }
 UIFont *FSTFontSemibold(CGFloat size) { return [UIFont systemFontOfSize:size weight:UIFontWeightSemibold]; }
 UIFont *FSTFontBold(CGFloat size)     { return [UIFont systemFontOfSize:size weight:UIFontWeightBold]; }
 UIFont *FSTFontAvenirBold(CGFloat size)     { return [UIFont fontWithName:@"AvenirNext-Bold" size:size] ?: FSTFontBold(size); }
 UIFont *FSTFontAvenirDemiBold(CGFloat size) { return [UIFont fontWithName:@"AvenirNext-DemiBold" size:size] ?: FSTFontSemibold(size); }
+
+UIFont *FSTFontHeadline(void) { return FSTFontBold(28); }
+UIFont *FSTFontTitle(void)    { return FSTFontBold(22); }
+UIFont *FSTFontSubhead(void)  { return FSTFontBold(20); }
+UIFont *FSTFontBody(void)     { return FSTFontRegular(15); }
+UIFont *FSTFontCaption(void)  { return FSTFontRegular(13); }
 
 NSString *FSTFormatHHMMSS(NSTimeInterval seconds) {
     if (seconds < 0) seconds = 0;
@@ -33,6 +46,7 @@ NSString *FSTFormatTimeOnly(NSDate *date) {
     dispatch_once(&onceToken, ^{
         formatter = [NSDateFormatter new];
         formatter.dateFormat = @"HH:mm";
+        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
     });
     return [formatter stringFromDate:date];
 }

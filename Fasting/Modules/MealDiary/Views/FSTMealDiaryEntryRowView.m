@@ -4,28 +4,35 @@
 //
 
 #import "FSTMealDiaryEntryRowView.h"
-#import "FSTSessionManager.h"
 #import "FSTTheme.h"
 
 @interface FSTMealDiaryEntryRowView ()
-@property (nonatomic, strong) FSTMealRecord *record;
+@property (nonatomic, copy) NSString *category;
+@property (nonatomic, copy) NSString *dietType;
+@property (nonatomic, assign) NSInteger tasteLevel;
+@property (nonatomic, copy) NSString *dateText;
 @property (nonatomic, strong) UIView *topLineView;
 @property (nonatomic, strong) UIView *bottomLineView;
 @end
 
 @implementation FSTMealDiaryEntryRowView
 
-- (instancetype)initWithRecord:(FSTMealRecord *)record {
+- (instancetype)initWithCategory:(NSString *)category
+                        dietType:(NSString *)dietType
+                      tasteLevel:(NSInteger)tasteLevel
+                        dateText:(NSString *)dateText {
     if ((self = [super initWithFrame:CGRectZero])) {
-        _record = record;
+        _category = [category copy];
+        _dietType = [dietType copy];
+        _tasteLevel = tasteLevel;
+        _dateText = [dateText copy];
         [self buildSubviews];
     }
     return self;
 }
 
-#pragma mark - 构建 UI
+#pragma mark - UI
 
-/// 构建一条时间轴记录行的全部子视图。
 - (void)buildSubviews {
     UIView *dotView = [self buildTimelineDot];
     self.topLineView = [self buildTimelineLine];
@@ -34,8 +41,8 @@
     UIButton *editButton = [self buildEditButton];
     UIControl *cardView = [self buildCard];
     UILabel *foodIconLabel = [self buildFoodIcon];
-    UILabel *categoryChipLabel = [self pillLabelWithText:self.record.mealCategory ?: @"正餐"];
-    UILabel *dietChipLabel = [self pillLabelWithText:self.record.dietType ?: @"我不确定"];
+    UILabel *categoryChipLabel = [self pillLabelWithText:self.category ?: @"Meal"];
+    UILabel *dietChipLabel = [self pillLabelWithText:self.dietType ?: @"Not sure"];
     UIImageView *feelingImageView = [self buildFeelingImageView];
 
     [self addSubview:self.topLineView];
@@ -120,8 +127,8 @@
 
 - (UILabel *)buildTimeLabel {
     UILabel *timeLabel = [UILabel new];
-    timeLabel.text = FSTFormatRelativeDateTime(self.record.date ?: [NSDate date]);
-    timeLabel.font = FSTFontRegular(15);
+    timeLabel.text = self.dateText;
+    timeLabel.font = FSTFontBody();
     timeLabel.textColor = [UIColor fst_textSecondary];
     return timeLabel;
 }
@@ -140,7 +147,7 @@
 - (UIControl *)buildCard {
     UIControl *cardView = [UIControl new];
     cardView.backgroundColor = [UIColor fst_mealDiaryCardBackground];
-    cardView.layer.cornerRadius = 18;
+    cardView.layer.cornerRadius = FSTRadiusCard;
     cardView.layer.borderWidth = 1.0;
     cardView.layer.borderColor = [UIColor fst_mealDiaryCardBorder].CGColor;
     [cardView addTarget:self action:@selector(emitCardTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -150,9 +157,9 @@
 - (UILabel *)buildFoodIcon {
     UILabel *iconLabel = [UILabel new];
     iconLabel.backgroundColor = [UIColor whiteColor];
-    iconLabel.layer.cornerRadius = 14;
+    iconLabel.layer.cornerRadius = FSTRadiusM;
     iconLabel.clipsToBounds = YES;
-    iconLabel.text = [self.record.mealCategory isEqualToString:@"零食"] ? @"🍎" : @"🍽";
+    iconLabel.text = [self.category isEqualToString:@"Snack"] ? @"\U0001F34E" : @"\U0001F37D";
     iconLabel.font = [UIFont systemFontOfSize:34];
     iconLabel.textAlignment = NSTextAlignmentCenter;
     return iconLabel;
@@ -160,7 +167,7 @@
 
 - (UIImageView *)buildFeelingImageView {
     NSString *imageName;
-    switch (self.record.tasteLevel) {
+    switch (self.tasteLevel) {
         case 0: imageName = @"tl_rating_hard"; break;
         case 2: imageName = @"tl_rating_easy"; break;
         default: imageName = @"tl_rating_ok"; break;
@@ -170,14 +177,13 @@
     return feelingImageView;
 }
 
-/// 卡片内白色胶囊 label：左右各加 2 空格用于内边距。
 - (UILabel *)pillLabelWithText:(NSString *)text {
     UILabel *label = [UILabel new];
     label.text = [NSString stringWithFormat:@"  %@  ", text];
-    label.font = FSTFontRegular(15);
+    label.font = FSTFontBody();
     label.textColor = [UIColor fst_textPrimary];
     label.backgroundColor = [UIColor whiteColor];
-    label.layer.cornerRadius = 17;
+    label.layer.cornerRadius = FSTRadiusChip;
     label.clipsToBounds = YES;
     label.textAlignment = NSTextAlignmentCenter;
     return label;
@@ -186,9 +192,9 @@
 - (void)setHidesTopLine:(BOOL)hidesTopLine { _hidesTopLine = hidesTopLine; self.topLineView.hidden = hidesTopLine; }
 - (void)setHidesBottomLine:(BOOL)hidesBottomLine { _hidesBottomLine = hidesBottomLine; self.bottomLineView.hidden = hidesBottomLine; }
 
-#pragma mark - 事件转发
+#pragma mark - Events
 
-- (void)emitCardTapped { if (self.onCardTapped) self.onCardTapped(self.record); }
-- (void)emitEditTapped { if (self.onEditTapped) self.onEditTapped(self.record); }
+- (void)emitCardTapped { if (self.onCardTapped) self.onCardTapped(); }
+- (void)emitEditTapped { if (self.onEditTapped) self.onEditTapped(); }
 
 @end

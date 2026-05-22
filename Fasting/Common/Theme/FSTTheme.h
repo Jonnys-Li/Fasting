@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 #import <Masonry/Masonry.h>
 #import "UIColor+FST.h"
-#import "UIButton+FSTStyle.h"
+#import "UIButton+FST.h"
 #import "UILabel+FSTStyle.h"
 #import "UIView+FSTLayout.h"
 #import "FSTBaseViewController.h"
@@ -28,12 +28,29 @@ UIFont *FSTFontBold(CGFloat size);       ///< Bold 字重，主标题/大数字�
 UIFont *FSTFontAvenirBold(CGFloat size);     ///< AvenirNext-Bold，fallback Bold。
 UIFont *FSTFontAvenirDemiBold(CGFloat size); ///< AvenirNext-DemiBold，fallback Semibold。
 
+// MARK: - 语义字体快捷函数
+// 对应设计稿中的标准文字层级，减少调用侧记忆字号的负担。
+UIFont *FSTFontHeadline(void);   ///< Bold 28 — 页面大标题
+UIFont *FSTFontTitle(void);      ///< Bold 22 — 卡片区块标题
+UIFont *FSTFontSubhead(void);    ///< Bold 20 — 副标题/段标题
+UIFont *FSTFontBody(void);       ///< Regular 15 — 正文
+UIFont *FSTFontCaption(void);    ///< Regular 13 — 说明文字
+
 // MARK: - 间距常量
 // 设计稿四档间距，业务侧不应再用裸数字。Masonry 约束、padding、margin 都直接引用。
 extern const CGFloat FSTSpacingS;   ///< 8  — 紧凑（chip 内边距、密集列表）
 extern const CGFloat FSTSpacingM;   ///< 12 — 标准（默认间距）
 extern const CGFloat FSTSpacingL;   ///< 16 — 段落（卡片内边距、按钮高度）
 extern const CGFloat FSTSpacingXL;  ///< 24 — 大段（区块之间、安全区边距）
+
+// MARK: - 圆角常量
+// 高频圆角值；小圆点（diameter/2）和药丸按钮（height/2）保持计算式，不走常量。
+extern const CGFloat FSTRadiusS;     ///< 12 — 紧凑组件（摘要卡、阶段标签）
+extern const CGFloat FSTRadiusM;     ///< 14 — 中等控件（关闭按钮、图标容器、面板）
+extern const CGFloat FSTRadiusChip;  ///< 17 — 芯片/药丸控件（分段、标签筛选项）
+extern const CGFloat FSTRadiusCard;  ///< 18 — 标准卡片
+extern const CGFloat FSTRadiusL;     ///< 22 — 大面板/区块
+extern const CGFloat FSTRadiusXL;    ///< 24 — 输入卡片/大按钮
 
 // MARK: - 时间格式化
 // App 内所有时间显示走这 5 个函数；保证全局一致并便于 localization。

@@ -27,8 +27,8 @@
 
 - (void)buildSubviews {
     UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"食物的味道";
-    titleLabel.font = FSTFontBold(22);
+    titleLabel.text = @"How was the food?";
+    titleLabel.font = FSTFontTitle();
     titleLabel.textColor = [UIColor fst_textPrimary];
     [self addSubview:titleLabel];
 
@@ -38,7 +38,7 @@
     [self addSubview:buttonsStack];
 
     NSMutableArray *collectedButtons = [NSMutableArray array];
-    NSArray *itemDescriptors = @[@[@"tl_rating_hard", @"糟糕"], @[@"tl_rating_ok", @"还可以"], @[@"tl_rating_easy", @"美味"]];
+    NSArray *itemDescriptors = @[@[@"tl_rating_hard", @"Bad"], @[@"tl_rating_ok", @"OK"], @[@"tl_rating_easy", @"Delicious"]];
     for (NSInteger index = 0; index < itemDescriptors.count; index++) {
         UIControl *button = [self faceButtonWithImageName:itemDescriptors[index][0] title:itemDescriptors[index][1] tag:index];
         [buttonsStack addArrangedSubview:button];

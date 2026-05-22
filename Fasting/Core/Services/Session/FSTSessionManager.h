@@ -24,7 +24,7 @@
 #import <Foundation/Foundation.h>
 #import "FSTPlan.h"
 #import "FSTFastingRecord.h"
-#import "FSTWeightUnitToggleView.h"
+#import "FSTWeightUnit.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

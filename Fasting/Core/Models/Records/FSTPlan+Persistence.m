@@ -3,8 +3,7 @@
 //  Fasting
 //
 
-#import "FSTPlan+Persistence.h"
-#import "UIColor+FST.h"
+#import "FSTPlan.h"
 
 @implementation FSTPlan (Persistence)
 
@@ -14,14 +13,13 @@
     for (FSTPlan *plan in [self defaultDailyPlans]) {
         if ([plan.name isEqualToString:name]) return plan;
     }
-    // 回退兼容：未在默认列表中命中时按字段构造，外观回退到通用绿色
     FSTPlan *plan = [FSTPlan new];
     plan.name                = name;
     plan.fastingHours        = [dictionary[@"fastingHours"]    integerValue];
     plan.eatingHours         = [dictionary[@"eatingHours"]     integerValue];
     plan.difficultyLevel     = [dictionary[@"difficultyLevel"] integerValue];
-    plan.cardBackgroundColor = [UIColor fst_planGreen];
-    plan.accentBoltColor     = [UIColor fst_primaryGreen];
+    plan.cardBackgroundHex   = 0xE6F3EA;
+    plan.accentBoltHex       = 0x3F9D5E;
     return plan;
 }
 

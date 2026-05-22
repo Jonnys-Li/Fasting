@@ -21,7 +21,7 @@
 #import "FSTDailyPlanReadyDisplayState.h"
 #import "FSTPlan.h"
 #import "FSTFastingTopBar.h"
-#import "UIButton+FSTNavCircle.h"
+#import "UIButton+FST.h"
 #import "UIViewController+FSTTimeEditor.h"
 #import "FSTQuickAddRecordViewController.h"
 #import "FSTTheme.h"
@@ -154,7 +154,7 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 
 - (void)installPickerTopBar {
     UILabel *titleLabel = [UILabel new];
-    titleLabel.text      = @"断食";
+    titleLabel.text      = @"Fasting";
     titleLabel.font      = FSTFontBold(32);
     titleLabel.textColor = [UIColor fst_textPrimary];
 
@@ -309,11 +309,11 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 #pragma mark - 事件
 
 - (void)handleResetTapped {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"改变计划"
-                                                                              message:@"当前进度会被清空，是否继续？"
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Change Plan"
+                                                                              message:@"Current progress will be cleared. Continue?"
                                                                        preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"继续" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
         [[FSTSessionManager sharedManager] clearCurrentPlan];
         [self reloadRootContent];
     }]];
@@ -376,7 +376,7 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 }
 
 - (void)handleBellTapped {
-    [self showComingSoonAlertWithTitle:@"提醒" message:@"提醒功能即将到来。"];
+    [self showComingSoonAlertWithTitle:@"Reminder" message:@"Reminder feature coming soon."];
 }
 
 - (void)handleAteTapped {
@@ -392,14 +392,14 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 }
 
 - (void)handleBreakingFastTapped {
-    [self showComingSoonAlertWithTitle:@"Breaking fast" message:@"功能开发中。"];
+    [self showComingSoonAlertWithTitle:@"Breaking fast" message:@"Feature in development."];
 }
 
 - (void)showComingSoonAlertWithTitle:(NSString *)title message:(NSString *)message {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
                                                                               message:message
                                                                        preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Got it" style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alertController animated:YES completion:nil];
 }
 

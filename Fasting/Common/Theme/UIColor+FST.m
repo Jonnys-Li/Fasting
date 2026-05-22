@@ -19,11 +19,8 @@
 }
 
 + (UIColor *)fst_primaryGreen       { return [self fst_colorWithHex:0x62D49F]; }
-+ (UIColor *)fst_primaryGreenDark   { return [self fst_colorWithHex:0x35BE83]; }
 + (UIColor *)fst_ringTrack          { return [self fst_colorWithHex:0xEDF3F8]; }
-+ (UIColor *)fst_buttonGray         { return [self fst_colorWithHex:0xE6E8EC]; }
 + (UIColor *)fst_pageBackground     { return [self fst_colorWithHex:0xF5F5F9]; }
-+ (UIColor *)fst_cardBackground     { return [UIColor whiteColor]; }
 + (UIColor *)fst_textPrimary        { return [self fst_colorWithHex:0x173A53]; }
 + (UIColor *)fst_textSecondary      { return [self fst_colorWithHex:0x7D8C9A]; }
 + (UIColor *)fst_separator          { return [self fst_colorWithHex:0xEDEEF0]; }
@@ -35,7 +32,6 @@
 
 + (UIColor *)fst_amber              { return [self fst_colorWithHex:0xDEA006]; }
 + (UIColor *)fst_progressCream      { return [self fst_colorWithHex:0xFEECAC]; }
-+ (UIColor *)fst_peach              { return [self fst_colorWithHex:0xF5E0D8]; }
 + (UIColor *)fst_orangeCTA          { return [self fst_colorWithHex:0xFFA93F]; }
 + (UIColor *)fst_eatingTimeGreen    { return [self fst_colorWithHex:0x28D8A1]; }
 
@@ -45,8 +41,6 @@
 + (UIColor *)fst_textTipBody        { return [self fst_colorWithHex:0x5A5C66]; }
 + (UIColor *)fst_textSubtitle       { return [self fst_colorWithHex:0x52596B]; }
 + (UIColor *)fst_dialogTitle        { return [self fst_colorWithHex:0x233243]; }
-+ (UIColor *)fst_planPrepBody       { return [self fst_colorWithHex:0x526A8F]; }
-
 // 扩展控件色
 + (UIColor *)fst_buttonInactive     { return [self fst_colorWithHex:0xE3E5EA]; }
 + (UIColor *)fst_startButtonYellow  { return [self fst_colorWithHex:0xF5C24A]; }
@@ -100,10 +94,5 @@
 + (UIColor *)fst_alignSelectedGreen      { return [self fst_colorWithHex:0x27D6A0]; }
 + (UIColor *)fst_alignUnselectedGray     { return [self fst_colorWithHex:0xC9CDD4]; }
 + (UIColor *)fst_alignSelectedText       { return [self fst_colorWithHex:0x008D5A]; }
-
-// Plan 专属
-+ (UIColor *)fst_recommendBlue           { return [self fst_colorWithHex:0x6689E8]; }
-+ (UIColor *)fst_recommendOrange         { return [self fst_colorWithHex:0xF4A94F]; }
-+ (UIColor *)fst_planPrepBackground      { return [self fst_colorWithHex:0xEAF3FF]; }
 
 @end

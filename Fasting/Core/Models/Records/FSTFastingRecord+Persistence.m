@@ -3,7 +3,7 @@
 //  Fasting
 //
 
-#import "FSTFastingRecord+Persistence.h"
+#import "FSTFastingRecord.h"
 
 static const CGFloat kFSTFastingRecordDefaultCurrentWeightKg = 81.2;
 static const CGFloat kFSTFastingRecordDefaultInitialWeightKg = 81.2;

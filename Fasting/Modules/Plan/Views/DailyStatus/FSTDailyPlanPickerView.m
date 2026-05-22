@@ -35,7 +35,7 @@ static const CGFloat kFSTDailyPlanPickerListAspectOffset      = 48.0;
 
 - (void)buildSubviews {
     self.subtitleLabel = [UILabel new];
-    self.subtitleLabel.text          = @"选择一个来开始吧";
+    self.subtitleLabel.text          = @"Choose one to start";
     self.subtitleLabel.font          = FSTFontBold(21);
     self.subtitleLabel.textColor     = [UIColor fst_textPrimary];
     self.subtitleLabel.textAlignment = NSTextAlignmentCenter;

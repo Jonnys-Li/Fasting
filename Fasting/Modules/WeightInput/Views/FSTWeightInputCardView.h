@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FSTWeightUnit.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,6 +15,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 当前体重（kg），内部始终以 kg 存储；切换到 lb 仅影响显示。
 @property (nonatomic, assign) CGFloat weightKg;
+
+/// Initial unit to show. Set before view appears.
+@property (nonatomic, assign) FSTWeightUnit initialUnit;
+
+/// Current unit after user interaction. Read on save to persist preference.
+@property (nonatomic, readonly) FSTWeightUnit currentUnit;
 
 /// 关闭按钮（X）被点击时回调
 @property (nonatomic, copy, nullable) void (^onClose)(void);

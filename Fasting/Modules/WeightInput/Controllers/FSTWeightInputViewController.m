@@ -8,6 +8,7 @@
 
 #import "FSTWeightInputViewController.h"
 #import "FSTWeightInputCardView.h"
+#import "FSTSessionManager.h"
 #import "FSTTheme.h"
 
 @interface FSTWeightInputViewController ()
@@ -30,10 +31,12 @@
     [super viewDidLoad];
 
     self.inputCardView = [FSTWeightInputCardView new];
+    self.inputCardView.initialUnit = [FSTSessionManager sharedManager].preferredWeightUnit;
     self.inputCardView.weightKg = self.weightKg;
     __weak typeof(self) weakSelf = self;
     self.inputCardView.onClose = ^{ [weakSelf dismissViewControllerAnimated:YES completion:nil]; };
     self.inputCardView.onSave = ^(CGFloat enteredWeightKg) {
+        [FSTSessionManager sharedManager].preferredWeightUnit = weakSelf.inputCardView.currentUnit;
         void (^saveCallback)(CGFloat) = weakSelf.onSave;
         [weakSelf dismissViewControllerAnimated:YES completion:^{ if (saveCallback) saveCallback(enteredWeightKg); }];
     };

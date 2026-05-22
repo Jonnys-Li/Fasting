@@ -6,7 +6,6 @@
 //
 
 #import "FSTTimelineModuleView.h"
-#import "FSTSessionManager.h"
 #import "FSTTheme.h"
 
 static const CGFloat kHeaderHeight      = 44;
@@ -41,7 +40,7 @@ static const CGFloat kAddButtonHeight   = 48;
 // 空态
 @property (nonatomic, strong) UILabel *emptyLabel;
 // 数据
-@property (nonatomic, strong, nullable) FSTMealRecord *currentRecord;
+@property (nonatomic, assign) BOOL hasRecord;
 @end
 
 @implementation FSTTimelineModuleView
@@ -49,7 +48,7 @@ static const CGFloat kAddButtonHeight   = 48;
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 22;
+        self.layer.cornerRadius = FSTRadiusL;
         [self buildHeader];
         [self buildEntryRow];
         [self buildFooter];
@@ -70,8 +69,8 @@ static const CGFloat kAddButtonHeight   = 48;
 
     // 标题
     self.titleLabel = [UILabel new];
-    self.titleLabel.text = @"食物日记";
-    self.titleLabel.font = FSTFontBold(22);
+    self.titleLabel.text = @"Food Diary";
+    self.titleLabel.font = FSTFontTitle();
     self.titleLabel.textColor = [UIColor fst_textPrimary];
     [self addSubview:self.titleLabel];
 
@@ -150,14 +149,14 @@ static const CGFloat kAddButtonHeight   = 48;
 
     // 时间文字
     self.timeLabel = [UILabel new];
-    self.timeLabel.font = FSTFontRegular(15);
+    self.timeLabel.font = FSTFontBody();
     self.timeLabel.textColor = [UIColor fst_textSecondary];
     [self.entryContainer addSubview:self.timeLabel];
 
     // 食物卡片
     self.cardView = [UIControl new];
     self.cardView.backgroundColor = [UIColor fst_mealDiaryCardBackground];
-    self.cardView.layer.cornerRadius = 18;
+    self.cardView.layer.cornerRadius = FSTRadiusCard;
     self.cardView.layer.borderWidth = 1.0;
     self.cardView.layer.borderColor = [UIColor fst_mealDiaryCardBorder].CGColor;
     [self.cardView addTarget:self action:@selector(handleEntryTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -166,7 +165,7 @@ static const CGFloat kAddButtonHeight   = 48;
     // 食物图标（白底圆角方块 + emoji）
     self.foodIconLabel = [UILabel new];
     self.foodIconLabel.backgroundColor = [UIColor whiteColor];
-    self.foodIconLabel.layer.cornerRadius = 14;
+    self.foodIconLabel.layer.cornerRadius = FSTRadiusM;
     self.foodIconLabel.clipsToBounds = YES;
     self.foodIconLabel.font = [UIFont systemFontOfSize:34];
     self.foodIconLabel.textAlignment = NSTextAlignmentCenter;
@@ -241,10 +240,10 @@ static const CGFloat kAddButtonHeight   = 48;
 
 - (UILabel *)buildChipLabel {
     UILabel *label = [UILabel new];
-    label.font = FSTFontRegular(15);
+    label.font = FSTFontBody();
     label.textColor = [UIColor fst_textPrimary];
     label.backgroundColor = [UIColor whiteColor];
-    label.layer.cornerRadius = 17;
+    label.layer.cornerRadius = FSTRadiusChip;
     label.clipsToBounds = YES;
     label.textAlignment = NSTextAlignmentCenter;
     label.userInteractionEnabled = NO;
@@ -264,7 +263,7 @@ static const CGFloat kAddButtonHeight   = 48;
             attributes:@{NSFontAttributeName: FSTFontBold(18),
                          NSForegroundColorAttributeName: [UIColor fst_mealDateText]}];
     [addTitle appendAttributedString:[[NSAttributedString alloc]
-        initWithString:@"增加"
+        initWithString:@"Add"
             attributes:@{NSFontAttributeName: FSTFontBold(18),
                          NSForegroundColorAttributeName: [UIColor fst_mealDateText]}]];
     [self.addButton setAttributedTitle:addTitle forState:UIControlStateNormal];
@@ -288,8 +287,8 @@ static const CGFloat kAddButtonHeight   = 48;
 
 - (void)buildEmptyState {
     self.emptyLabel = [UILabel new];
-    self.emptyLabel.text = @"今天还没有饮食记录";
-    self.emptyLabel.font = FSTFontRegular(15);
+    self.emptyLabel.text = @"No meal records today";
+    self.emptyLabel.font = FSTFontBody();
     self.emptyLabel.textColor = [UIColor fst_textSecondary];
     self.emptyLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:self.emptyLabel];
@@ -308,21 +307,24 @@ static const CGFloat kAddButtonHeight   = 48;
 
 #pragma mark - 数据刷新
 
-- (void)updateWithMealRecord:(FSTMealRecord *)record {
-    self.currentRecord = record;
-    if (!record) {
+- (void)updateWithCategory:(nullable NSString *)category
+                  dietType:(nullable NSString *)dietType
+                tasteLevel:(NSInteger)tasteLevel
+                  dateText:(nullable NSString *)dateText {
+    self.hasRecord = (category != nil);
+    if (!self.hasRecord) {
         [self showEmptyState:YES];
         return;
     }
     [self showEmptyState:NO];
 
-    self.timeLabel.text = FSTFormatRelativeDateTime(record.date ?: [NSDate date]);
-    self.foodIconLabel.text = [record.mealCategory isEqualToString:@"零食"] ? @"🍎" : @"🍽";
-    self.categoryChipLabel.text = [NSString stringWithFormat:@"  %@  ", record.mealCategory ?: @"正餐"];
-    self.dietChipLabel.text = [NSString stringWithFormat:@"  %@  ", record.dietType ?: @"我不确定"];
+    self.timeLabel.text = dateText ?: @"";
+    self.foodIconLabel.text = [category isEqualToString:@"Snack"] ? @"\U0001F34E" : @"\U0001F37D";
+    self.categoryChipLabel.text = [NSString stringWithFormat:@"  %@  ", category ?: @"Meal"];
+    self.dietChipLabel.text = [NSString stringWithFormat:@"  %@  ", dietType ?: @"Not sure"];
 
     NSString *imageName;
-    switch (record.tasteLevel) {
+    switch (tasteLevel) {
         case 0: imageName = @"tl_rating_hard"; break;
         case 2: imageName = @"tl_rating_easy"; break;
         default: imageName = @"tl_rating_ok"; break;
@@ -341,7 +343,7 @@ static const CGFloat kAddButtonHeight   = 48;
 }
 
 - (void)handleEntryTapped {
-    if (self.currentRecord && self.onEntryTapped) self.onEntryTapped(self.currentRecord);
+    if (self.hasRecord && self.onEntryTapped) self.onEntryTapped();
 }
 
 @end
