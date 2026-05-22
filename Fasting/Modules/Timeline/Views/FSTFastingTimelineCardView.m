@@ -5,13 +5,9 @@
 
 #import "FSTFastingTimelineCardView.h"
 #import "FSTTheme.h"
+#import "UIImage+FSTHelpers.h"
 
 static CGFloat const kFSTFastingTimelineCardPadding = 20.0;
-
-static UIImage *FSTTimelineOriginalImage(NSString *name) {
-    UIImage *image = [UIImage imageNamed:name];
-    return [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-}
 
 static NSString *FSTTimelineCardLowercaseMeridiem(NSString *value) {
     return [[value stringByReplacingOccurrencesOfString:@" AM" withString:@" am"] stringByReplacingOccurrencesOfString:@" PM" withString:@" pm"];
@@ -80,7 +76,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        self.backgroundColor = [UIColor fst_colorWithHex:0x54D9B0];
+        self.backgroundColor = [UIColor fst_timelineGreen];
         self.layer.cornerRadius = 22.0;
         self.layer.masksToBounds = YES;
         [self addTarget:self action:@selector(handleMoreTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -96,34 +92,29 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 }
 
 - (void)buildSubviews {
-    self.badgeImageView = [[UIImageView alloc] initWithImage:FSTTimelineOriginalImage(@"tl_target_badge")];
+    self.badgeImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_target_badge"]];
     self.badgeImageView.contentMode = UIViewContentModeScaleAspectFit;
-    self.badgeImageView.userInteractionEnabled = NO;
     [self addSubview:self.badgeImageView];
 
     self.titleLabel = [UILabel new];
     self.titleLabel.font = FSTFontBold(20);
     self.titleLabel.textColor = [UIColor whiteColor];
-    self.titleLabel.userInteractionEnabled = NO;
     [self addSubview:self.titleLabel];
 
-    self.streakImageView = [[UIImageView alloc] initWithImage:FSTTimelineOriginalImage(@"tl_streak_bolts")];
+    self.streakImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_streak_bolts"]];
     self.streakImageView.contentMode = UIViewContentModeScaleAspectFit;
-    self.streakImageView.userInteractionEnabled = NO;
     [self addSubview:self.streakImageView];
 
     self.moreControl = [UIControl new];
     [self.moreControl addTarget:self action:@selector(handleMoreTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.moreControl];
 
-    self.chevronImageView = [[UIImageView alloc] initWithImage:FSTTimelineOriginalImage(@"tl_chevron")];
+    self.chevronImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_chevron"]];
     self.chevronImageView.contentMode = UIViewContentModeScaleAspectFit;
-    self.chevronImageView.userInteractionEnabled = NO;
     [self.moreControl addSubview:self.chevronImageView];
 
     self.dividerView = [UIView new];
     self.dividerView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.2];
-    self.dividerView.userInteractionEnabled = NO;
     [self addSubview:self.dividerView];
 
     self.hoursValueLabel = [self durationValueLabel];
@@ -136,30 +127,27 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     [self addSubview:self.minutesUnitLabel];
 
     self.ratingContainerView = [UIView new];
-    self.ratingContainerView.userInteractionEnabled = NO;
     [self addSubview:self.ratingContainerView];
 
-    self.ratingImageView = [[UIImageView alloc] initWithImage:FSTTimelineOriginalImage(@"tl_rating_ok")];
+    self.ratingImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_rating_ok"]];
     self.ratingImageView.contentMode = UIViewContentModeScaleAspectFit;
-    self.ratingImageView.userInteractionEnabled = NO;
     [self.ratingContainerView addSubview:self.ratingImageView];
 
     self.timelinePanelView = [UIView new];
     self.timelinePanelView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.06];
     self.timelinePanelView.layer.cornerRadius = 14.0;
-    self.timelinePanelView.userInteractionEnabled = NO;
     [self addSubview:self.timelinePanelView];
 
     self.startDotView = [UIView new];
-    self.startDotView.backgroundColor = [UIColor fst_colorWithHex:0x54D9B0];
+    self.startDotView.backgroundColor = [UIColor fst_timelineGreen];
     self.startDotView.layer.cornerRadius = 4.0;
     [self.timelinePanelView addSubview:self.startDotView];
 
-    self.connectorImageView = [[UIImageView alloc] initWithImage:FSTTimelineOriginalImage(@"tl_timeline_connector")];
+    self.connectorImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_timeline_connector"]];
     self.connectorImageView.contentMode = UIViewContentModeScaleToFill;
     [self.timelinePanelView addSubview:self.connectorImageView];
 
-    self.endDotImageView = [[UIImageView alloc] initWithImage:FSTTimelineOriginalImage(@"tl_timeline_dot")];
+    self.endDotImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_timeline_dot"]];
     self.endDotImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.timelinePanelView addSubview:self.endDotImageView];
 
@@ -181,7 +169,6 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     label.textColor = [UIColor whiteColor];
     label.adjustsFontSizeToFitWidth = YES;
     label.minimumScaleFactor = 0.75;
-    label.userInteractionEnabled = NO;
     return label;
 }
 
@@ -190,7 +177,6 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     label.font = FSTFontRegular(16);
     label.textColor = [UIColor whiteColor];
     label.text = text;
-    label.userInteractionEnabled = NO;
     return label;
 }
 
@@ -199,7 +185,6 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     label.font = FSTFontRegular(15);
     label.textColor = [[UIColor whiteColor] colorWithAlphaComponent:0.75];
     label.text = text;
-    label.userInteractionEnabled = NO;
     return label;
 }
 
@@ -210,7 +195,6 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     label.textAlignment = NSTextAlignmentRight;
     label.adjustsFontSizeToFitWidth = YES;
     label.minimumScaleFactor = 0.75;
-    label.userInteractionEnabled = NO;
     return label;
 }
 
@@ -348,7 +332,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     } else if (rating == FSTFastingRatingHard) {
         imageName = @"tl_rating_hard";
     }
-    self.ratingImageView.image = FSTTimelineOriginalImage(imageName);
+    self.ratingImageView.image = [UIImage fst_originalImageNamed:imageName];
 }
 
 - (void)configureWithRecord:(FSTFastingRecord *)record {

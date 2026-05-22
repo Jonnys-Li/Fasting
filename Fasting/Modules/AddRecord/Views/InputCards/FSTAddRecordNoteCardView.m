@@ -34,7 +34,7 @@
     self.textView = [UITextView new];
     self.textView.font = FSTFontRegular(17);
     self.textView.textColor = [UIColor fst_textPrimary];
-    self.textView.backgroundColor = [UIColor fst_colorWithHex:0xF5F7FA];
+    self.textView.backgroundColor = [UIColor fst_inputBackground];
     self.textView.layer.cornerRadius = 14;
     self.textView.textContainerInset = UIEdgeInsetsMake(18, 18, 18, 18);
     [self addSubview:self.textView];

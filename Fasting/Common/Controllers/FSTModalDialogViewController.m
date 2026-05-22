@@ -94,7 +94,7 @@ static const CGFloat kFSTDialogButtonHeight = 58.0;
     UIView *card = self.cardContainer;
 
     UIView *iconBackground = [UIView new];
-    iconBackground.backgroundColor = [UIColor fst_colorWithHex:0xF1F4FA];
+    iconBackground.backgroundColor = [UIColor fst_dialogIconBackground];
     iconBackground.layer.cornerRadius = kFSTDialogIconSize / 2.0;
     iconBackground.layer.masksToBounds = YES;
     [card addSubview:iconBackground];
@@ -106,20 +106,20 @@ static const CGFloat kFSTDialogButtonHeight = 58.0;
     } else if (self.iconSystemName.length > 0) {
         UIImageSymbolConfiguration *configuration = [UIImageSymbolConfiguration configurationWithPointSize:36 weight:UIImageSymbolWeightMedium];
         iconView.image = [UIImage systemImageNamed:self.iconSystemName withConfiguration:configuration];
-        iconView.tintColor = [UIColor fst_colorWithHex:0x8F9CB2];
+        iconView.tintColor = [UIColor fst_dialogIconTint];
     }
     [iconBackground addSubview:iconView];
 
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    closeButton.backgroundColor = [UIColor fst_colorWithHex:0xF3F5F9];
+    closeButton.backgroundColor = [UIColor fst_dialogCloseBackground];
     closeButton.layer.cornerRadius = kFSTDialogCloseSize / 2.0;
     UIImageSymbolConfiguration *closeConfiguration = [UIImageSymbolConfiguration configurationWithPointSize:19 weight:UIImageSymbolWeightBold];
     [closeButton setImage:[UIImage systemImageNamed:@"xmark" withConfiguration:closeConfiguration] forState:UIControlStateNormal];
-    closeButton.tintColor = [UIColor fst_colorWithHex:0xC4CAD3];
+    closeButton.tintColor = [UIColor fst_dialogCloseTint];
     [closeButton addTarget:self action:@selector(handleCloseTapped) forControlEvents:UIControlEventTouchUpInside];
     [card addSubview:closeButton];
 
-    UILabel *titleLabel = [UILabel fst_centerLabelWithFont:FSTFontBold(24) color:[UIColor fst_colorWithHex:0x233243]];
+    UILabel *titleLabel = [UILabel fst_centerLabelWithFont:FSTFontBold(24) color:[UIColor fst_dialogTitle]];
     titleLabel.text = self.dialogTitle;
     titleLabel.numberOfLines = 2;
     titleLabel.adjustsFontSizeToFitWidth = YES;
@@ -184,8 +184,8 @@ static const CGFloat kFSTDialogButtonHeight = 58.0;
     button.titleLabel.font = FSTFontBold(24);
     button.titleLabel.adjustsFontSizeToFitWidth = YES;
     button.titleLabel.minimumScaleFactor = 0.72;
-    button.backgroundColor = primary ? [UIColor fst_eatingTimeGreen] : [UIColor fst_colorWithHex:0xEDF1F7];
-    [button setTitleColor:primary ? [UIColor whiteColor] : [UIColor fst_colorWithHex:0x233243] forState:UIControlStateNormal];
+    button.backgroundColor = primary ? [UIColor fst_eatingTimeGreen] : [UIColor fst_dialogSecondaryButton];
+    [button setTitleColor:primary ? [UIColor whiteColor] : [UIColor fst_dialogTitle] forState:UIControlStateNormal];
     button.layer.cornerRadius = kFSTDialogButtonHeight / 2.0;
     button.layer.masksToBounds = YES;
     return button;

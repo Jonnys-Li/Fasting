@@ -75,7 +75,7 @@ static const CGFloat kFSTTimeEditorSaveHeight = 48.0;
     UILabel *titleLabel = [UILabel new];
     titleLabel.text = self.titleText;
     titleLabel.font = [UIFont fontWithName:@"AvenirNext-DemiBold" size:24] ?: FSTFontBold(24);
-    titleLabel.textColor = [UIColor fst_colorWithHex:0x272A33];
+    titleLabel.textColor = [UIColor fst_textHeading];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.adjustsFontSizeToFitWidth = YES;
     titleLabel.minimumScaleFactor = 0.76;
@@ -178,8 +178,8 @@ static const CGFloat kFSTTimeEditorSaveHeight = 48.0;
 
 - (void)refreshAlignState {
     if (!self.alignControl) return;
-    UIColor *backgroundColor = self.alignSelected ? [UIColor fst_colorWithHex:0x27D6A0 alpha:0.15] : [UIColor fst_colorWithHex:0xC9CDD4 alpha:0.30];
-    UIColor *textColor = self.alignSelected ? [UIColor fst_colorWithHex:0x008D5A] : [UIColor fst_textSecondary];
+    UIColor *backgroundColor = self.alignSelected ? [[UIColor fst_alignSelectedGreen] colorWithAlphaComponent:0.15] : [[UIColor fst_alignUnselectedGray] colorWithAlphaComponent:0.30];
+    UIColor *textColor = self.alignSelected ? [UIColor fst_alignSelectedText] : [UIColor fst_textSecondary];
     self.alignControl.backgroundColor = backgroundColor;
     self.alignLabel.textColor = textColor;
     self.datePicker.userInteractionEnabled = !self.alignSelected;

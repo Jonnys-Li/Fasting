@@ -83,8 +83,8 @@
     // 达标点击 = 完成断食（COMPLETE，绿底，直接跳到 AddRecord 填写感受）。
     // 配色与标题成对切换，确保用户在两个场景中都能一眼分辨。
     state.stopButtonTitle           = targetReached ? @"COMPLETE FASTING" : @"END FASTING";
-    state.stopButtonBackgroundColor = targetReached ? [UIColor fst_eatingTimeGreen] : [UIColor fst_colorWithHex:0xE3E5EA];
-    state.stopButtonTitleColor      = targetReached ? [UIColor whiteColor] : [UIColor fst_colorWithHex:0x272A33];
+    state.stopButtonBackgroundColor = targetReached ? [UIColor fst_eatingTimeGreen] : [UIColor fst_buttonInactive];
+    state.stopButtonTitleColor      = targetReached ? [UIColor whiteColor] : [UIColor fst_textHeading];
 
     return state;
 }

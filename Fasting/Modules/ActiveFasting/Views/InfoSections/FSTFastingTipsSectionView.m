@@ -121,13 +121,12 @@ static NSString * const FSTFastingTipsExpandedText =
 
 - (UIView *)buildLemonCard {
     UIView *card = [UIView new];
-    card.backgroundColor = [UIColor fst_colorWithHex:0xFFF8D9];
+    card.backgroundColor = [UIColor fst_tipCardYellow];
     card.layer.cornerRadius = 18;
     card.layer.masksToBounds = YES;
 
     UIImageView *bg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_lemon_bg"]];
     bg.contentMode = UIViewContentModeScaleAspectFit;
-    bg.userInteractionEnabled = NO;
     [card addSubview:bg];
 
     UILabel *title = [UILabel new];
@@ -192,7 +191,6 @@ static NSString * const FSTFastingTipsExpandedText =
 
     UIImageView *bg = [UIImageView new];
     bg.contentMode = UIViewContentModeScaleAspectFit;
-    bg.userInteractionEnabled = NO;
     [card addSubview:bg];
     _stageBgIcon = bg;
 
@@ -230,14 +228,13 @@ static NSString * const FSTFastingTipsExpandedText =
 
 - (UIView *)buildQACard {
     UIView *card = [UIView new];
-    card.backgroundColor = [UIColor fst_colorWithHex:0xE2EEFF];
+    card.backgroundColor = [UIColor fst_stageBlue];
     card.layer.cornerRadius = 18;
     card.layer.masksToBounds = YES;
     _qaCard = card;
 
     UIImageView *bg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_question_bg"]];
     bg.contentMode = UIViewContentModeScaleAspectFit;
-    bg.userInteractionEnabled = NO;
     [card addSubview:bg];
 
     UILabel *title = [UILabel new];
@@ -301,7 +298,7 @@ static NSString * const FSTFastingTipsExpandedText =
 - (void)configureForStage:(FSTTipsFastingStage)stage {
     switch (stage) {
         case FSTTipsFastingStagePrepare:
-            self.stageCard.backgroundColor = [UIColor fst_colorWithHex:0xE2EEFF];
+            self.stageCard.backgroundColor = [UIColor fst_stageBlue];
             self.stageBgIcon.hidden = YES;
             self.stageBgIcon.image = nil;
             self.stageTitleLabel.attributedText = [self cellTitleAttributedString:@"Prepare for fasting"];
@@ -309,7 +306,7 @@ static NSString * const FSTFastingTipsExpandedText =
                 @"🥩 Eat protein-rich foods, such as meat, fish, tofu and nuts.\n🍎 Add fiber and complex carbs from beans, fruits and vegetables.\n💧 Drink plenty of water.\n🥬 Fill yourself with natural foods to control your appetite."];
             break;
         case FSTTipsFastingStageDuring:
-            self.stageCard.backgroundColor = [UIColor fst_colorWithHex:0xDCF1ED];
+            self.stageCard.backgroundColor = [UIColor fst_stageGreen];
             self.stageBgIcon.hidden = NO;
             self.stageBgIcon.image = [UIImage imageNamed:@"tips_fork_ring_during"];
             self.stageTitleLabel.attributedText = [self cellTitleAttributedString:@"During fasting"];
@@ -317,7 +314,7 @@ static NSString * const FSTFastingTipsExpandedText =
                 @"💧 Drink water or herbal tea to stay hydrated.\n🍪 Keep your mind off food.\n🚫 Avoid high-intensity workouts."];
             break;
         case FSTTipsFastingStageAfter:
-            self.stageCard.backgroundColor = [UIColor fst_colorWithHex:0xFFF1E7];
+            self.stageCard.backgroundColor = [UIColor fst_stageOrange];
             self.stageBgIcon.hidden = NO;
             self.stageBgIcon.image = [UIImage imageNamed:@"tips_fork_ring_after"];
             self.stageTitleLabel.attributedText = [self cellTitleAttributedString:@"After fasting"];
@@ -336,7 +333,7 @@ static NSString * const FSTFastingTipsExpandedText =
     return [[NSAttributedString alloc] initWithString:text
                                            attributes:@{
         NSFontAttributeName: font,
-        NSForegroundColorAttributeName: [UIColor fst_colorWithHex:0x272A33],
+        NSForegroundColorAttributeName: [UIColor fst_textHeading],
         NSParagraphStyleAttributeName: style,
     }];
 }
@@ -347,7 +344,7 @@ static NSString * const FSTFastingTipsExpandedText =
     return [[NSAttributedString alloc] initWithString:text
                                            attributes:@{
         NSFontAttributeName: FSTFontMedium(17),
-        NSForegroundColorAttributeName: [UIColor fst_colorWithHex:0x5A5C66],
+        NSForegroundColorAttributeName: [UIColor fst_textTipBody],
         NSParagraphStyleAttributeName: style,
     }];
 }
@@ -358,7 +355,7 @@ static NSString * const FSTFastingTipsExpandedText =
     return [[NSAttributedString alloc] initWithString:text
                                            attributes:@{
         NSFontAttributeName: FSTFontMedium(15),
-        NSForegroundColorAttributeName: [UIColor fst_colorWithHex:0x5A5C66],
+        NSForegroundColorAttributeName: [UIColor fst_textTipBody],
         NSParagraphStyleAttributeName: style,
     }];
 }

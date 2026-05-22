@@ -23,7 +23,6 @@ static const CGFloat kFSTFastingCardCellSideInset     = 24;
         self.selectionStyle = UITableViewCellSelectionStyleNone;
 
         _cardView = [[FSTFastingTimelineCardView alloc] initWithFrame:CGRectZero];
-        _cardView.userInteractionEnabled = NO;
         [self.contentView addSubview:_cardView];
         [_cardView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.bottom.equalTo(self.contentView).inset(kFSTFastingCardCellVerticalInset);

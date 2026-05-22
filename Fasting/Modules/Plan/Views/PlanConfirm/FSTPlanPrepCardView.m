@@ -10,7 +10,7 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
-        self.backgroundColor = [UIColor fst_colorWithHex:0xEAF3FF];
+        self.backgroundColor = [UIColor fst_planPrepBackground];
         self.layer.cornerRadius = 14;
         [self buildSubviews];
     }
@@ -27,7 +27,7 @@
     UILabel *bodyLabel = [UILabel new];
     bodyLabel.text = @"•  吃足够的蛋白质，比如肉，鱼，豆腐和坚果。\n\n•  吃高纤维食物，比如坚果，豆类，水果和蔬菜。\n\n•  喝大量的水。\n\n•  吃天然的食物来帮助在用餐期间控制食欲。";
     bodyLabel.font = FSTFontBold(16);
-    bodyLabel.textColor = [UIColor fst_colorWithHex:0x526A8F];
+    bodyLabel.textColor = [UIColor fst_planPrepBody];
     bodyLabel.numberOfLines = 0;
 
     [self addSubview:titleLabel];

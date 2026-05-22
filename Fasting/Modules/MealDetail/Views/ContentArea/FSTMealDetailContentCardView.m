@@ -31,19 +31,18 @@
 
 - (void)buildSubviews {
     UIButton *imageButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    imageButton.backgroundColor = [UIColor fst_colorWithHex:0xFFF1C9];
+    imageButton.backgroundColor = [UIColor fst_mealImageBackground];
     imageButton.layer.cornerRadius = 14;
     [imageButton setImage:[UIImage systemImageNamed:@"camera.fill"] forState:UIControlStateNormal];
-    imageButton.tintColor = [UIColor fst_colorWithHex:0xE8B64C];
+    imageButton.tintColor = [UIColor fst_mealImageTint];
     [imageButton addTarget:self action:@selector(emitImageTapped) forControlEvents:UIControlEventTouchUpInside];
 
     self.imageStatusLabel = [UILabel new];
     self.imageStatusLabel.font = FSTFontRegular(16);
     self.imageStatusLabel.textColor = [UIColor fst_textSecondary];
-    self.imageStatusLabel.userInteractionEnabled = NO;
 
     self.detailTextView = [UITextView new];
-    self.detailTextView.backgroundColor = [UIColor fst_colorWithHex:0xF5F7FA];
+    self.detailTextView.backgroundColor = [UIColor fst_inputBackground];
     self.detailTextView.layer.cornerRadius = 12;
     self.detailTextView.font = FSTFontRegular(16);
     self.detailTextView.textColor = [UIColor fst_textPrimary];

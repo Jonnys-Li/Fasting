@@ -60,6 +60,123 @@ NS_ASSUME_NONNULL_BEGIN
 /// #28D8A1 Eating Time 断食强调绿。Active Fasting 完成态按钮、断食圆环达成色。
 + (UIColor *)fst_eatingTimeGreen;
 
+// MARK: - 扩展文字色
+
+/// #272A33 卡片标题、面板标题、按钮标题深色文字。
++ (UIColor *)fst_textHeading;
+/// #5C6373 计时器说明、副标注文字。
++ (UIColor *)fst_textCaption;
+/// #5A5C66 Tips 卡片正文色。
++ (UIColor *)fst_textTipBody;
+/// #52596B Breaking Fast 卡片副标题。
++ (UIColor *)fst_textSubtitle;
+/// #233243 弹窗标题文字。
++ (UIColor *)fst_dialogTitle;
+/// #526A8F 计划准备卡片正文。
++ (UIColor *)fst_planPrepBody;
+
+// MARK: - 扩展控件色
+
+/// #E3E5EA 停止按钮 / 未激活态按钮背景。
++ (UIColor *)fst_buttonInactive;
+/// #F5C24A Start Fasting 黄色 CTA 背景。
++ (UIColor *)fst_startButtonYellow;
+/// #EBEDEE 圆环次浅灰底色 / 胶囊筹码底色。
++ (UIColor *)fst_ringTrackLight;
+
+// MARK: - 扩展表面/背景色
+
+/// #F5F7FA 输入框、行内底色。
++ (UIColor *)fst_inputBackground;
+/// #F4F6F8 提示标签底色。
++ (UIColor *)fst_hintBackground;
+/// #F0F1F3 分段控件底色。
++ (UIColor *)fst_segmentBackground;
+/// #F1F2F4 标签筛选未选中态底色。
++ (UIColor *)fst_chipBackground;
+/// #F6F7F9 饮食日记卡片底色。
++ (UIColor *)fst_mealDiaryCardBackground;
+
+// MARK: - Tips / Stage 阶段卡配色
+
+/// #E2EEFF 阶段卡蓝色背景。
++ (UIColor *)fst_stageBlue;
+/// #DCF1ED 阶段卡绿色背景。
++ (UIColor *)fst_stageGreen;
+/// #FFF1E7 阶段卡橙色背景。
++ (UIColor *)fst_stageOrange;
+/// #FFF8D9 Tips 黄色卡片背景。
++ (UIColor *)fst_tipCardYellow;
+
+// MARK: - Timeline 配色
+
+/// #54D9B0 时间线绿色圆点/徽标。
++ (UIColor *)fst_timelineGreen;
+
+// MARK: - 警告 / 强调
+
+/// #FF6D4A 超时/警告橙色。
++ (UIColor *)fst_warningOrange;
+/// #FF9876 Ready-to-start 圆环 progress 橙。
++ (UIColor *)fst_ringReadyOrange;
+
+// MARK: - Meal Detail 专属
+
+/// #F4F3FA MealDetail 页面底色。
++ (UIColor *)fst_mealDetailBackground;
+/// #F0D895 MealDetail 保存按钮底色。
++ (UIColor *)fst_mealSaveButton;
+/// #E7A847 MealTime 日期文字色。
++ (UIColor *)fst_mealDateText;
+/// #FFF1C9 MealDetail 图片按钮底色。
++ (UIColor *)fst_mealImageBackground;
+/// #E8B64C MealDetail 图片按钮 tint。
++ (UIColor *)fst_mealImageTint;
+/// #F8F1E5 MealSlot 图标底色。
++ (UIColor *)fst_mealSlotIconBackground;
+
+// MARK: - AddRecord 专属
+
+/// #5DA986 AddRecord 顶栏绿。
++ (UIColor *)fst_addRecordHeaderGreen;
+/// #4A9275 AddRecord 山形装饰底色。
++ (UIColor *)fst_addRecordMountainGreen;
+/// #F2F4FA AddRecord 页面底色。
++ (UIColor *)fst_addRecordBackground;
+/// #E9EEF6 AddRecord 取消按钮底色。
++ (UIColor *)fst_addRecordCancelButton;
+
+// MARK: - Dialog 弹窗专属
+
+/// #F1F4FA 弹窗图标底色。
++ (UIColor *)fst_dialogIconBackground;
+/// #8F9CB2 弹窗图标 tint。
++ (UIColor *)fst_dialogIconTint;
+/// #F3F5F9 弹窗关闭按钮底色。
++ (UIColor *)fst_dialogCloseBackground;
+/// #C4CAD3 弹窗关闭按钮 tint。
++ (UIColor *)fst_dialogCloseTint;
+/// #EDF1F7 弹窗次要按钮底色。
++ (UIColor *)fst_dialogSecondaryButton;
+
+// MARK: - TimeEditor 专属
+
+/// #27D6A0 对齐选中态背景（需搭配 alpha）。
++ (UIColor *)fst_alignSelectedGreen;
+/// #C9CDD4 对齐未选中态背景（需搭配 alpha）。
++ (UIColor *)fst_alignUnselectedGray;
+/// #008D5A 对齐选中态文字。
++ (UIColor *)fst_alignSelectedText;
+
+// MARK: - Plan 专属
+
+/// #6689E8 推荐面板蓝色卡片。
++ (UIColor *)fst_recommendBlue;
+/// #F4A94F 推荐面板橙色卡片。
++ (UIColor *)fst_recommendOrange;
+/// #EAF3FF 计划准备卡片底色。
++ (UIColor *)fst_planPrepBackground;
+
 @end
 
 NS_ASSUME_NONNULL_END

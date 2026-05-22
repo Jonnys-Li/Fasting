@@ -80,7 +80,7 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
     self.headlineLabel = [UILabel new];
     self.headlineLabel.text          = @"You're fasting!";
     self.headlineLabel.font          = [UIFont fontWithName:@"AvenirNext-Bold" size:22] ?: FSTFontBold(22);
-    self.headlineLabel.textColor     = [UIColor fst_colorWithHex:0x272A33];
+    self.headlineLabel.textColor     = [UIColor fst_textHeading];
     self.headlineLabel.textAlignment = NSTextAlignmentCenter;
     [self.contentView addSubview:self.headlineLabel];
 
@@ -136,10 +136,10 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
     [self.contentView addSubview:self.timesRow];
 
     self.stopButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    self.stopButton.backgroundColor    = [UIColor fst_colorWithHex:0xE3E5EA];
+    self.stopButton.backgroundColor    = [UIColor fst_buttonInactive];
     self.stopButton.layer.cornerRadius = kFSTActiveFastingStopCornerRadius;
     [self.stopButton setTitle:@"END FASTING" forState:UIControlStateNormal];
-    [self.stopButton setTitleColor:[UIColor fst_colorWithHex:0x272A33] forState:UIControlStateNormal];
+    [self.stopButton setTitleColor:[UIColor fst_textHeading] forState:UIControlStateNormal];
     self.stopButton.titleLabel.font = [UIFont fontWithName:@"AvenirNext-DemiBold" size:16] ?: FSTFontBold(16);
     [self.stopButton addTarget:self action:@selector(handleStopTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.stopButton];

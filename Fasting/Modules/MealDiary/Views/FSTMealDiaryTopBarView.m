@@ -39,18 +39,15 @@
     calendarIconLabel.text = @"📅";
     calendarIconLabel.font = [UIFont systemFontOfSize:22];
     calendarIconLabel.textAlignment = NSTextAlignmentCenter;
-    calendarIconLabel.userInteractionEnabled = NO;
 
     self.dateLabel = [UILabel new];
     self.dateLabel.font = FSTFontBold(22);
     self.dateLabel.textColor = [UIColor fst_textPrimary];
-    self.dateLabel.userInteractionEnabled = NO;
 
     UIImageSymbolConfiguration *symbolConfiguration = [UIImageSymbolConfiguration configurationWithPointSize:14 weight:UIImageSymbolWeightSemibold];
     UIImageView *chevronIconView = [[UIImageView alloc] initWithImage:[[UIImage systemImageNamed:@"chevron.down"] imageWithConfiguration:symbolConfiguration]];
     chevronIconView.tintColor = [UIColor fst_textPrimary];
     chevronIconView.contentMode = UIViewContentModeScaleAspectFit;
-    chevronIconView.userInteractionEnabled = NO;
 
     [dateChip addSubview:calendarIconLabel];
     [dateChip addSubview:self.dateLabel];
@@ -62,7 +59,6 @@
     UIView *redDotView = [UIView new];
     redDotView.backgroundColor = [UIColor fst_redDot];
     redDotView.layer.cornerRadius = 4;
-    redDotView.userInteractionEnabled = NO;
     [filterButton addSubview:redDotView];
 
     for (UIView *subview in @[backButton, dateChip, filterButton]) [self addSubview:subview];

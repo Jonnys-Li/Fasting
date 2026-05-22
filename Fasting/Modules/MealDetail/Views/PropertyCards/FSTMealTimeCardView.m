@@ -40,17 +40,14 @@
     titleLabel.text = @"时间";
     titleLabel.font = FSTFontBold(22);
     titleLabel.textColor = [UIColor fst_textPrimary];
-    titleLabel.userInteractionEnabled = NO;
 
     self.dateLabel = [UILabel new];
     self.dateLabel.font = FSTFontBold(17);
-    self.dateLabel.textColor = [UIColor fst_colorWithHex:0xE7A847];
+    self.dateLabel.textColor = [UIColor fst_mealDateText];
     self.dateLabel.textAlignment = NSTextAlignmentRight;
-    self.dateLabel.userInteractionEnabled = NO;
 
     UIImageView *editIconView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"edit_pencil"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
     editIconView.contentMode = UIViewContentModeScaleAspectFit;
-    editIconView.userInteractionEnabled = NO;
 
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleToggleTapped)];
     tapGesture.cancelsTouchesInView = NO;

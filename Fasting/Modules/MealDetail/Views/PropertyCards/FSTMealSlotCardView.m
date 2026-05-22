@@ -32,7 +32,6 @@
     titleLabel.text = @"正餐/零食";
     titleLabel.font = FSTFontBold(22);
     titleLabel.textColor = [UIColor fst_textPrimary];
-    titleLabel.userInteractionEnabled = NO;
     [self addSubview:titleLabel];
 
     UIStackView *tilesStack = [UIStackView new];
@@ -69,16 +68,14 @@
     [tile addTarget:self action:@selector(handleTileTapped:) forControlEvents:UIControlEventTouchUpInside];
 
     UIView *iconBox = [UIView new];
-    iconBox.backgroundColor = [UIColor fst_colorWithHex:0xF8F1E5];
+    iconBox.backgroundColor = [UIColor fst_mealSlotIconBackground];
     iconBox.layer.cornerRadius = 14;
-    iconBox.userInteractionEnabled = NO;
     [tile addSubview:iconBox];
 
     UILabel *iconLabel = [UILabel new];
     iconLabel.text = emoji;
     iconLabel.font = [UIFont systemFontOfSize:42];
     iconLabel.textAlignment = NSTextAlignmentCenter;
-    iconLabel.userInteractionEnabled = NO;
     [iconBox addSubview:iconLabel];
 
     UILabel *titleLabel = [UILabel new];
@@ -86,7 +83,6 @@
     titleLabel.font = FSTFontBold(19);
     titleLabel.textColor = [UIColor fst_textPrimary];
     titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.userInteractionEnabled = NO;
     [tile addSubview:titleLabel];
 
     [iconBox mas_makeConstraints:^(MASConstraintMaker *make) {

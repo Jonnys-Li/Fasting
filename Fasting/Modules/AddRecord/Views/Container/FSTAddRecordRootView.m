@@ -45,7 +45,7 @@ static const CGFloat kFSTAddRecordButtonCornerRadius = 29;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        self.backgroundColor = [UIColor fst_colorWithHex:0xF2F4FA];
+        self.backgroundColor = [UIColor fst_addRecordBackground];
         [self buildHeader];
         [self buildScrollAndCards];
         [self buildBottomBar];
@@ -91,7 +91,7 @@ static const CGFloat kFSTAddRecordButtonCornerRadius = 29;
     [self addSubview:self.bottomBar];
 
     self.cancelButton = [UIButton fst_outlineGreenPillButtonWithTitle:@"取消"];
-    self.cancelButton.backgroundColor = [UIColor fst_colorWithHex:0xE9EEF6];
+    self.cancelButton.backgroundColor = [UIColor fst_addRecordCancelButton];
     [self.cancelButton setTitleColor:[UIColor fst_textPrimary] forState:UIControlStateNormal];
     self.cancelButton.titleLabel.font = FSTFontBold(20);
     self.cancelButton.layer.cornerRadius = kFSTAddRecordButtonCornerRadius;

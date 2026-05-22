@@ -55,7 +55,7 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
     self.eatingTitleLabel = [UILabel new];
     self.eatingTitleLabel.text          = @"Eating Time";
     self.eatingTitleLabel.font          = [UIFont fontWithName:@"AvenirNext-Bold" size:22] ?: FSTFontBold(22);
-    self.eatingTitleLabel.textColor     = [UIColor fst_colorWithHex:0x272A33];
+    self.eatingTitleLabel.textColor     = [UIColor fst_textHeading];
     self.eatingTitleLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:self.eatingTitleLabel];
 
@@ -189,10 +189,10 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
 
 - (void)refreshPrimaryActionButton {
     if (self.primaryActionMode == FSTDailyPlanReadyPrimaryActionAbortPlan) {
-        self.startFastingButton.backgroundColor = [UIColor fst_colorWithHex:0xE3E5EA];
+        self.startFastingButton.backgroundColor = [UIColor fst_buttonInactive];
         self.startFastingButton.layer.shadowOpacity = 0;
         [self.startFastingButton setTitle:@"Abort Plan" forState:UIControlStateNormal];
-        [self.startFastingButton setTitleColor:[UIColor fst_colorWithHex:0x272A33] forState:UIControlStateNormal];
+        [self.startFastingButton setTitleColor:[UIColor fst_textHeading] forState:UIControlStateNormal];
         return;
     }
 

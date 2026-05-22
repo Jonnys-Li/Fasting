@@ -86,16 +86,16 @@ static NSString *const FSTChipDefaultSelected = @"Daily plan";
 }
 
 - (void)applyUnselectedStyle:(UIButton *)chip {
-    chip.backgroundColor = [UIColor fst_colorWithHex:0xF1F2F4];
+    chip.backgroundColor = [UIColor fst_chipBackground];
     chip.layer.borderWidth = 0;
-    [chip setTitleColor:[UIColor fst_colorWithHex:0x272A33] forState:UIControlStateNormal];
+    [chip setTitleColor:[UIColor fst_textHeading] forState:UIControlStateNormal];
 }
 
 - (void)applySelectedStyle:(UIButton *)chip {
     chip.backgroundColor = [UIColor whiteColor];
     chip.layer.borderWidth = 1.5;
     chip.layer.borderColor = [UIColor fst_eatingTimeGreen].CGColor;
-    [chip setTitleColor:[UIColor fst_colorWithHex:0x272A33] forState:UIControlStateNormal];
+    [chip setTitleColor:[UIColor fst_textHeading] forState:UIControlStateNormal];
 }
 
 - (void)applySelectionToTitle:(NSString *)title {

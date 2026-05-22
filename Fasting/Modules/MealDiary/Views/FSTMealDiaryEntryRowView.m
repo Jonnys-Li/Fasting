@@ -128,7 +128,7 @@
 
 - (UIControl *)buildCard {
     UIControl *cardView = [UIControl new];
-    cardView.backgroundColor = [UIColor fst_colorWithHex:0xF6F7F9];
+    cardView.backgroundColor = [UIColor fst_mealDiaryCardBackground];
     cardView.layer.cornerRadius = 18;
     [cardView addTarget:self action:@selector(emitCardTapped) forControlEvents:UIControlEventTouchUpInside];
     return cardView;
@@ -142,7 +142,6 @@
     iconLabel.text = [self.record.mealCategory isEqualToString:@"零食"] ? @"🍎" : @"🍽";
     iconLabel.font = [UIFont systemFontOfSize:34];
     iconLabel.textAlignment = NSTextAlignmentCenter;
-    iconLabel.userInteractionEnabled = NO;
     return iconLabel;
 }
 
@@ -155,7 +154,6 @@
     }
     UIImageView *feelingImageView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
     feelingImageView.contentMode = UIViewContentModeScaleAspectFit;
-    feelingImageView.userInteractionEnabled = NO;
     return feelingImageView;
 }
 
@@ -169,7 +167,6 @@
     label.layer.cornerRadius = 17;
     label.clipsToBounds = YES;
     label.textAlignment = NSTextAlignmentCenter;
-    label.userInteractionEnabled = NO;
     return label;
 }
 

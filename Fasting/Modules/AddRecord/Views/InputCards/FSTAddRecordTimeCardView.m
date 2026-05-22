@@ -58,7 +58,7 @@
     self.hintLabel = [UILabel new];
     self.hintLabel.font = FSTFontBold(15);
     self.hintLabel.textColor = [UIColor fst_textSecondary];
-    self.hintLabel.backgroundColor = [UIColor fst_colorWithHex:0xF4F6F8];
+    self.hintLabel.backgroundColor = [UIColor fst_hintBackground];
     self.hintLabel.layer.cornerRadius = 8;
     self.hintLabel.clipsToBounds = YES;
 

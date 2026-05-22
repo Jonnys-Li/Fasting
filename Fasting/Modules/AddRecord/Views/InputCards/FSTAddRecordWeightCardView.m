@@ -56,7 +56,7 @@
     self.targetLabel = [self mutedLabelWithText:@""];
 
     UIView *healthRowView = [UIView new];
-    healthRowView.backgroundColor = [UIColor fst_colorWithHex:0xF5F7FA];
+    healthRowView.backgroundColor = [UIColor fst_inputBackground];
     healthRowView.layer.cornerRadius = 14;
 
     UILabel *healthTitleLabel = [UILabel new];

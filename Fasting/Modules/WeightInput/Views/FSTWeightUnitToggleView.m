@@ -75,7 +75,6 @@
     chipLabel.text = text;
     chipLabel.font = FSTFontBold(16);
     chipLabel.textAlignment = NSTextAlignmentCenter;
-    chipLabel.userInteractionEnabled = NO;
     return chipLabel;
 }
 

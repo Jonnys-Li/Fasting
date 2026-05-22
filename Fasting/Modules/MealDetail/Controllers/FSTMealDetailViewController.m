@@ -41,7 +41,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor fst_colorWithHex:0xF4F3FA];
+    self.view.backgroundColor = [UIColor fst_mealDetailBackground];
     [self buildLayout];
     [self pushStateIntoCards];
 }
@@ -63,7 +63,7 @@
     bottomBar.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.92];
 
     UIButton *saveButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    saveButton.backgroundColor = [UIColor fst_colorWithHex:0xF0D895];
+    saveButton.backgroundColor = [UIColor fst_mealSaveButton];
     saveButton.layer.cornerRadius = 30;
     [saveButton setTitle:@"保存" forState:UIControlStateNormal];
     [saveButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];

@@ -54,7 +54,7 @@
 - (void)buildSubviews {
     self.ringProgressView = [[FSTRingProgressView alloc] initWithFrame:CGRectZero];
     self.ringProgressView.lineWidth = 22;
-    self.ringProgressView.trackColor = [UIColor fst_colorWithHex:0xEBEDEE];
+    self.ringProgressView.trackColor = [UIColor fst_ringTrackLight];
     self.ringProgressView.progressColor = [UIColor fst_progressCream];
     self.ringProgressView.arrowHeadTintColor = [UIColor fst_amber];
     self.ringProgressView.arrowHeadImage = [UIImage imageNamed:@"ring_head"];
@@ -125,7 +125,7 @@
     [self applyReadyToStartLayout:compact];
     self.toggleButton.hidden = compact;
     self.toggleButton.userInteractionEnabled = !compact;
-    self.ringProgressView.progressColor = readyToStart ? [UIColor fst_colorWithHex:0xFF9876] : [UIColor fst_progressCream];
+    self.ringProgressView.progressColor = readyToStart ? [UIColor fst_ringReadyOrange] : [UIColor fst_progressCream];
     self.ringProgressView.arrowHeadTintColor = readyToStart ? [UIColor whiteColor] : [UIColor fst_amber];
 
     if (scheduledCountdown) {

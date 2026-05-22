@@ -75,14 +75,14 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
     }
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text attributes:@{
         NSFontAttributeName: FSTFontRegular(18),
-        NSForegroundColorAttributeName: [UIColor fst_colorWithHex:0x5C6373],
+        NSForegroundColorAttributeName: [UIColor fst_textCaption],
     }];
     NSRange percentRange = [text rangeOfString:@"("];
     if (percentRange.location != NSNotFound) {
         NSRange highlightRange = NSMakeRange(percentRange.location, text.length - percentRange.location);
         [attributedText addAttributes:@{
             NSFontAttributeName: FSTFontBold(18),
-            NSForegroundColorAttributeName: [UIColor fst_colorWithHex:0xFF6D4A],
+            NSForegroundColorAttributeName: [UIColor fst_warningOrange],
         } range:highlightRange];
     }
     self.overtimeDetailLabel.attributedText = attributedText;
@@ -92,7 +92,7 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
     self.ring = [[FSTRingProgressView alloc] initWithFrame:CGRectZero];
     self.ring.lineWidth          = 22;
     self.ring.progressColor      = [UIColor fst_eatingTimeGreen];
-    self.ring.trackColor         = [UIColor fst_colorWithHex:0xEBEDEE];
+    self.ring.trackColor         = [UIColor fst_ringTrackLight];
     self.ring.arrowHeadTintColor = [UIColor whiteColor];
     self.ring.arrowHeadImage     = [[UIImage imageNamed:@"ring_head"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     [self addSubview:self.ring];
@@ -106,15 +106,15 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
     self.timerCaptionLabel = [UILabel fst_centerLabelWithFont:FSTFontBold(16)
                                                         color:[UIColor fst_textSecondary]];
     self.timerLabel        = [UILabel fst_centerLabelWithFont:[UIFont monospacedDigitSystemFontOfSize:32 weight:UIFontWeightBold]
-                                                        color:[UIColor fst_colorWithHex:0x272A33]];
+                                                        color:[UIColor fst_textHeading]];
     self.completionIconView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"congratulations"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
     self.completionIconView.contentMode = UIViewContentModeScaleAspectFit;
     self.completionIconView.hidden = YES;
     self.overtimeDetailLabel = [UILabel fst_centerLabelWithFont:FSTFontRegular(18)
-                                                          color:[UIColor fst_colorWithHex:0x5C6373]];
+                                                          color:[UIColor fst_textCaption]];
     self.overtimeDetailLabel.hidden = YES;
     self.overtimeTotalLabel = [UILabel fst_centerLabelWithFont:[UIFont monospacedDigitSystemFontOfSize:28 weight:UIFontWeightBold]
-                                                         color:[UIColor fst_colorWithHex:0x272A33]];
+                                                         color:[UIColor fst_textHeading]];
     self.overtimeTotalLabel.hidden = YES;
     self.endCaptionLabel   = [UILabel fst_centerLabelWithFont:FSTFontRegular(16)
                                                         color:[UIColor fst_textSecondary]];
@@ -236,9 +236,9 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
 
     if (self.presentationState == FSTRingPresentationComplete) {
         self.timerCaptionLabel.font = FSTFontRegular(20);
-        self.timerCaptionLabel.textColor = [UIColor fst_colorWithHex:0x5C6373];
+        self.timerCaptionLabel.textColor = [UIColor fst_textCaption];
         self.timerLabel.font = [UIFont systemFontOfSize:58 weight:UIFontWeightHeavy];
-        self.timerLabel.textColor = [UIColor fst_colorWithHex:0x272A33];
+        self.timerLabel.textColor = [UIColor fst_textHeading];
 
         [self.timerCaptionLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.completionIconView.mas_bottom).offset(8);
@@ -262,9 +262,9 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
         }];
     } else if (self.presentationState == FSTRingPresentationOvertime) {
         self.timerCaptionLabel.font = FSTFontRegular(18);
-        self.timerCaptionLabel.textColor = [UIColor fst_colorWithHex:0x5C6373];
+        self.timerCaptionLabel.textColor = [UIColor fst_textCaption];
         self.timerLabel.font = [UIFont monospacedDigitSystemFontOfSize:42 weight:UIFontWeightHeavy];
-        self.timerLabel.textColor = [UIColor fst_colorWithHex:0x272A33];
+        self.timerLabel.textColor = [UIColor fst_textHeading];
         self.overtimeTotalLabel.font = [UIFont monospacedDigitSystemFontOfSize:28 weight:UIFontWeightBold];
 
         [self.timerCaptionLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -291,7 +291,7 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
         self.timerCaptionLabel.font = FSTFontBold(16);
         self.timerCaptionLabel.textColor = [UIColor fst_textSecondary];
         self.timerLabel.font = [UIFont monospacedDigitSystemFontOfSize:32 weight:UIFontWeightBold];
-        self.timerLabel.textColor = [UIColor fst_colorWithHex:0x272A33];
+        self.timerLabel.textColor = [UIColor fst_textHeading];
 
         [self.timerCaptionLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.modeButton.mas_bottom).offset(10);

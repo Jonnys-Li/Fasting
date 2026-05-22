@@ -30,7 +30,6 @@
     titleLabel.text = @"食物的味道";
     titleLabel.font = FSTFontBold(22);
     titleLabel.textColor = [UIColor fst_textPrimary];
-    titleLabel.userInteractionEnabled = NO;
     [self addSubview:titleLabel];
 
     UIStackView *buttonsStack = [UIStackView new];
@@ -66,7 +65,6 @@
 
     UIImageView *faceImageView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
     faceImageView.contentMode = UIViewContentModeScaleAspectFit;
-    faceImageView.userInteractionEnabled = NO;
     [button addSubview:faceImageView];
 
     UILabel *titleLabel = [UILabel new];
@@ -74,7 +72,6 @@
     titleLabel.font = FSTFontBold(17);
     titleLabel.textColor = [UIColor fst_textSecondary];
     titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.userInteractionEnabled = NO;
     [button addSubview:titleLabel];
 
     [faceImageView mas_makeConstraints:^(MASConstraintMaker *make) {

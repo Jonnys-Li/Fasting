@@ -107,7 +107,6 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
                                                                diameter:kFSTActiveFastingNavButtonDiameter];
 
     self.segment = [FSTFastingSegmentControl new];
-    self.segment.userInteractionEnabled = NO;
 
     self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:shareButton
                                                   rightButtons:@[waterButton]

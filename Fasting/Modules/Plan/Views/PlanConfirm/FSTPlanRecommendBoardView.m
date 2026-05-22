@@ -69,7 +69,7 @@
     UIControl *cardControl = [UIControl new];
     cardControl.layer.cornerRadius = 14;
     cardControl.clipsToBounds = YES;
-    cardControl.backgroundColor = index % 2 == 0 ? [UIColor fst_colorWithHex:0x6689E8] : [UIColor fst_colorWithHex:0xF4A94F];
+    cardControl.backgroundColor = index % 2 == 0 ? [UIColor fst_recommendBlue] : [UIColor fst_recommendOrange];
     [cardControl mas_makeConstraints:^(MASConstraintMaker *make) { make.width.equalTo(@260); }];
 
     UILabel *nameLabel = [self whiteLabelWithText:plan.name font:FSTFontBold(27)];

@@ -36,7 +36,7 @@
     [button setTitle:title forState:UIControlStateNormal];
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     button.titleLabel.font = FSTFontBold(18);
-    button.backgroundColor = [UIColor fst_colorWithHex:0xF5C24A];
+    button.backgroundColor = [UIColor fst_startButtonYellow];
     button.layer.cornerRadius = 32;
     button.layer.masksToBounds = YES;
     return button;

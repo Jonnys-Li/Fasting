@@ -5,15 +5,11 @@
 
 #import "FSTAddRecordFeelingCardView.h"
 #import "FSTTheme.h"
+#import "UIImage+FSTHelpers.h"
 
 @interface FSTAddRecordFeelingCardView ()
 @property (nonatomic, strong) NSArray<UIControl *> *feelingButtons;
 @end
-
-static UIImage *FSTFeelingOriginalImage(NSString *name) {
-    UIImage *image = [UIImage imageNamed:name];
-    return [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-}
 
 @implementation FSTAddRecordFeelingCardView
 
@@ -73,9 +69,8 @@ static UIImage *FSTFeelingOriginalImage(NSString *name) {
     button.tag = index;
     [button addTarget:self action:@selector(handleFeelingTapped:) forControlEvents:UIControlEventTouchUpInside];
 
-    UIImageView *feelingImageView = [[UIImageView alloc] initWithImage:FSTFeelingOriginalImage(imageName)];
+    UIImageView *feelingImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:imageName]];
     feelingImageView.contentMode = UIViewContentModeScaleAspectFit;
-    feelingImageView.userInteractionEnabled = NO;
     [button addSubview:feelingImageView];
 
     UILabel *titleLabel = [UILabel new];

@@ -14,7 +14,7 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
-        self.backgroundColor = [UIColor fst_colorWithHex:0x5DA986];
+        self.backgroundColor = [UIColor fst_addRecordHeaderGreen];
         [self buildSubviews];
     }
     return self;
@@ -29,7 +29,7 @@
 /// 构建：山形背景色块 + 左右两个圆形按钮 + 标题 + 大数字。
 - (void)buildSubviews {
     UIView *mountainBackground = [UIView new];
-    mountainBackground.backgroundColor = [[UIColor fst_colorWithHex:0x4A9275] colorWithAlphaComponent:0.35];
+    mountainBackground.backgroundColor = [[UIColor fst_addRecordMountainGreen] colorWithAlphaComponent:0.35];
     [self addSubview:mountainBackground];
 
     UIButton *backButton = [self roundButtonWithSymbol:@"arrow.left"];

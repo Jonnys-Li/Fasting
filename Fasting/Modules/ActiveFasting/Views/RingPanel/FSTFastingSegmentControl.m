@@ -19,7 +19,7 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
-        self.backgroundColor = [UIColor fst_colorWithHex:0xF0F1F3];
+        self.backgroundColor = [UIColor fst_segmentBackground];
         self.layer.cornerRadius = 17;
         [self buildSubviews];
     }
@@ -32,7 +32,6 @@
     self.selectorView = [UIView new];
     self.selectorView.backgroundColor = [UIColor whiteColor];
     self.selectorView.layer.cornerRadius = 17;
-    self.selectorView.userInteractionEnabled = NO;
     [self addSubview:self.selectorView];
 
     self.bodyIconView = [self iconViewWithAssetNamed:@"nav_people"];
@@ -68,7 +67,6 @@
     UIImage *image = [[UIImage imageNamed:assetName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
     imageView.contentMode = UIViewContentModeScaleAspectFit;
-    imageView.userInteractionEnabled = NO;
     return imageView;
 }
 

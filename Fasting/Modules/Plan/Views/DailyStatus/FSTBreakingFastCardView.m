@@ -45,19 +45,19 @@
     self.titleLabel = [UILabel new];
     self.titleLabel.text = @"Breaking fast";
     self.titleLabel.font = FSTFontBold(16);
-    self.titleLabel.textColor = [UIColor fst_colorWithHex:0x272A33];
+    self.titleLabel.textColor = [UIColor fst_textHeading];
     [self addSubview:self.titleLabel];
 
     self.subtitleLabel = [UILabel new];
     self.subtitleLabel.text = @"Your fast is over;it's time to replenish...";
     self.subtitleLabel.font = FSTFontRegular(13);
-    self.subtitleLabel.textColor = [UIColor fst_colorWithHex:0x52596B];
+    self.subtitleLabel.textColor = [UIColor fst_textSubtitle];
     [self addSubview:self.subtitleLabel];
 
     UIImageSymbolConfiguration *chevronSymbolConfiguration = [UIImageSymbolConfiguration configurationWithPointSize:13 weight:UIImageSymbolWeightSemibold];
     self.chevronImageView = [[UIImageView alloc] initWithImage:[[UIImage systemImageNamed:@"chevron.right" withConfiguration:chevronSymbolConfiguration]
                                                                  imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
-    self.chevronImageView.tintColor = [UIColor fst_colorWithHex:0x28D8A1];
+    self.chevronImageView.tintColor = [UIColor fst_eatingTimeGreen];
     [self addSubview:self.chevronImageView];
 
     [self.iconImageView mas_makeConstraints:^(MASConstraintMaker *make) {

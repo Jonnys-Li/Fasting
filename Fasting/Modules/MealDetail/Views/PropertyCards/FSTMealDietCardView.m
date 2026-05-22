@@ -34,7 +34,6 @@
     titleLabel.text = @"饮食类型";
     titleLabel.font = FSTFontBold(22);
     titleLabel.textColor = [UIColor fst_textPrimary];
-    titleLabel.userInteractionEnabled = NO;
     [self addSubview:titleLabel];
 
     UIStackView *rowsStack = [UIStackView new];
@@ -71,7 +70,7 @@
 - (UIControl *)rowWithIcon:(NSString *)icon title:(NSString *)title subtitle:(NSString *)subtitle tag:(NSInteger)tag {
     UIControl *row = [UIControl new];
     row.tag = tag;
-    row.backgroundColor = [UIColor fst_colorWithHex:0xF5F7FA];
+    row.backgroundColor = [UIColor fst_inputBackground];
     row.layer.cornerRadius = 14;
     row.layer.borderWidth = 1.2;
     row.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.32].CGColor;
@@ -81,21 +80,18 @@
     UILabel *iconLabel = [UILabel new];
     iconLabel.text = icon;
     iconLabel.font = [UIFont systemFontOfSize:32];
-    iconLabel.userInteractionEnabled = NO;
     [row addSubview:iconLabel];
 
     UILabel *titleLabel = [UILabel new];
     titleLabel.text = title;
     titleLabel.font = FSTFontBold(17);
     titleLabel.textColor = [UIColor fst_textPrimary];
-    titleLabel.userInteractionEnabled = NO;
     [row addSubview:titleLabel];
 
     UILabel *subtitleLabel = [UILabel new];
     subtitleLabel.text = subtitle;
     subtitleLabel.font = FSTFontRegular(14);
     subtitleLabel.textColor = [UIColor fst_textSecondary];
-    subtitleLabel.userInteractionEnabled = NO;
     [row addSubview:subtitleLabel];
 
     [iconLabel mas_makeConstraints:^(MASConstraintMaker *make) {

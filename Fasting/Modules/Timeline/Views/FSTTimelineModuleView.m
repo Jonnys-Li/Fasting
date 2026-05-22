@@ -29,35 +29,30 @@
 - (void)buildSubviewsWithTitle:(NSString *)title iconName:(NSString *)iconName actionTitle:(NSString *)actionTitle {
     UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:iconName]];
     iconView.tintColor = [UIColor fst_primaryGreen];
-    iconView.userInteractionEnabled = NO;
     [self addSubview:iconView];
 
     UILabel *titleLabel = [UILabel new];
     titleLabel.text = title;
     titleLabel.font = FSTFontBold(22);
     titleLabel.textColor = [UIColor fst_textPrimary];
-    titleLabel.userInteractionEnabled = NO;
     [self addSubview:titleLabel];
 
     UILabel *actionLabel = [UILabel new];
     actionLabel.text = actionTitle;
     actionLabel.font = FSTFontBold(16);
     actionLabel.textColor = [UIColor fst_primaryGreen];
-    actionLabel.userInteractionEnabled = NO;
     [self addSubview:actionLabel];
 
     self.summaryLabel = [UILabel new];
     self.summaryLabel.font = FSTFontBold(28);
     self.summaryLabel.textColor = [UIColor fst_textPrimary];
     self.summaryLabel.numberOfLines = 2;
-    self.summaryLabel.userInteractionEnabled = NO;
     [self addSubview:self.summaryLabel];
 
     self.detailLabel = [UILabel new];
     self.detailLabel.font = FSTFontRegular(16);
     self.detailLabel.textColor = [UIColor fst_textSecondary];
     self.detailLabel.numberOfLines = 2;
-    self.detailLabel.userInteractionEnabled = NO;
     [self addSubview:self.detailLabel];
 
     [iconView mas_makeConstraints:^(MASConstraintMaker *make) {

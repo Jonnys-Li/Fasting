@@ -29,22 +29,18 @@
 - (void)buildSubviews {
     _stageIconView = [UIImageView new];
     _stageIconView.contentMode = UIViewContentModeScaleAspectFit;
-    _stageIconView.userInteractionEnabled = NO;
     [self addSubview:_stageIconView];
 
     _levelLabel = [UILabel new];
     _levelLabel.textAlignment = NSTextAlignmentLeft;
-    _levelLabel.userInteractionEnabled = NO;
     [self addSubview:_levelLabel];
 
     _titleLabel = [UILabel new];
-    _titleLabel.userInteractionEnabled = NO;
     [self addSubview:_titleLabel];
 
     _chevronIconView = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.right"]];
     _chevronIconView.tintColor = [UIColor fst_eatingTimeGreen];
     _chevronIconView.contentMode = UIViewContentModeScaleAspectFit;
-    _chevronIconView.userInteractionEnabled = NO;
     [self addSubview:_chevronIconView];
 
     [_stageIconView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -75,7 +71,7 @@
     self.stageIconView.image = [UIImage imageNamed:@"blood_glucose_stage"];
     self.titleLabel.text = @"血糖升高";
     self.titleLabel.font = FSTFontBold(16);
-    self.titleLabel.textColor = [UIColor fst_colorWithHex:0x272A33];
+    self.titleLabel.textColor = [UIColor fst_textHeading];
     self.titleLabel.numberOfLines = 1;
     self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
@@ -90,7 +86,7 @@
     self.stageIconView.image = [UIImage imageNamed:@"autophagy_stage"];
     self.titleLabel.text = @"Autophagy Starts!";
     self.titleLabel.font = FSTFontBold(15);
-    self.titleLabel.textColor = [UIColor fst_colorWithHex:0x272A33];
+    self.titleLabel.textColor = [UIColor fst_textHeading];
     self.titleLabel.numberOfLines = 1;
     self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
