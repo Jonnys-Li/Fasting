@@ -13,7 +13,7 @@
 #import "FSTFastingHistoryViewController.h"
 #import "FSTMealDetailViewController.h"
 #import "FSTMealDiaryViewController.h"
-#import "FSTSessionManager.h"
+#import "FSTRecordsRepository.h"
 #import "FSTTheme.h"
 
 @interface FSTTimelineViewController ()
@@ -61,13 +61,13 @@
 
 #pragma mark - 数据刷新
 
-/// 根据 SessionManager 最近一条断食/饮食记录刷新两张模块卡的摘要。
+/// 根据 RecordsRepository 最近一条断食/饮食记录刷新两张模块卡的摘要。
 - (void)refreshHome {
-    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    FSTFastingRecord *fastingRecord = [sessionManager allRecords].firstObject;
+    FSTRecordsRepository *repository = [FSTRecordsRepository sharedRepository];
+    FSTFastingRecord *fastingRecord = [repository allRecords].firstObject;
     [self.rootView.fastingModuleView configureWithRecord:fastingRecord];
 
-    self.latestMealRecord = [sessionManager allMealRecords].firstObject;
+    self.latestMealRecord = [repository allMealRecords].firstObject;
     FSTMealRecord *mr = self.latestMealRecord;
     [self.rootView.mealModuleView updateWithCategory:mr.mealCategory
                                             dietType:mr.dietType

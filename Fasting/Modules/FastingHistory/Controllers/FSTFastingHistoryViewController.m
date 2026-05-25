@@ -11,7 +11,7 @@
 #import "FSTAddRecordViewController.h"
 #import "FSTFastingCardCell.h"
 #import "FSTFastingTimelineCardView.h"
-#import "FSTSessionManager.h"
+#import "FSTRecordsRepository.h"
 
 @interface FSTFastingHistoryViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, copy) NSArray<FSTFastingRecord *> *records;
@@ -54,7 +54,7 @@
 }
 
 - (void)reloadRecords {
-    self.records = [[FSTSessionManager sharedManager] allRecords];
+    self.records = [[FSTRecordsRepository sharedRepository] allRecords];
     [self.rootView.tableView reloadData];
 }
 

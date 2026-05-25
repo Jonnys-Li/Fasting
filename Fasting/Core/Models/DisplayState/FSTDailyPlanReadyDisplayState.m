@@ -5,6 +5,7 @@
 
 #import "FSTDailyPlanReadyDisplayState.h"
 #import "FSTSessionManager.h"
+#import "FSTRecordsRepository.h"
 #import "FSTEatingWindowService.h"
 #import "FSTPlan.h"
 #import "FSTTheme.h"
@@ -20,7 +21,7 @@
     FSTEatingWindowState *windowState =
         [FSTEatingWindowService stateForPlan:plan
                                nextStartDate:nextStartDate
-                           latestFastEndDate:[sessionManager latestFastingEndDate]
+                           latestFastEndDate:[[FSTRecordsRepository sharedRepository] latestFastingEndDate]
                                referenceDate:now];
 
     // 三态判定优先级：scheduledCountdown > readyAfterEating > 默认 eatingWindow。

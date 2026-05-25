@@ -2,23 +2,23 @@
 //  FSTSessionManager.h
 //  Fasting
 //
-//  全 App 单例状态管理器 — 唯一的 NSUserDefaults 读写入口。
+//  会话状态单例 —— plan / active session / scheduled / preference / 一次性 token。
 //
-//  Session 概念：包含以下字段族
+//  Session 字段族：
 //    - 计划：currentPlan + hasCompletedOnboarding
 //    - 进行中断食：activeStartDate + activeEndOverrideDate
 //    - 吃窗口：eatingWindowAnchorDate
 //    - 预约：scheduledReadySource + scheduledReadyAnchorDate
 //    - 一次性 token：pendingActiveStartDatePrompt
-//    - 历史：records + mealRecords
 //
-//  写入约定：任何 mutation 都走 -persistAllStateAndNotifySession（统一持久化 + 通知），
-//  这样不会漏调 saveXxxToDefaults，也不会漏发通知。例外：records / mealRecords 写入用 -saveRecordsToDefaults
-//  + FSTRecordsDidChangeNotification，避免列表型订阅者被无关 session 变化打扰。
+//  历史记录（records / mealRecords）已搬到 [FSTRecordsRepository sharedRepository]，调用方直接用 repository。
+//  finishFastingWithRecord: 是跨域的：先写 record（转发到 repository）再清 active 状态，由本类编排。
 //
-//  两个通知名的分工：
-//    - FSTSessionDidChangeNotification — 任何 session 字段改变；订阅方：DailyPlan/ActiveFasting VC。
-//    - FSTRecordsDidChangeNotification — 仅 records / mealRecords 增删；订阅方：FastingHistory/MealDiary/Timeline。
+//  写入约定：任何 mutation 都走 -persistAllStateAndNotifySession（统一持久化 + 通知）。
+//
+//  通知名分工：
+//    - FSTSessionDidChangeNotification — session 字段变更；订阅方：DailyPlan / ActiveFasting VC。
+//    - FSTRecordsDidChangeNotification — records / mealRecords 增删；见 FSTRecordsRepository.h。
 //
 
 #import <Foundation/Foundation.h>
@@ -29,7 +29,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 extern NSNotificationName const FSTSessionDidChangeNotification;
-extern NSNotificationName const FSTRecordsDidChangeNotification;
 
 /// 预约准备态来源标记 — 表示 Plan 页"已选未开始"但用户显式 Schedule 了一个未来开始时间。
 /// 写入方：[FSTSessionManager markScheduledReadyWithSource:anchorDate:]
@@ -85,22 +84,10 @@ typedef NS_ENUM(NSInteger, FSTScheduledReadySource) {
 - (void)clearScheduledReadyState;
 - (void)beginEatingWindowFromDate:(NSDate * _Nullable)date;
 
-// 历史记录
-- (NSArray<FSTFastingRecord *> *)allRecords;  // 倒序
-- (void)updateFastingRecord:(FSTFastingRecord *)record;
-- (void)deleteFastingRecord:(FSTFastingRecord *)record;
-
-// 饮食记录
-- (NSArray<FSTMealRecord *> *)allMealRecords; // 倒序
-- (void)addOrUpdateMealRecord:(FSTMealRecord *)record;
-- (void)deleteMealRecord:(FSTMealRecord *)record;
-
 // 体重单位偏好
 @property (nonatomic, assign) FSTWeightUnit preferredWeightUnit;
 
 // 准备态推导
-- (NSDate * _Nullable)latestFastingEndDate;
-- (NSDate * _Nullable)latestMealDate;
 - (NSDate * _Nullable)nextFastingStartDate;
 /// 覆盖下一次断食开始时间。传 nil 清除覆盖，让 nextFastingStartDate 回到默认推导。
 - (void)setNextFastingStartDate:(NSDate * _Nullable)date;

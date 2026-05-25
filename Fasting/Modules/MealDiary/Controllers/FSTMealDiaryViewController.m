@@ -11,7 +11,7 @@
 #import "FSTMealDiaryTopBarView.h"
 #import "FSTMealDiaryEntryRowView.h"
 #import "FSTMealDetailViewController.h"
-#import "FSTSessionManager.h"
+#import "FSTRecordsRepository.h"
 #import "FSTFastingRecord.h"
 #import "FSTTheme.h"
 
@@ -68,7 +68,7 @@
 - (void)reloadDayRecords {
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *targetDate = self.selectedDate ?: [NSDate date];
-    NSArray<FSTMealRecord *> *allRecords = [[FSTSessionManager sharedManager] allMealRecords];
+    NSArray<FSTMealRecord *> *allRecords = [[FSTRecordsRepository sharedRepository] allMealRecords];
     NSMutableArray<FSTMealRecord *> *matchedRecords = [NSMutableArray array];
     for (FSTMealRecord *record in allRecords) {
         if ([calendar isDate:record.date inSameDayAsDate:targetDate]) [matchedRecords addObject:record];

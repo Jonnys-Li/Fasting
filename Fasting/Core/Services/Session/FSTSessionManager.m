@@ -6,16 +6,14 @@
 #import "FSTSessionManager.h"
 #import "FSTFastingRecord.h"
 #import "FSTPlan.h"
+#import "FSTRecordsRepository.h"
 
 NSNotificationName const FSTSessionDidChangeNotification = @"FSTSessionDidChangeNotification";
-NSNotificationName const FSTRecordsDidChangeNotification = @"FSTRecordsDidChangeNotification";
 
 // NSUserDefaults persistence keys.
 static NSString * const FSTCurrentPlanKey      = @"kFSTCurrentPlan";
 static NSString * const FSTActiveStartTimeKey  = @"kFSTActiveStartTime";
 static NSString * const FSTActiveEndOverrideTimeKey = @"kFSTActiveEndOverrideTime";
-static NSString * const FSTRecordsKey          = @"kFSTRecords";
-static NSString * const FSTMealRecordsKey      = @"kFSTMealRecords";
 static NSString * const FSTNextStartOverrideKey = @"kFSTNextStartOverride";
 static NSString * const FSTEatingWindowAnchorTimeKey = @"kFSTEatingWindowAnchorTime";
 static NSString * const FSTOnboardingCompletedKey = @"kFSTOnboardingCompleted";
@@ -32,8 +30,6 @@ static NSString * const FSTPreferredWeightUnitKey  = @"kFSTPreferredWeightUnit";
 @property (nonatomic, assign) BOOL pendingActiveStartDatePrompt;
 @property (nonatomic, assign, readwrite) FSTScheduledReadySource scheduledReadySource;
 @property (nonatomic, strong, readwrite, nullable) NSDate *scheduledReadyAnchorDate;
-@property (nonatomic, strong) NSMutableArray<FSTFastingRecord *> *records;
-@property (nonatomic, strong) NSMutableArray<FSTMealRecord *> *mealRecords;
 @end
 
 @implementation FSTSessionManager
@@ -59,39 +55,24 @@ static NSString * const FSTPreferredWeightUnitKey  = @"kFSTPreferredWeightUnit";
     self.currentPlan = planDictionary ? [FSTPlan fst_planWithDictionary:planDictionary] : nil;
 
     NSNumber *startTimeInterval = [userDefaults objectForKey:FSTActiveStartTimeKey];
-    self.activeStartDate = startTimeInterval ? [NSDate dateWithTimeIntervalSince1970:startTimeInterval.doubleValue] : nil;
+    self.activeStartDate = startTimeInterval != nil ? [NSDate dateWithTimeIntervalSince1970:startTimeInterval.doubleValue] : nil;
 
     NSNumber *endOverrideTimeInterval = [userDefaults objectForKey:FSTActiveEndOverrideTimeKey];
-    self.activeEndOverrideDate = endOverrideTimeInterval ? [NSDate dateWithTimeIntervalSince1970:endOverrideTimeInterval.doubleValue] : nil;
+    self.activeEndOverrideDate = endOverrideTimeInterval != nil ? [NSDate dateWithTimeIntervalSince1970:endOverrideTimeInterval.doubleValue] : nil;
 
     NSNumber *eatingAnchorTimeInterval = [userDefaults objectForKey:FSTEatingWindowAnchorTimeKey];
-    self.eatingWindowAnchorDate = eatingAnchorTimeInterval ? [NSDate dateWithTimeIntervalSince1970:eatingAnchorTimeInterval.doubleValue] : nil;
+    self.eatingWindowAnchorDate = eatingAnchorTimeInterval != nil ? [NSDate dateWithTimeIntervalSince1970:eatingAnchorTimeInterval.doubleValue] : nil;
 
     NSNumber *scheduledSourceValue = [userDefaults objectForKey:FSTScheduledReadySourceKey];
-    self.scheduledReadySource = scheduledSourceValue ? scheduledSourceValue.integerValue : FSTScheduledReadySourceNone;
+    self.scheduledReadySource = scheduledSourceValue != nil ? scheduledSourceValue.integerValue : FSTScheduledReadySourceNone;
 
     NSNumber *scheduledAnchorTimeInterval = [userDefaults objectForKey:FSTScheduledReadyAnchorTimeKey];
-    self.scheduledReadyAnchorDate = scheduledAnchorTimeInterval ? [NSDate dateWithTimeIntervalSince1970:scheduledAnchorTimeInterval.doubleValue] : nil;
+    self.scheduledReadyAnchorDate = scheduledAnchorTimeInterval != nil ? [NSDate dateWithTimeIntervalSince1970:scheduledAnchorTimeInterval.doubleValue] : nil;
     if (self.scheduledReadySource == FSTScheduledReadySourceNone) {
         self.scheduledReadyAnchorDate = nil;
     }
 
     self.preferredWeightUnit = [userDefaults integerForKey:FSTPreferredWeightUnitKey];
-
-    NSArray *fastingRecordDictionaries = [userDefaults objectForKey:FSTRecordsKey];
-    self.records = [NSMutableArray array];
-    for (NSDictionary *entry in fastingRecordDictionaries) {
-        FSTFastingRecord *record = [FSTFastingRecord fst_recordWithDictionary:entry];
-        if (record) [self.records addObject:record];
-    }
-
-    NSArray *mealRecordDictionaries = [userDefaults objectForKey:FSTMealRecordsKey];
-    self.mealRecords = [NSMutableArray array];
-    for (NSDictionary *entry in mealRecordDictionaries) {
-        FSTMealRecord *record = [FSTMealRecord fst_recordWithDictionary:entry];
-        if (record) [self.mealRecords addObject:record];
-    }
-
 }
 
 - (void)saveActiveStateToDefaults {
@@ -160,22 +141,6 @@ static NSString * const FSTPreferredWeightUnitKey  = @"kFSTPreferredWeightUnit";
 - (void)persistAllStateAndNotifySession {
     [self persistAllState];
     [[NSNotificationCenter defaultCenter] postNotificationName:FSTSessionDidChangeNotification object:self];
-}
-
-- (void)saveRecordsToDefaults {
-    NSMutableArray *serialized = [NSMutableArray array];
-    for (FSTFastingRecord *record in self.records) {
-        [serialized addObject:[record fst_dictionaryRepresentation]];
-    }
-    [[NSUserDefaults standardUserDefaults] setObject:serialized forKey:FSTRecordsKey];
-}
-
-- (void)saveMealRecordsToDefaults {
-    NSMutableArray *serialized = [NSMutableArray array];
-    for (FSTMealRecord *record in self.mealRecords) {
-        [serialized addObject:[record fst_dictionaryRepresentation]];
-    }
-    [[NSUserDefaults standardUserDefaults] setObject:serialized forKey:FSTMealRecordsKey];
 }
 
 #pragma mark - Active state
@@ -257,9 +222,7 @@ static NSString * const FSTPreferredWeightUnitKey  = @"kFSTPreferredWeightUnit";
 - (void)finishFastingWithRecord:(FSTFastingRecord *)record {
     if (record) {
         if (!record.recordID.length) record.recordID = [[NSUUID UUID] UUIDString];
-        [self.records insertObject:record atIndex:0];
-        [self saveRecordsToDefaults];
-        [[NSNotificationCenter defaultCenter] postNotificationName:FSTRecordsDidChangeNotification object:self];
+        [[FSTRecordsRepository sharedRepository] updateFastingRecord:record];
     }
     self.activeStartDate = nil;
     self.activeEndOverrideDate = nil;
@@ -328,81 +291,6 @@ static NSString * const FSTPreferredWeightUnitKey  = @"kFSTPreferredWeightUnit";
     [self persistAllStateAndNotifySession];
 }
 
-- (NSArray<FSTFastingRecord *> *)allRecords {
-    return [self.records copy];
-}
-
-- (void)updateFastingRecord:(FSTFastingRecord *)record {
-    if (!record.recordID.length) return;
-    NSUInteger existingIndex = [self.records indexOfObjectPassingTest:^BOOL(FSTFastingRecord *obj, NSUInteger idx, BOOL *stop) {
-        return [obj.recordID isEqualToString:record.recordID];
-    }];
-    if (existingIndex != NSNotFound) {
-        self.records[existingIndex] = record;
-    } else {
-        [self.records insertObject:record atIndex:0];
-    }
-    [self.records sortUsingComparator:^NSComparisonResult(FSTFastingRecord *a, FSTFastingRecord *b) {
-        return [b.endDate compare:a.endDate];
-    }];
-    [self saveRecordsToDefaults];
-    [[NSNotificationCenter defaultCenter] postNotificationName:FSTRecordsDidChangeNotification object:self];
-}
-
-- (void)deleteFastingRecord:(FSTFastingRecord *)record {
-    if (!record.recordID.length) return;
-    NSIndexSet *indexes = [self.records indexesOfObjectsPassingTest:^BOOL(FSTFastingRecord *obj, NSUInteger idx, BOOL *stop) {
-        return [obj.recordID isEqualToString:record.recordID];
-    }];
-    if (indexes.count == 0) return;
-    [self.records removeObjectsAtIndexes:indexes];
-    [self saveRecordsToDefaults];
-    [[NSNotificationCenter defaultCenter] postNotificationName:FSTRecordsDidChangeNotification object:self];
-}
-
-- (NSArray<FSTMealRecord *> *)allMealRecords {
-    return [self.mealRecords copy];
-}
-
-- (void)addOrUpdateMealRecord:(FSTMealRecord *)record {
-    if (!record) return;
-    if (!record.recordID.length) record.recordID = [[NSUUID UUID] UUIDString];
-    NSUInteger existingIndex = [self.mealRecords indexOfObjectPassingTest:^BOOL(FSTMealRecord *obj, NSUInteger idx, BOOL *stop) {
-        return [obj.recordID isEqualToString:record.recordID];
-    }];
-    if (existingIndex != NSNotFound) {
-        self.mealRecords[existingIndex] = record;
-    } else {
-        [self.mealRecords insertObject:record atIndex:0];
-    }
-    [self.mealRecords sortUsingComparator:^NSComparisonResult(FSTMealRecord *a, FSTMealRecord *b) {
-        return [b.date compare:a.date];
-    }];
-    [self saveMealRecordsToDefaults];
-    [[NSNotificationCenter defaultCenter] postNotificationName:FSTRecordsDidChangeNotification object:self];
-}
-
-- (void)deleteMealRecord:(FSTMealRecord *)record {
-    if (!record.recordID.length) return;
-    NSIndexSet *indexes = [self.mealRecords indexesOfObjectsPassingTest:^BOOL(FSTMealRecord *obj, NSUInteger idx, BOOL *stop) {
-        return [obj.recordID isEqualToString:record.recordID];
-    }];
-    if (indexes.count == 0) return;
-    [self.mealRecords removeObjectsAtIndexes:indexes];
-    [self saveMealRecordsToDefaults];
-    [[NSNotificationCenter defaultCenter] postNotificationName:FSTRecordsDidChangeNotification object:self];
-}
-
-- (NSDate *)latestFastingEndDate {
-    FSTFastingRecord *record = self.records.firstObject;
-    return record.endDate;
-}
-
-- (NSDate *)latestMealDate {
-    FSTMealRecord *record = self.mealRecords.firstObject;
-    return record.date;
-}
-
 /// 推导下一次断食起点。
 /// 优先级（自上而下，命中即返）：
 ///   1) override   — 用户在 Plan 页 Schedule 了具体时间（FSTNextStartOverrideKey）；
@@ -416,9 +304,10 @@ static NSString * const FSTPreferredWeightUnitKey  = @"kFSTPreferredWeightUnit";
 - (NSDate *)nextFastingStartDate {
     if (!self.currentPlan) return nil;
     NSNumber *override = [[NSUserDefaults standardUserDefaults] objectForKey:FSTNextStartOverrideKey];
-    if (override) return [NSDate dateWithTimeIntervalSince1970:override.doubleValue];
-    NSDate *mealDate = [self latestMealDate];
-    NSDate *fastingEndDate = [self latestFastingEndDate];
+    if (override != nil) return [NSDate dateWithTimeIntervalSince1970:override.doubleValue];
+    FSTRecordsRepository *repository = [FSTRecordsRepository sharedRepository];
+    NSDate *mealDate = [repository latestMealDate];
+    NSDate *fastingEndDate = [repository latestFastingEndDate];
     NSDate *anchor = fastingEndDate ?: mealDate ?: self.eatingWindowAnchorDate;
     if (!anchor) {
         anchor = [NSDate date];
