@@ -11,7 +11,6 @@
 #import "FSTMealDetailContentCardView.h"
 #import "FSTVerticalCardStackView.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 
 static const CGFloat kFSTMealDetailCardSpacing       = 18;
 static const CGFloat kFSTMealDetailCardSideInset     = 24;

@@ -11,7 +11,6 @@
 #import "FSTAddRecordNoteCardView.h"
 #import "FSTVerticalCardStackView.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 
 static const CGFloat kFSTAddRecordHeaderHeight       = 310;
 static const CGFloat kFSTAddRecordHeaderOverlap      = -34;  // 卡片区上拉与 header 视觉重叠的距离

@@ -4,12 +4,11 @@
 //
 //  分享卡弹窗：复用 FSTBaseModalViewController 的遮罩 + cardContainer，
 //  内容（圆环截图 + 品牌行）放进 cardContainer；Save/Share 按钮挂在 self.view 上、位于卡片下方。
-//  按钮和卡片都不在 backdropView 内，因此点击它们不会触发 backdrop tap dismiss。
+//  当前实现：UI 完整保留，但 Save / Share 仅做"样子"——直接 dismiss，不真实保存到相册或弹分享菜单。
 //
 
 #import "FSTShareCardViewController.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 
 static const CGFloat kFSTShareCardPadding        = 24;
 static const CGFloat kFSTShareBrandIconSize      = 28;
@@ -19,7 +18,6 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
 
 @interface FSTShareCardViewController ()
 @property (nonatomic, strong) UIImage *ringSnapshot;
-@property (nonatomic, strong) UIImage *shareImage;
 @end
 
 @implementation FSTShareCardViewController
@@ -37,7 +35,6 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
     [super viewDidLoad];
     [self buildCardContent];
     [self buildButtons];
-    [self renderShareImage];
 }
 
 #pragma mark - Card
@@ -70,13 +67,10 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
     iconView.contentMode = UIViewContentModeScaleAspectFit;
     iconView.layer.cornerRadius = kFSTShareBrandIconSize / 2.0;
     iconView.layer.masksToBounds = YES;
-    [row addSubview:iconView];
 
-    UILabel *nameLabel = [UILabel new];
-    nameLabel.text = @"Fasting Tracker";
-    nameLabel.font = FSTFontBold(16);
-    nameLabel.textColor = [UIColor blackColor];
-    [row addSubview:nameLabel];
+    UILabel *nameLabel = [UILabel fst_labelWithText:@"Fasting Tracker" font:FSTFontBold(16) color:[UIColor blackColor]];
+
+    [row fst_addSubviews:@[iconView, nameLabel]];
 
     [iconView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.top.bottom.equalTo(row);
@@ -93,10 +87,9 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
 #pragma mark - Buttons
 
 - (void)buildButtons {
-    UIButton *saveButton = [self actionButtonWithTitle:@"Save" action:@selector(handleSave)];
-    UIButton *shareButton = [self actionButtonWithTitle:@"Share" action:@selector(handleShare)];
-    [self.view addSubview:saveButton];
-    [self.view addSubview:shareButton];
+    UIButton *saveButton  = [self actionButtonWithTitle:@"Save"  action:@selector(handleDismiss)];
+    UIButton *shareButton = [self actionButtonWithTitle:@"Share" action:@selector(handleDismiss)];
+    [self.view fst_addSubviews:@[saveButton, shareButton]];
 
     [saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.cardContainer.mas_bottom).offset(20);
@@ -123,39 +116,11 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
     return button;
 }
 
-#pragma mark - Render share image
-
-- (void)renderShareImage {
-    [self.view layoutIfNeeded];
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.cardContainer layoutIfNeeded];
-        UIGraphicsBeginImageContextWithOptions(self.cardContainer.bounds.size, NO, 0);
-        [self.cardContainer drawViewHierarchyInRect:self.cardContainer.bounds afterScreenUpdates:YES];
-        self.shareImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-    });
-}
-
 #pragma mark - Actions
 
-- (void)handleSave {
-    if (!self.shareImage) return;
-    UIImageWriteToSavedPhotosAlbum(self.shareImage, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
-}
-
-- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
-    if (error) {
-        NSLog(@"Save image error: %@", error.localizedDescription);
-    } else {
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }
-}
-
-- (void)handleShare {
-    if (!self.shareImage) return;
-    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[self.shareImage] applicationActivities:nil];
-    [self presentViewController:activityVC animated:YES completion:nil];
+- (void)handleDismiss {
+    // 样子化：Save / Share 都直接 dismiss，不真实保存或弹分享菜单。
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

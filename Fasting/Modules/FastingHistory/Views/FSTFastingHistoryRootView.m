@@ -8,7 +8,6 @@
 #import "UIButton+FST.h"
 #import "UILabel+FSTStyle.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 
 static const CGFloat kFSTHistoryNavTopOffset  = 25;
 static const CGFloat kFSTHistoryNavSideInset  = 22;
@@ -32,11 +31,17 @@ static const CGFloat kFSTHistoryRowHeight     = 264;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
+        _todayText = @"Today";
         [self buildNavBar];
         [self buildContent];
         [self setupConstraints];
     }
     return self;
+}
+
+- (void)setTodayText:(NSString *)todayText {
+    _todayText = [todayText copy];
+    self.todayLabel.text = _todayText ?: @"";
 }
 
 #pragma mark - 视图组装
@@ -50,11 +55,10 @@ static const CGFloat kFSTHistoryRowHeight     = 264;
 
     self.shareButton = [UIButton fst_navPlainButtonWithImageNamed:@"nav_share" size:CGSizeMake(kFSTHistoryNavButtonSize, kFSTHistoryNavButtonSize)];
 
-    self.todayLabel = [UILabel new];
-    self.todayLabel.text = @"Today";
-    self.todayLabel.font = FSTFontBold(18);
-    self.todayLabel.textColor = [UIColor fst_textSecondary];
-    self.todayLabel.textAlignment = NSTextAlignmentCenter;
+    self.todayLabel = [UILabel fst_labelWithText:self.todayText
+                                            font:FSTFontBold(18)
+                                           color:[UIColor fst_textSecondary]
+                                       alignment:NSTextAlignmentCenter];
 
     for (UIView *v in @[self.backButton, self.titleLabel, self.shareButton, self.todayLabel]) {
         [self addSubview:v];

@@ -4,7 +4,6 @@
 //
 
 #import "UIViewController+FSTTimeEditor.h"
-#import "FSTTimeEditorSheetViewController.h"
 
 @implementation UIViewController (FSTTimeEditor)
 
@@ -16,9 +15,11 @@
                              minimumDate:nil
                              maximumDate:nil
                            alignChipText:nil
-                             alignedDate:nil
-                         initiallyAligned:NO
-                                 onCommit:^(NSDate *pickedDate, BOOL aligned) {
+                    alignDurationSeconds:0
+                               alignMode:FSTTimeEditorAlignModeStartFast
+                      alignReferenceDate:nil
+                                onCommit:^(NSDate *pickedDate, BOOL aligned) {
+        (void)aligned;
         if (onCommit) onCommit(pickedDate);
     }];
 }
@@ -28,18 +29,20 @@
                            minimumDate:(nullable NSDate *)minimumDate
                            maximumDate:(nullable NSDate *)maximumDate
                          alignChipText:(nullable NSString *)alignChipText
-                           alignedDate:(nullable NSDate *)alignedDate
-                       initiallyAligned:(BOOL)initiallyAligned
-                               onCommit:(void (^)(NSDate *pickedDate, BOOL aligned))onCommit {
+                  alignDurationSeconds:(NSTimeInterval)alignDurationSeconds
+                             alignMode:(FSTTimeEditorAlignMode)alignMode
+                    alignReferenceDate:(nullable NSDate *)alignReferenceDate
+                              onCommit:(void (^)(NSDate *pickedDate, BOOL aligned))onCommit {
     FSTTimeEditorSheetViewController *sheet =
         [[FSTTimeEditorSheetViewController alloc] initWithTitle:title
                                                     initialDate:initialDate ?: [NSDate date]
                                                     minimumDate:minimumDate
                                                     maximumDate:maximumDate
                                                   alignChipText:alignChipText
-                                                    alignedDate:alignedDate
-                                                initiallyAligned:initiallyAligned
-                                                        onCommit:onCommit];
+                                           alignDurationSeconds:alignDurationSeconds
+                                                      alignMode:alignMode
+                                             alignReferenceDate:alignReferenceDate
+                                                       onCommit:onCommit];
     [self presentViewController:sheet animated:YES completion:nil];
 }
 

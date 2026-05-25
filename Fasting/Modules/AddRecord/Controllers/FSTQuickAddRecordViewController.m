@@ -8,9 +8,10 @@
 #import "FSTQuickAddRecordViewController.h"
 #import "FSTQuickAddRecordRootView.h"
 #import "FSTTimeRowView.h"
+#import "FSTAppRouter.h"
 #import "FSTSessionManager.h"
 #import "FSTFastingRecord.h"
-#import "FSTRootTabBarController.h"
+#import "FSTFastingRecordBuilder.h"
 
 @interface FSTQuickAddRecordViewController ()
 @property (nonatomic, strong) NSDate *startDate;
@@ -103,36 +104,25 @@
 
 - (void)handleSave {
     if ([self.endDate compare:self.startDate] != NSOrderedDescending) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid time"
-                                                                       message:@"End time must be after start time."
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-        [self presentViewController:alert animated:YES completion:nil];
+        [FSTAppRouter showAlertFrom:self
+                              title:@"Invalid time"
+                            message:@"End time must be after start time."
+                        buttonTitle:@"OK"];
         return;
     }
 
     FSTSessionManager *sm = [FSTSessionManager sharedManager];
-    FSTFastingRecord *record = [FSTFastingRecord new];
-    record.recordID        = [[NSUUID UUID] UUIDString];
-    record.planName        = sm.currentPlan.name ?: @"14-10";
-    record.fastingHours    = sm.currentPlan.fastingHours;
-    record.startDate       = self.startDate;
-    record.endDate         = self.endDate;
-    record.weightKg        = 81.2;
-    record.initialWeightKg = 81.2;
-    record.targetWeightKg  = 70.0;
-    record.feelingLevel    = 1;
-    record.note            = @"";
+    FSTFastingRecord *record = FSTBuildFastingRecord(nil,
+                                                      self.startDate, self.endDate,
+                                                      81.2, 81.2, 70.0,
+                                                      1, @"", NO);
 
-    FSTRootTabBarController *tab = (FSTRootTabBarController *)self.tabBarController;
-    if ([tab isKindOfClass:[FSTRootTabBarController class]]) {
-        [tab fst_finishFlowReturningToTimelineWithUpdates:^{
-            [sm finishFastingWithRecord:record];
-        }];
-    } else {
+    [FSTAppRouter finishFlowFrom:self
+                         updates:^{ [sm finishFastingWithRecord:record]; }
+                        fallback:^{
         [sm finishFastingWithRecord:record];
         [self.navigationController popViewControllerAnimated:YES];
-    }
+    }];
 }
 
 @end

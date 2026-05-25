@@ -7,7 +7,6 @@
 #import "FSTPlanSelectListView.h"
 #import "FSTPlan.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 
 static const CGFloat kFSTDailyPlanPickerSubtitleTopInset = 24;
 static const CGFloat kFSTDailyPlanPickerListTopOffset    = 34;

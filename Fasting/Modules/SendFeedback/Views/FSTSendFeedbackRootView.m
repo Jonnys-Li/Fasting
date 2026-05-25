@@ -5,18 +5,17 @@
 
 #import "FSTSendFeedbackRootView.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 
 static NSString * const kFSTFeedbackPlaceholder = @"Anything you share helps us make fasting better for you.";
 
-static const CGFloat kFSTFeedbackSideInset     = 24;
-static const CGFloat kFSTFeedbackChipHeight    = 44;
-static const CGFloat kFSTFeedbackChipSpacingH  = 12;
-static const CGFloat kFSTFeedbackChipSpacingV  = 12;
-static const CGFloat kFSTFeedbackChipRadius    = 22;
+static const CGFloat kFSTFeedbackSideInset      = 24;
+static const CGFloat kFSTFeedbackChipHeight     = 44;
+static const CGFloat kFSTFeedbackChipSpacingH   = 12;
+static const CGFloat kFSTFeedbackChipSpacingV   = 12;
+static const CGFloat kFSTFeedbackChipRadius     = 22;
 static const CGFloat kFSTFeedbackTextViewHeight = 140;
-static const CGFloat kFSTFeedbackSubmitHeight  = 56;
-static const CGFloat kFSTFeedbackSubmitRadius  = 28;
+static const CGFloat kFSTFeedbackSubmitHeight   = 56;
+static const CGFloat kFSTFeedbackSubmitRadius   = 28;
 
 @interface FSTSendFeedbackRootView ()
 @property (nonatomic, strong, readwrite) UITextView *textView;
@@ -31,6 +30,10 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
 @property (nonatomic, strong) NSMutableArray<UIView *> *chipViews;
 @property (nonatomic, strong) UIButton *addPictureButton;
 @property (nonatomic, strong) UIButton *submitButton;
+@property (nonatomic, strong) UILabel *envelopeLabel;
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *moreLabel;
+@property (nonatomic, strong) UIView *textViewContainer;
 @end
 
 @implementation FSTSendFeedbackRootView
@@ -56,14 +59,12 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
 
 - (void)buildBackButton {
     self.backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage *backImage = [[UIImage imageNamed:@"feedback_back"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    [self.backButton setImage:backImage forState:UIControlStateNormal];
+    [self.backButton setImage:[[UIImage imageNamed:@"feedback_back"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
     [self.backButton addTarget:self action:@selector(handleBackTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.backButton];
 }
 
 - (void)buildScrollAndContent {
-    // Scroll view
     self.scrollView = [UIScrollView new];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
@@ -73,76 +74,40 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
     self.contentView = [UIView new];
     [self.scrollView addSubview:self.contentView];
 
-    // Envelope emoji
-    UILabel *envelopeLabel = [UILabel new];
-    envelopeLabel.text = @"\U0001F4E9";
-    envelopeLabel.font = FSTFontRegular(60);
-    envelopeLabel.textAlignment = NSTextAlignmentCenter;
-    [self.contentView addSubview:envelopeLabel];
-    envelopeLabel.tag = 1001;
-
-    // Title
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"How can we help you?";
-    titleLabel.font = FSTFontTitle();
-    titleLabel.textColor = [UIColor blackColor];
-    titleLabel.textAlignment = NSTextAlignmentCenter;
-    [self.contentView addSubview:titleLabel];
-    titleLabel.tag = 1002;
-
-    // Chip container
+    self.envelopeLabel = [UILabel fst_labelWithText:@"\U0001F4E9" font:FSTFontRegular(60) color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
+    self.titleLabel    = [UILabel fst_labelWithText:@"How can we help you?" font:FSTFontTitle() color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
     self.chipContainer = [UIView new];
-    [self.contentView addSubview:self.chipContainer];
+    self.moreLabel     = [UILabel fst_labelWithText:@"Tell us more (optional)" font:FSTFontBold(18) color:[UIColor blackColor]];
 
-    // "Tell us more" label
-    UILabel *moreLabel = [UILabel new];
-    moreLabel.text = @"Tell us more (optional)";
-    moreLabel.font = FSTFontBold(18);
-    moreLabel.textColor = [UIColor blackColor];
-    [self.contentView addSubview:moreLabel];
-    moreLabel.tag = 1003;
-
-    // Text view container
-    UIView *textViewContainer = [UIView new];
-    textViewContainer.backgroundColor = [UIColor fst_inputBackground];
-    textViewContainer.layer.cornerRadius = 16;
-    textViewContainer.layer.masksToBounds = YES;
-    [self.contentView addSubview:textViewContainer];
-    textViewContainer.tag = 1004;
+    self.textViewContainer = [UIView fst_containerWithBackground:[UIColor fst_inputBackground] radius:16];
+    self.textViewContainer.layer.masksToBounds = YES;
 
     self.textView = [UITextView new];
     self.textView.backgroundColor = [UIColor clearColor];
     self.textView.font = FSTFontRegular(16);
     self.textView.textColor = [UIColor blackColor];
     self.textView.textContainerInset = UIEdgeInsetsMake(16, 12, 16, 12);
-    [textViewContainer addSubview:self.textView];
 
-    self.placeholderLabel = [UILabel new];
-    self.placeholderLabel.text = kFSTFeedbackPlaceholder;
-    self.placeholderLabel.font = FSTFontRegular(16);
-    self.placeholderLabel.textColor = [UIColor fst_textSecondary];
-    self.placeholderLabel.numberOfLines = 0;
-    [textViewContainer addSubview:self.placeholderLabel];
+    self.placeholderLabel = [UILabel fst_labelWithText:kFSTFeedbackPlaceholder
+                                                  font:FSTFontRegular(16)
+                                                 color:[UIColor fst_textSecondary]
+                                             alignment:NSTextAlignmentLeft
+                                         numberOfLines:0];
+    [self.textViewContainer fst_addSubviews:@[self.textView, self.placeholderLabel]];
 
-    // Add picture button
     self.addPictureButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.addPictureButton.backgroundColor = [UIColor fst_chipBackground];
     self.addPictureButton.layer.cornerRadius = FSTRadiusS;
     self.addPictureButton.layer.masksToBounds = YES;
-    UIImage *addPicImage = [[UIImage imageNamed:@"feedback_add_picture"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    [self.addPictureButton setImage:addPicImage forState:UIControlStateNormal];
+    [self.addPictureButton setImage:[[UIImage imageNamed:@"feedback_add_picture"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
     [self.addPictureButton addTarget:self action:@selector(handleAddPictureTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.contentView addSubview:self.addPictureButton];
 
-    // Picked image preview
     self.pickedImageView = [UIImageView new];
     self.pickedImageView.contentMode = UIViewContentModeScaleAspectFill;
     self.pickedImageView.layer.cornerRadius = FSTRadiusS;
     self.pickedImageView.layer.masksToBounds = YES;
     self.pickedImageView.hidden = YES;
-    [self.contentView addSubview:self.pickedImageView];
 
-    // Submit button
     self.submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.submitButton.backgroundColor = [UIColor fst_eatingTimeGreen];
     self.submitButton.layer.cornerRadius = kFSTFeedbackSubmitRadius;
@@ -150,7 +115,10 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
     [self.submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.submitButton.titleLabel.font = FSTFontBold(18);
     [self.submitButton addTarget:self action:@selector(handleSubmitTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.contentView addSubview:self.submitButton];
+
+    [self.contentView fst_addSubviews:@[self.envelopeLabel, self.titleLabel, self.chipContainer,
+                                        self.moreLabel, self.textViewContainer,
+                                        self.addPictureButton, self.pickedImageView, self.submitButton]];
 }
 
 #pragma mark - Chips
@@ -162,26 +130,17 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
         [container addSubview:rowView];
 
         NSInteger leftIdx = row * 2;
-        NSInteger rightIdx = leftIdx + 1;
-
-        UIView *leftChip = [self buildChipWithTitle:self.chipTitles[leftIdx] index:leftIdx];
-        UIView *rightChip = [self buildChipWithTitle:self.chipTitles[rightIdx] index:rightIdx];
-        [rowView addSubview:leftChip];
-        [rowView addSubview:rightChip];
+        UIView *leftChip  = [self buildChipWithTitle:self.chipTitles[leftIdx]     index:leftIdx];
+        UIView *rightChip = [self buildChipWithTitle:self.chipTitles[leftIdx + 1] index:leftIdx + 1];
+        [rowView fst_addSubviews:@[leftChip, rightChip]];
 
         [rowView mas_makeConstraints:^(MASConstraintMaker *make) {
-            if (previousRow) {
-                make.top.equalTo(previousRow.mas_bottom).offset(kFSTFeedbackChipSpacingV);
-            } else {
-                make.top.equalTo(container);
-            }
+            if (previousRow) make.top.equalTo(previousRow.mas_bottom).offset(kFSTFeedbackChipSpacingV);
+            else             make.top.equalTo(container);
             make.left.right.equalTo(container);
             make.height.mas_equalTo(kFSTFeedbackChipHeight);
-            if (row == 2) {
-                make.bottom.equalTo(container);
-            }
+            if (row == 2) make.bottom.equalTo(container);
         }];
-
         [leftChip mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.top.bottom.equalTo(rowView);
             make.right.equalTo(rowView.mas_centerX).offset(-kFSTFeedbackChipSpacingH / 2.0);
@@ -190,7 +149,6 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
             make.left.equalTo(rowView.mas_centerX).offset(kFSTFeedbackChipSpacingH / 2.0);
             make.right.top.bottom.equalTo(rowView);
         }];
-
         previousRow = rowView;
     }
 }
@@ -204,15 +162,10 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
     chip.tag = index;
     [chip addTarget:self action:@selector(handleChipTapped:) forControlEvents:UIControlEventTouchUpInside];
 
-    UILabel *label = [UILabel new];
-    label.text = title;
-    label.font = FSTFontMedium(15);
-    label.textColor = [UIColor fst_textHeading];
-    label.textAlignment = NSTextAlignmentCenter;
+    UILabel *label = [UILabel fst_labelWithText:title font:FSTFontMedium(15) color:[UIColor fst_textHeading] alignment:NSTextAlignmentCenter];
     label.tag = 100;
     label.userInteractionEnabled = NO;
     [chip addSubview:label];
-
     [label mas_makeConstraints:^(MASConstraintMaker *make) {
         make.center.equalTo(chip);
         make.left.greaterThanOrEqualTo(chip).offset(12);
@@ -225,11 +178,7 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
 
 - (void)handleChipTapped:(UIControl *)sender {
     NSInteger tappedIndex = sender.tag;
-    if (self.selectedChipIndex == tappedIndex) {
-        self.selectedChipIndex = -1;
-    } else {
-        self.selectedChipIndex = tappedIndex;
-    }
+    self.selectedChipIndex = (self.selectedChipIndex == tappedIndex) ? -1 : tappedIndex;
     [self refreshChipStates];
 }
 
@@ -238,26 +187,15 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
         UIView *chip = self.chipViews[i];
         UILabel *label = [chip viewWithTag:100];
         BOOL selected = (i == self.selectedChipIndex);
-        if (selected) {
-            chip.backgroundColor = [UIColor whiteColor];
-            chip.layer.borderColor = [UIColor fst_eatingTimeGreen].CGColor;
-            label.textColor = [UIColor fst_eatingTimeGreen];
-        } else {
-            chip.backgroundColor = [UIColor fst_chipBackground];
-            chip.layer.borderColor = [UIColor clearColor].CGColor;
-            label.textColor = [UIColor fst_textHeading];
-        }
+        chip.backgroundColor   = selected ? [UIColor whiteColor]            : [UIColor fst_chipBackground];
+        chip.layer.borderColor = selected ? [UIColor fst_eatingTimeGreen].CGColor : [UIColor clearColor].CGColor;
+        label.textColor        = selected ? [UIColor fst_eatingTimeGreen]   : [UIColor fst_textHeading];
     }
 }
 
 #pragma mark - Constraints
 
 - (void)setupConstraints {
-    UILabel *envelopeLabel = [self.contentView viewWithTag:1001];
-    UILabel *titleLabel    = [self.contentView viewWithTag:1002];
-    UILabel *moreLabel     = [self.contentView viewWithTag:1003];
-    UIView  *textViewContainer = [self.contentView viewWithTag:1004];
-
     [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.mas_safeAreaLayoutGuideTop).offset(8);
         make.left.equalTo(self).offset(16);
@@ -271,37 +209,26 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
         make.edges.equalTo(self.scrollView);
         make.width.equalTo(self.scrollView);
     }];
-    [envelopeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.envelopeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView).offset(20);
         make.centerX.equalTo(self.contentView);
     }];
-    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(envelopeLabel.mas_bottom).offset(16);
-        make.left.right.equalTo(self.contentView).inset(kFSTFeedbackSideInset);
-    }];
-    [self.chipContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(titleLabel.mas_bottom).offset(24);
-        make.left.right.equalTo(self.contentView).inset(kFSTFeedbackSideInset);
-    }];
-    [moreLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.chipContainer.mas_bottom).offset(32);
-        make.left.right.equalTo(self.contentView).inset(kFSTFeedbackSideInset);
-    }];
-    [textViewContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(moreLabel.mas_bottom).offset(14);
+    [self pinViewToContentBelow:self.envelopeLabel anchor:self.titleLabel offset:16];
+    [self pinViewToContentBelow:self.titleLabel anchor:self.chipContainer offset:24];
+    [self pinViewToContentBelow:self.chipContainer anchor:self.moreLabel offset:32];
+    [self.textViewContainer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.moreLabel.mas_bottom).offset(14);
         make.left.right.equalTo(self.contentView).inset(kFSTFeedbackSideInset);
         make.height.mas_equalTo(kFSTFeedbackTextViewHeight);
     }];
-    [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(textViewContainer);
-    }];
+    [self.textView fst_pinEdgesToSuperview];
     [self.placeholderLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(textViewContainer).offset(16);
-        make.left.equalTo(textViewContainer).offset(17);
-        make.right.equalTo(textViewContainer).offset(-17);
+        make.top.equalTo(self.textViewContainer).offset(16);
+        make.left.equalTo(self.textViewContainer).offset(17);
+        make.right.equalTo(self.textViewContainer).offset(-17);
     }];
     [self.addPictureButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(textViewContainer.mas_bottom).offset(16);
+        make.top.equalTo(self.textViewContainer.mas_bottom).offset(16);
         make.left.equalTo(self.contentView).offset(kFSTFeedbackSideInset);
         make.size.mas_equalTo(CGSizeMake(48, 48));
     }];
@@ -315,6 +242,14 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
         make.left.right.equalTo(self.contentView).inset(kFSTFeedbackSideInset);
         make.height.mas_equalTo(kFSTFeedbackSubmitHeight);
         make.bottom.equalTo(self.contentView).offset(-40);
+    }];
+}
+
+/// 复用：把 anchor view 钉在 above view 下方，左右贴 contentView 标准 inset。
+- (void)pinViewToContentBelow:(UIView *)above anchor:(UIView *)below offset:(CGFloat)offset {
+    [below mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(above.mas_bottom).offset(offset);
+        make.left.right.equalTo(self.contentView).inset(kFSTFeedbackSideInset);
     }];
 }
 

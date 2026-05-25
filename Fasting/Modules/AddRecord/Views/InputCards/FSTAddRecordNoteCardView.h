@@ -5,11 +5,11 @@
 //  备注卡片：标题"记录" + 多行文本框（灰底，圆角 14）。
 //
 
-#import <UIKit/UIKit.h>
+#import "FSTAddRecordBaseCardView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FSTAddRecordNoteCardView : UIView
+@interface FSTAddRecordNoteCardView : FSTAddRecordBaseCardView
 
 /// 当前文本内容
 @property (nonatomic, copy, nullable) NSString *text;

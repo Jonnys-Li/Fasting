@@ -4,7 +4,7 @@
 //
 //  时间编辑底卡的内容视图 — 承载关闭按钮、标题、滚轮 DatePicker、可选 Align 芯片、保存按钮。
 //  由 FSTTimeEditorSheetViewController 创建并放入 cardContainer 内；
-//  VC 负责状态逻辑（align toggle、clamp date），本视图只负责 UI 创建与约束。
+//  VC 负责状态逻辑（align 应用与否、clamp date），本视图只负责 UI 创建与约束。
 //
 
 #import <UIKit/UIKit.h>
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
-/// 滚轮日期选择器 — VC 读取/设置 date、minimumDate、maximumDate、userInteractionEnabled。
+/// 滚轮日期选择器 — VC 读取/设置 date、minimumDate、maximumDate。
 @property (nonatomic, strong, readonly) UIDatePicker *datePicker;
 
 /// Align 芯片控件，alignChipText 为 nil 时此属性为 nil。
@@ -36,8 +36,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// Align 芯片点击回调。
 @property (nonatomic, copy, nullable) void (^onAlignToggled)(void);
 
-/// 更新 Align 芯片的选中态视觉（背景色、文字色）。
-- (void)setAlignSelected:(BOOL)selected;
+/// 用户滚动 datePicker 触发 UIControlEventValueChanged 时回调；VC 用来更新 align chip 启用态。
+@property (nonatomic, copy, nullable) void (^onPickerValueChanged)(void);
+
+/// 更新 Align 芯片的「启用 / 禁用」视觉态：
+///   enabled=YES → 绿色高亮可点；enabled=NO → 灰色禁用。
+- (void)setAlignEnabled:(BOOL)enabled;
 
 @end
 

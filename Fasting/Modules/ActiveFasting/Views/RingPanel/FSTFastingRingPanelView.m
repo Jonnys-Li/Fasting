@@ -7,7 +7,6 @@
 #import "FSTRingProgressView.h"
 #import "FSTPlanChipPillView.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 #import <CoreImage/CoreImage.h>
 #import <Masonry/Masonry.h>
 

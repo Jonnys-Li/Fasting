@@ -8,6 +8,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FSTTimeEditorSheetViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,22 +24,28 @@ NS_ASSUME_NONNULL_BEGIN
                            initialDate:(NSDate *)initialDate
                               onCommit:(void (^)(NSDate *pickedDate))onCommit;
 
-/// 全功能版 — 用于活跃断食页的 Start/Ends 编辑：可以带 min/max、可以带一个 align chip 让用户切换"按 plan 对齐"。
-/// @param minimumDate   picker 不允许选早于此时间（用于 endDate 至少要 > startDate+60s）。nil 不限。
-/// @param maximumDate   picker 不允许选晚于此时间（如未来时间在活跃中通常禁止）。nil 不限。
-/// @param alignChipText 顶部 chip 的标题（如 "Align with plan"）。nil 时不显示 chip。
-/// @param alignedDate   chip 激活时的"对齐目标日期"。chip 切换会让 picker 跳到该日期并禁用滚动。
-/// @param initiallyAligned 进入时 chip 是否激活态（YES = picker 锁定到 alignedDate）。
-/// @param onCommit       回调参数 (pickedDate, aligned)：aligned=YES 表示当前是 align chip 激活的提交，
-///                       调用方可借此调 sessionManager 的 editActiveStartDate:alignWithPlan: 走 align 分支。
+/// 全功能版 — 用于活跃断食页的 Start/Ends 编辑：可以带 min/max、可以带一个 align chip。
+///
+/// Align chip 行为详见 FSTTimeEditorAlignMode 枚举（StartFast / EndFast / ReferencePlusDuration）：
+///   - 不是 toggle，而是一次性 Apply。点击后 picker 跳到对齐时间，chip 变灰。
+///   - 用户滚动 picker 后 chip 重新亮起（视 mode 决定）。
+///
+/// @param minimumDate          picker 不允许选早于此时间。nil 不限。
+/// @param maximumDate          picker 不允许选晚于此时间。nil 不限。
+/// @param alignChipText        顶部 chip 的标题（如 "Align with 14-10"）。nil 时不显示 chip。
+/// @param alignDurationSeconds 对齐时长（如 plan.fastingHours * 3600）。
+/// @param alignMode            对齐模式；决定启用条件 + targetDate 算法。
+/// @param alignReferenceDate   EndFast / ReferencePlusDuration 模式下的参考时刻；StartFast 模式忽略。
+/// @param onCommit             回调参数 (pickedDate, aligned)：aligned=YES 表示保存时 chip 处于已应用状态。
 - (void)fst_presentTimeEditorWithTitle:(NSString *)title
                            initialDate:(NSDate *)initialDate
                            minimumDate:(nullable NSDate *)minimumDate
                            maximumDate:(nullable NSDate *)maximumDate
                          alignChipText:(nullable NSString *)alignChipText
-                           alignedDate:(nullable NSDate *)alignedDate
-                       initiallyAligned:(BOOL)initiallyAligned
-                               onCommit:(void (^)(NSDate *pickedDate, BOOL aligned))onCommit;
+                  alignDurationSeconds:(NSTimeInterval)alignDurationSeconds
+                             alignMode:(FSTTimeEditorAlignMode)alignMode
+                    alignReferenceDate:(nullable NSDate *)alignReferenceDate
+                              onCommit:(void (^)(NSDate *pickedDate, BOOL aligned))onCommit;
 
 @end
 

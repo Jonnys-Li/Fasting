@@ -8,11 +8,11 @@
 //  - 注意：所有 weight 字段单位恒为 kg；FSTWeightInputViewController 内部处理 lb 显示与换算。
 //
 
-#import <UIKit/UIKit.h>
+#import "FSTAddRecordBaseCardView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FSTAddRecordWeightCardView : UIView
+@interface FSTAddRecordWeightCardView : FSTAddRecordBaseCardView
 
 /// 当次记录体重（kg）。
 /// 写入方：VC 初始化推入；用户点铅笔编辑后通过 onEditTapped → FSTWeightInputViewController → onSave 回写。

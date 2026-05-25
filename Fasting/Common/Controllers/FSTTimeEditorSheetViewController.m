@@ -15,9 +15,16 @@ static const CGFloat kFSTTimeEditorSheetCornerRadius = 22.0;
 @property (nonatomic, strong, nullable) NSDate *minimumDate;
 @property (nonatomic, strong, nullable) NSDate *maximumDate;
 @property (nonatomic, copy, nullable) NSString *alignChipText;
-@property (nonatomic, strong, nullable) NSDate *alignedDate;
-@property (nonatomic, assign) BOOL alignSelected;
+@property (nonatomic, assign) NSTimeInterval alignDurationSeconds;
+@property (nonatomic, assign) FSTTimeEditorAlignMode alignMode;
+@property (nonatomic, strong, nullable) NSDate *alignReferenceDate;
 @property (nonatomic, copy) FSTTimeEditorCommitHandler onCommit;
+
+// 内部状态机（同 demo1）：
+//   alignApplied — chip 刚被点过、picker 已被对齐；保存时此标志同步传给上游。
+//   pickerWasChanged — 用户至少滚动过 picker 一次（EndFast 模式用来决定 chip 何时启用）。
+@property (nonatomic, assign) BOOL alignApplied;
+@property (nonatomic, assign) BOOL pickerWasChanged;
 
 @property (nonatomic, strong) FSTTimeEditorSheetContentView *contentView;
 @end
@@ -29,18 +36,22 @@ static const CGFloat kFSTTimeEditorSheetCornerRadius = 22.0;
                   minimumDate:(nullable NSDate *)minimumDate
                   maximumDate:(nullable NSDate *)maximumDate
                 alignChipText:(nullable NSString *)alignChipText
-                  alignedDate:(nullable NSDate *)alignedDate
-              initiallyAligned:(BOOL)initiallyAligned
-                      onCommit:(FSTTimeEditorCommitHandler)onCommit {
+         alignDurationSeconds:(NSTimeInterval)alignDurationSeconds
+                    alignMode:(FSTTimeEditorAlignMode)alignMode
+           alignReferenceDate:(nullable NSDate *)alignReferenceDate
+                     onCommit:(FSTTimeEditorCommitHandler)onCommit {
     if ((self = [super initWithNibName:nil bundle:nil])) {
         _titleText = [title copy];
         _initialDate = initialDate ?: [NSDate date];
         _minimumDate = minimumDate;
         _maximumDate = maximumDate;
         _alignChipText = [alignChipText copy];
-        _alignedDate = alignedDate;
-        _alignSelected = initiallyAligned && alignChipText.length > 0 && alignedDate != nil;
+        _alignDurationSeconds = MAX(alignDurationSeconds, 60.0);  // 至少 1 分钟，防退化
+        _alignMode = alignMode;
+        _alignReferenceDate = alignReferenceDate;
         _onCommit = [onCommit copy];
+        _alignApplied = NO;
+        _pickerWasChanged = NO;
         self.containerStyle = FSTBaseModalContainerStyleBottomSheet;
         self.backdropAlpha = 0.42;
         self.containerCornerRadius = kFSTTimeEditorSheetCornerRadius;
@@ -51,7 +62,7 @@ static const CGFloat kFSTTimeEditorSheetCornerRadius = 22.0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self buildContentView];
-    [self refreshAlignState];
+    [self refreshAlignControlAppearance];
 }
 
 #pragma mark - Content View
@@ -64,14 +75,15 @@ static const CGFloat kFSTTimeEditorSheetCornerRadius = 22.0;
         make.edges.equalTo(self.cardContainer);
     }];
 
-    self.contentView.datePicker.date = [self clampedDate:self.alignSelected && self.alignedDate ? self.alignedDate : self.initialDate];
+    self.contentView.datePicker.date = [self clampedDate:self.initialDate];
     self.contentView.datePicker.minimumDate = self.minimumDate;
     self.contentView.datePicker.maximumDate = self.maximumDate;
 
     __weak typeof(self) weakSelf = self;
-    self.contentView.onCloseTapped = ^{ [weakSelf handleCloseTapped]; };
-    self.contentView.onSaveTapped  = ^{ [weakSelf handleSaveTapped]; };
-    self.contentView.onAlignToggled = ^{ [weakSelf handleAlignTapped]; };
+    self.contentView.onCloseTapped       = ^{ [weakSelf handleCloseTapped]; };
+    self.contentView.onSaveTapped        = ^{ [weakSelf handleSaveTapped]; };
+    self.contentView.onAlignToggled      = ^{ [weakSelf handleAlignTapped]; };
+    self.contentView.onPickerValueChanged = ^{ [weakSelf handlePickerValueChanged]; };
 }
 
 #pragma mark - State
@@ -83,19 +95,47 @@ static const CGFloat kFSTTimeEditorSheetCornerRadius = 22.0;
     return result;
 }
 
-- (void)refreshAlignState {
-    [self.contentView setAlignSelected:self.alignSelected];
-    self.contentView.datePicker.userInteractionEnabled = !self.alignSelected;
-    if (self.alignSelected && self.alignedDate) {
-        [self.contentView.datePicker setDate:[self clampedDate:self.alignedDate] animated:YES];
+/// chip 是否启用 — 按 mode 分流：
+///   StartFast / ReferencePlusDuration：默认可点；点过一次（alignApplied=YES）后变灰，直到用户改 picker。
+///   EndFast：默认变灰；用户改 picker 后才启用；点过一次后又变灰，直到再次改 picker。
+- (BOOL)isAlignControlEnabled {
+    if (self.alignMode == FSTTimeEditorAlignModeStartFast ||
+        self.alignMode == FSTTimeEditorAlignModeReferencePlusDuration) {
+        return !self.alignApplied;
     }
+    return self.pickerWasChanged && !self.alignApplied;
+}
+
+/// 计算 chip 点击后 picker 应该跳到的目标时间。
+///   StartFast：now - alignDurationSeconds（现在正好是完成点）。
+///   EndFast / ReferencePlusDuration：alignReferenceDate（或 initialDate 兜底）+ alignDurationSeconds。
+- (NSDate *)alignTargetDate {
+    if (self.alignMode == FSTTimeEditorAlignModeStartFast) {
+        return [[NSDate date] dateByAddingTimeInterval:-self.alignDurationSeconds];
+    }
+    NSDate *reference = self.alignReferenceDate ?: self.initialDate;
+    return [reference dateByAddingTimeInterval:self.alignDurationSeconds];
+}
+
+- (void)refreshAlignControlAppearance {
+    if (!self.contentView.alignControl) return;
+    [self.contentView setAlignEnabled:[self isAlignControlEnabled]];
 }
 
 #pragma mark - Events
 
 - (void)handleAlignTapped {
-    self.alignSelected = !self.alignSelected;
-    [self refreshAlignState];
+    if (![self isAlignControlEnabled] || self.alignChipText.length == 0) return;
+    NSDate *target = [self alignTargetDate];
+    [self.contentView.datePicker setDate:[self clampedDate:target] animated:YES];
+    self.alignApplied = YES;
+    [self refreshAlignControlAppearance];
+}
+
+- (void)handlePickerValueChanged {
+    self.pickerWasChanged = YES;
+    self.alignApplied = NO;     // 用户手动改了 picker，对齐失效
+    [self refreshAlignControlAppearance];
 }
 
 - (void)handleCloseTapped {
@@ -103,8 +143,7 @@ static const CGFloat kFSTTimeEditorSheetCornerRadius = 22.0;
 }
 
 - (void)handleSaveTapped {
-    NSDate *pickedDate = self.alignSelected && self.alignedDate ? [self clampedDate:self.alignedDate] : self.contentView.datePicker.date;
-    if (self.onCommit) self.onCommit(pickedDate, self.alignSelected);
+    if (self.onCommit) self.onCommit(self.contentView.datePicker.date, self.alignApplied);
     [self dismissSelfAnimated:YES completion:nil];
 }
 

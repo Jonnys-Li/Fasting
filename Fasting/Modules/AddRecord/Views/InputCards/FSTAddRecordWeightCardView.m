@@ -21,8 +21,6 @@ static const CGFloat kLbPerKg = 2.20462262;
     if ((self = [super init])) {
         _initialWeightKg = 81.2;
         _targetWeightKg = 70.0;
-        self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = FSTRadiusXL;
         [self buildSubviews];
         [self refreshValues];
     }

@@ -5,7 +5,6 @@
 
 #import "FSTTimeRowView.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 
 static const CGFloat kDotSize        = 8;
 static const CGFloat kPencilSize     = 18;

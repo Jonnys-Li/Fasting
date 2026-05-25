@@ -5,7 +5,6 @@
 
 #import "FSTFastingTimesRow.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 #import <Masonry/Masonry.h>
 
 static const CGFloat kFSTFastingTimesRowPencilSize = 24;

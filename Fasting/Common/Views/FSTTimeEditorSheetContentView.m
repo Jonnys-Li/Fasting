@@ -61,6 +61,7 @@ static const CGFloat kFSTTimeEditorSaveHeight          = 48.0;
     if (@available(iOS 13.4, *)) {
         self.datePicker.preferredDatePickerStyle = UIDatePickerStyleWheels;
     }
+    [self.datePicker addTarget:self action:@selector(handlePickerValueChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:self.datePicker];
 
     // — Optional align chip
@@ -151,16 +152,22 @@ static const CGFloat kFSTTimeEditorSaveHeight          = 48.0;
 
 #pragma mark - 公开方法
 
-- (void)setAlignSelected:(BOOL)selected {
+/// 启用态：用绿色高亮系（fst_alignSelectedGreen 背景 + fst_alignSelectedText 文字）告诉用户可点。
+/// 禁用态：用灰色（fst_alignUnselectedGray 背景 + fst_textSecondary 文字）表示当前不可点（已 applied 或 EndFast 未改 picker）。
+- (void)setAlignEnabled:(BOOL)enabled {
     if (!self.alignControl) return;
-    UIColor *backgroundColor = selected
+    UIColor *backgroundColor = enabled
         ? [[UIColor fst_alignSelectedGreen] colorWithAlphaComponent:0.15]
         : [[UIColor fst_alignUnselectedGray] colorWithAlphaComponent:0.30];
-    UIColor *textColor = selected
+    UIColor *textColor = enabled
         ? [UIColor fst_alignSelectedText]
         : [UIColor fst_textSecondary];
     self.alignControl.backgroundColor = backgroundColor;
     self.alignLabel.textColor = textColor;
+    self.alignIconView.tintColor = textColor;
+    // chip 视觉「禁用」但仍保留点击响应 —— 由 VC 端 isAlignControlEnabled 决定要不要忽略点击，
+    // 这样不破坏 UIControl.enabled 的语义，避免影响其他子状态。
+    self.alignControl.userInteractionEnabled = enabled;
 }
 
 #pragma mark - 事件
@@ -175,6 +182,10 @@ static const CGFloat kFSTTimeEditorSaveHeight          = 48.0;
 
 - (void)handleAlignToggled {
     if (self.onAlignToggled) self.onAlignToggled();
+}
+
+- (void)handlePickerValueChanged {
+    if (self.onPickerValueChanged) self.onPickerValueChanged();
 }
 
 @end

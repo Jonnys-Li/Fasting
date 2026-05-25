@@ -9,7 +9,6 @@
 #import "FSTFastingTimesRow.h"
 #import "FSTFastingTipsSectionView.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 
 static const CGFloat kFSTActiveFastingHeadlineTopOffset      = 8;
 static const CGFloat kFSTActiveFastingHeadlineWidth          = 155;

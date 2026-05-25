@@ -16,8 +16,6 @@
 - (instancetype)init {
     if ((self = [super init])) {
         _feelingLevel = 1;
-        self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = FSTRadiusXL;
         [self buildSubviews];
         [self refreshSelection];
     }

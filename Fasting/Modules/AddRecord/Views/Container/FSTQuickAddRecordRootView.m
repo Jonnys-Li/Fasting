@@ -6,7 +6,6 @@
 #import "FSTQuickAddRecordRootView.h"
 #import "FSTTimeRowView.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 #import "UILabel+FSTStyle.h"
 
 static const CGFloat kQuickAddSideInset    = 24;

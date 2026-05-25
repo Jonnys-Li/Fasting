@@ -12,6 +12,7 @@
 #import "FSTFastingCardCell.h"
 #import "FSTFastingTimelineCardView.h"
 #import "FSTRecordsRepository.h"
+#import "FSTTheme.h"
 
 @interface FSTFastingHistoryViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, copy) NSArray<FSTFastingRecord *> *records;
@@ -56,6 +57,25 @@
 - (void)reloadRecords {
     self.records = [[FSTRecordsRepository sharedRepository] allRecords];
     [self.rootView.tableView reloadData];
+    [self refreshDateHeader];
+}
+
+/// 顶部「相对日期」label 跟随当前最上方可见 record 的 startDate 切换文案
+/// （Today / Yesterday / Tomorrow / May 12 等）。
+- (void)refreshDateHeader {
+    NSIndexPath *topVisible = self.rootView.tableView.indexPathsForVisibleRows.firstObject;
+    if (!topVisible || topVisible.row >= (NSInteger)self.records.count) {
+        self.rootView.todayText = @"Today";
+        return;
+    }
+    NSDate *date = self.records[topVisible.row].startDate ?: [NSDate date];
+    self.rootView.todayText = FSTFormatRelativeDay(date);
+}
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [self refreshDateHeader];
 }
 
 #pragma mark - UITableViewDataSource/Delegate

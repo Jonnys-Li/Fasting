@@ -5,11 +5,11 @@
 //  时间卡片：显示当前计划、开始/结束时间行（点击展开 UIDatePicker）、底部提示。
 //
 
-#import <UIKit/UIKit.h>
+#import "FSTAddRecordBaseCardView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FSTAddRecordTimeCardView : UIView
+@interface FSTAddRecordTimeCardView : FSTAddRecordBaseCardView
 
 /// 当前断食计划名（如 "14-10"），显示在卡片头
 @property (nonatomic, copy, nullable) NSString *planName;

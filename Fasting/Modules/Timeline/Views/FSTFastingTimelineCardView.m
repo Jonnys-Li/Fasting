@@ -92,110 +92,78 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 }
 
 - (void)buildSubviews {
-    self.badgeImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_target_badge"]];
-    self.badgeImageView.contentMode = UIViewContentModeScaleAspectFit;
-    [self addSubview:self.badgeImageView];
-
-    self.titleLabel = [UILabel new];
-    self.titleLabel.font = FSTFontSubhead();
-    self.titleLabel.textColor = [UIColor whiteColor];
-    [self addSubview:self.titleLabel];
-
-    self.streakImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_streak_bolts"]];
-    self.streakImageView.contentMode = UIViewContentModeScaleAspectFit;
-    [self addSubview:self.streakImageView];
+    self.badgeImageView = [self originalImageViewNamed:@"tl_target_badge" fit:YES];
+    self.titleLabel = [UILabel fst_labelWithText:nil font:FSTFontSubhead() color:[UIColor whiteColor]];
+    self.streakImageView = [self originalImageViewNamed:@"tl_streak_bolts" fit:YES];
 
     self.moreControl = [UIControl new];
     [self.moreControl addTarget:self action:@selector(handleMoreTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:self.moreControl];
 
-    self.chevronImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_chevron"]];
-    self.chevronImageView.contentMode = UIViewContentModeScaleAspectFit;
-    [self.moreControl addSubview:self.chevronImageView];
+    self.chevronImageView = [self originalImageViewNamed:@"tl_chevron" fit:YES];
 
     self.dividerView = [UIView new];
     self.dividerView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.2];
     self.dividerView.userInteractionEnabled = NO;
-    [self addSubview:self.dividerView];
 
-    self.hoursValueLabel = [self durationValueLabel];
-    self.hoursUnitLabel = [self durationUnitLabelWithText:@"hours"];
+    self.hoursValueLabel   = [self durationValueLabel];
+    self.hoursUnitLabel    = [self durationUnitLabelWithText:@"hours"];
     self.minutesValueLabel = [self durationValueLabel];
-    self.minutesUnitLabel = [self durationUnitLabelWithText:@"mins"];
-    [self addSubview:self.hoursValueLabel];
-    [self addSubview:self.hoursUnitLabel];
-    [self addSubview:self.minutesValueLabel];
-    [self addSubview:self.minutesUnitLabel];
+    self.minutesUnitLabel  = [self durationUnitLabelWithText:@"mins"];
 
     self.ratingContainerView = [UIView new];
     self.ratingContainerView.userInteractionEnabled = NO;
-    [self addSubview:self.ratingContainerView];
+    self.ratingImageView = [self originalImageViewNamed:@"tl_rating_ok" fit:YES];
 
-    self.ratingImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_rating_ok"]];
-    self.ratingImageView.contentMode = UIViewContentModeScaleAspectFit;
-    [self.ratingContainerView addSubview:self.ratingImageView];
-
-    self.timelinePanelView = [UIView new];
-    self.timelinePanelView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.06];
-    self.timelinePanelView.layer.cornerRadius = FSTRadiusM;
+    self.timelinePanelView = [UIView fst_containerWithBackground:[[UIColor blackColor] colorWithAlphaComponent:0.06] radius:FSTRadiusM];
     self.timelinePanelView.userInteractionEnabled = NO;
-    [self addSubview:self.timelinePanelView];
 
-    self.startDotView = [UIView new];
-    self.startDotView.backgroundColor = [UIColor fst_timelineInnerGreen];
-    self.startDotView.layer.cornerRadius = 4.0;
-    [self.timelinePanelView addSubview:self.startDotView];
-
-    self.connectorImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_timeline_connector"]];
+    self.startDotView = [UIView fst_containerWithBackground:[UIColor fst_timelineInnerGreen] radius:4.0];
+    self.connectorImageView = [self originalImageViewNamed:@"tl_timeline_connector" fit:NO];
     self.connectorImageView.contentMode = UIViewContentModeScaleToFill;
-    [self.timelinePanelView addSubview:self.connectorImageView];
+    self.endDotImageView = [self originalImageViewNamed:@"tl_timeline_dot" fit:YES];
 
-    self.endDotImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"tl_timeline_dot"]];
-    self.endDotImageView.contentMode = UIViewContentModeScaleAspectFit;
-    [self.timelinePanelView addSubview:self.endDotImageView];
-
-    self.startLabel = [self timelineCaptionLabelWithText:@"Start"];
+    self.startLabel      = [self timelineCaptionLabelWithText:@"Start"];
     self.startValueLabel = [self timelineValueLabel];
-    self.endLabel = [self timelineCaptionLabelWithText:@"End"];
-    self.endValueLabel = [self timelineValueLabel];
-    [self.timelinePanelView addSubview:self.startLabel];
-    [self.timelinePanelView addSubview:self.startValueLabel];
-    [self.timelinePanelView addSubview:self.endLabel];
-    [self.timelinePanelView addSubview:self.endValueLabel];
+    self.endLabel        = [self timelineCaptionLabelWithText:@"End"];
+    self.endValueLabel   = [self timelineValueLabel];
+
+    [self.moreControl addSubview:self.chevronImageView];
+    [self.ratingContainerView addSubview:self.ratingImageView];
+    [self.timelinePanelView fst_addSubviews:@[self.startDotView, self.connectorImageView, self.endDotImageView,
+                                              self.startLabel, self.startValueLabel, self.endLabel, self.endValueLabel]];
+    [self fst_addSubviews:@[self.badgeImageView, self.titleLabel, self.streakImageView, self.moreControl,
+                            self.dividerView, self.hoursValueLabel, self.hoursUnitLabel,
+                            self.minutesValueLabel, self.minutesUnitLabel,
+                            self.ratingContainerView, self.timelinePanelView]];
 
     [self installConstraints];
 }
 
+- (UIImageView *)originalImageViewNamed:(NSString *)name fit:(BOOL)aspectFit {
+    UIImageView *view = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:name]];
+    if (aspectFit) view.contentMode = UIViewContentModeScaleAspectFit;
+    return view;
+}
+
 - (UILabel *)durationValueLabel {
-    UILabel *label = [UILabel new];
-    label.font = [UIFont monospacedDigitSystemFontOfSize:32 weight:UIFontWeightBold];
-    label.textColor = [UIColor whiteColor];
+    UILabel *label = [UILabel fst_labelWithText:nil
+                                           font:[UIFont monospacedDigitSystemFontOfSize:32 weight:UIFontWeightBold]
+                                          color:[UIColor whiteColor]];
     label.adjustsFontSizeToFitWidth = YES;
     label.minimumScaleFactor = 0.75;
     return label;
 }
 
 - (UILabel *)durationUnitLabelWithText:(NSString *)text {
-    UILabel *label = [UILabel new];
-    label.font = FSTFontRegular(16);
-    label.textColor = [UIColor whiteColor];
-    label.text = text;
-    return label;
+    return [UILabel fst_labelWithText:text font:FSTFontRegular(16) color:[UIColor whiteColor]];
 }
 
 - (UILabel *)timelineCaptionLabelWithText:(NSString *)text {
-    UILabel *label = [UILabel new];
-    label.font = FSTFontBody();
-    label.textColor = [[UIColor whiteColor] colorWithAlphaComponent:0.75];
-    label.text = text;
-    return label;
+    return [UILabel fst_labelWithText:text font:FSTFontBody() color:[[UIColor whiteColor] colorWithAlphaComponent:0.75]];
 }
 
 - (UILabel *)timelineValueLabel {
-    UILabel *label = [UILabel new];
-    label.font = FSTFontBold(15);
-    label.textColor = [UIColor whiteColor];
-    label.textAlignment = NSTextAlignmentRight;
+    UILabel *label = [UILabel fst_labelWithText:nil font:FSTFontBold(15) color:[UIColor whiteColor] alignment:NSTextAlignmentRight];
     label.adjustsFontSizeToFitWidth = YES;
     label.minimumScaleFactor = 0.75;
     return label;

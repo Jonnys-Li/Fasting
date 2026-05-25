@@ -6,7 +6,7 @@
 #import "FSTRootTabBarController.h"
 #import "FSTDailyPlanViewController.h"
 #import "FSTTimelineViewController.h"
-#import "FSTPlanSelectViewController.h"
+#import "FSTAppRouter.h"
 #import "FSTTheme.h"
 
 static const NSTimeInterval kFSTTabChromeSuppressionDelay = 0.12;
@@ -35,13 +35,11 @@ static const NSTimeInterval kFSTTabChromeSuppressionDelay = 0.12;
                                                                     selectedImage:dailySelected];
     timelineNavigationController.tabBarItem.imageInsets = UIEdgeInsetsMake(-8, 0, 4, 0);
 
-
     FSTDailyPlanViewController *dailyPlanViewController = [FSTDailyPlanViewController new];
     UINavigationController *fastingNavigationController = [[UINavigationController alloc] initWithRootViewController:dailyPlanViewController];
     fastingNavigationController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Fasting"
                                                                            image:fastingUnselected
                                                                    selectedImage:fastingSelected];
-
     fastingNavigationController.tabBarItem.imageInsets = UIEdgeInsetsMake(-6, 0, 2, 0);
 
     // Explore: 占位 controller，仅承载 tabBarItem；点击时由 delegate 拦截改为 modal 弹出 Choose Plan。
@@ -93,10 +91,8 @@ static const NSTimeInterval kFSTTabChromeSuppressionDelay = 0.12;
 shouldSelectViewController:(UIViewController *)viewController {
     NSInteger targetIndex = [tabBarController.viewControllers indexOfObject:viewController];
     if (targetIndex == FSTTabIndexExplore) {
-        FSTPlanSelectViewController *picker = [FSTPlanSelectViewController new];
-        picker.modalPresentationStyle = UIModalPresentationFullScreen;
         UIViewController *presenter = tabBarController.selectedViewController ?: tabBarController;
-        [presenter presentViewController:picker animated:YES completion:nil];
+        [FSTAppRouter presentPlanPickerFrom:presenter onPick:nil];
         return NO;  // 不真正切到 Explore tab，保留当前 tab 高亮
     }
     return YES;

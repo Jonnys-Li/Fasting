@@ -37,24 +37,16 @@
     UIView *dotView = [self buildTimelineDot];
     self.topLineView = [self buildTimelineLine];
     self.bottomLineView = [self buildTimelineLine];
-    UILabel *timeLabel = [self buildTimeLabel];
+    UILabel *timeLabel = [UILabel fst_labelWithText:self.dateText font:FSTFontBody() color:[UIColor fst_textSecondary]];
     UIButton *editButton = [self buildEditButton];
     UIControl *cardView = [self buildCard];
     UILabel *foodIconLabel = [self buildFoodIcon];
     UILabel *categoryChipLabel = [self pillLabelWithText:self.category ?: @"Meal"];
-    UILabel *dietChipLabel = [self pillLabelWithText:self.dietType ?: @"Not sure"];
+    UILabel *dietChipLabel     = [self pillLabelWithText:self.dietType ?: @"Not sure"];
     UIImageView *feelingImageView = [self buildFeelingImageView];
 
-    [self addSubview:self.topLineView];
-    [self addSubview:self.bottomLineView];
-    [self addSubview:dotView];
-    [self addSubview:timeLabel];
-    [self addSubview:editButton];
-    [self addSubview:cardView];
-    [cardView addSubview:foodIconLabel];
-    [cardView addSubview:categoryChipLabel];
-    [cardView addSubview:dietChipLabel];
-    [cardView addSubview:feelingImageView];
+    [self fst_addSubviews:@[self.topLineView, self.bottomLineView, dotView, timeLabel, editButton, cardView]];
+    [cardView fst_addSubviews:@[foodIconLabel, categoryChipLabel, dietChipLabel, feelingImageView]];
 
     [dotView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self);
@@ -125,14 +117,6 @@
     return lineView;
 }
 
-- (UILabel *)buildTimeLabel {
-    UILabel *timeLabel = [UILabel new];
-    timeLabel.text = self.dateText;
-    timeLabel.font = FSTFontBody();
-    timeLabel.textColor = [UIColor fst_textSecondary];
-    return timeLabel;
-}
-
 - (UIButton *)buildEditButton {
     UIButton *editButton = [UIButton buttonWithType:UIButtonTypeCustom];
     UIImage *pencilImage = [[UIImage imageNamed:@"edit_pencil"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
@@ -155,13 +139,13 @@
 }
 
 - (UILabel *)buildFoodIcon {
-    UILabel *iconLabel = [UILabel new];
+    UILabel *iconLabel = [UILabel fst_labelWithText:[self.category isEqualToString:@"Snack"] ? @"\U0001F34E" : @"\U0001F37D"
+                                                font:FSTFontRegular(34)
+                                               color:[UIColor blackColor]
+                                           alignment:NSTextAlignmentCenter];
     iconLabel.backgroundColor = [UIColor whiteColor];
     iconLabel.layer.cornerRadius = FSTRadiusM;
     iconLabel.clipsToBounds = YES;
-    iconLabel.text = [self.category isEqualToString:@"Snack"] ? @"\U0001F34E" : @"\U0001F37D";
-    iconLabel.font = FSTFontRegular(34);
-    iconLabel.textAlignment = NSTextAlignmentCenter;
     return iconLabel;
 }
 
@@ -178,14 +162,13 @@
 }
 
 - (UILabel *)pillLabelWithText:(NSString *)text {
-    UILabel *label = [UILabel new];
-    label.text = [NSString stringWithFormat:@"  %@  ", text];
-    label.font = FSTFontBody();
-    label.textColor = [UIColor fst_textPrimary];
+    UILabel *label = [UILabel fst_labelWithText:[NSString stringWithFormat:@"  %@  ", text]
+                                            font:FSTFontBody()
+                                           color:[UIColor fst_textPrimary]
+                                       alignment:NSTextAlignmentCenter];
     label.backgroundColor = [UIColor whiteColor];
     label.layer.cornerRadius = FSTRadiusChip;
     label.clipsToBounds = YES;
-    label.textAlignment = NSTextAlignmentCenter;
     return label;
 }
 

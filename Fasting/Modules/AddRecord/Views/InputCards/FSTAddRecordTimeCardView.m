@@ -23,8 +23,6 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
-        self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = FSTRadiusXL;
         [self buildSubviews];
         [self refreshValues];
     }

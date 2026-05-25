@@ -6,23 +6,21 @@
 //  已选计划但未开始时显示「准备开始断食」页面（黄色提示卡 + 空圆环 + 开始按钮）。
 //
 //  UI 组装由 FSTDailyPlanPickerView / FSTDailyPlanReadyView 承担；VC 负责状态分发、
-//  topBar 创建、ready 态数据刷新（含定时器）、用户事件与导航。
+//  topBar 创建、ready 态数据刷新（含定时器）、用户事件与导航（导航统一走 FSTAppRouter）。
 //
 
 #import "FSTDailyPlanViewController.h"
 #import "FSTPlanConfirmViewController.h"
-#import "FSTActiveFastingViewController.h"
-#import "FSTMealDetailViewController.h"
-#import "FSTPlanSelectViewController.h"
+#import "FSTAppRouter.h"
+#import "FSTModalDialogViewController.h"
 #import "FSTDailyPlanPickerView.h"
 #import "FSTDailyPlanReadyView.h"
 #import "FSTSessionManager.h"
-#import "FSTDailyPlanReadyDisplayState.h"
+#import "FSTRecordsRepository.h"
 #import "FSTPlan.h"
 #import "FSTFastingTopBar.h"
 #import "UIButton+FST.h"
 #import "UIViewController+FSTTimeEditor.h"
-#import "FSTQuickAddRecordViewController.h"
 #import "FSTTheme.h"
 
 static const CGFloat kFSTDailyPlanTopBarHeightPicker = 84;
@@ -59,9 +57,9 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
     // (2) 在本页停留 — 重新组装内容（PickerView vs ReadyView 二选一）。
     // topViewController 判断防止 push 链路下重复执行。
     if ([[FSTSessionManager sharedManager] hasActiveFasting] && self.navigationController.topViewController == self) {
-        FSTActiveFastingViewController *activeFastingViewController = [FSTActiveFastingViewController new];
-        activeFastingViewController.promptsForStartTimeOnFirstAppear = [[FSTSessionManager sharedManager] consumeActiveStartDatePromptRequest];
-        [self.navigationController pushViewController:activeFastingViewController animated:NO];
+        [FSTAppRouter pushActiveFastingFrom:self
+                          promptForStartTime:[[FSTSessionManager sharedManager] consumeActiveStartDatePromptRequest]
+                                    animated:NO];
     } else if (self.navigationController.topViewController == self) {
         [self reloadRootContent];
     }
@@ -262,34 +260,76 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 
 #pragma mark - Ready 态数据刷新与定时器
 
+/// 每秒触发：根据吃窗口 / 预约状态推导 ReadyView 字段并下发。
+/// 三态优先级：scheduledCountdown > readyAfterEating > 普通 eatingWindow。
+/// 已到预约时刻则原地 startFasting + push 到 Active 页。
 - (void)refreshReadyState {
     if (!self.showingReadyState || !self.readyView) return;
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    FSTDailyPlanReadyDisplayState *state = [FSTDailyPlanReadyDisplayState stateForPlan:sessionManager.currentPlan];
+    FSTPlan *plan = sessionManager.currentPlan;
+    NSDate *now = [NSDate date];
+    NSDate *nextStartDate = [sessionManager nextFastingStartDate];
 
-    if (state.shouldAutoStartScheduledFasting) {
-        // 工厂已经判定"应该自动起始"——VC 这里只负责数据写入 + push 导航。
-        [sessionManager startFastingWithPlan:sessionManager.currentPlan startDate:state.scheduledFireDate];
+    // 自动起始已预约的断食：scheduled && nextStartDate <= now && plan 存在。
+    BOOL scheduled = (sessionManager.scheduledReadySource != FSTScheduledReadySourceNone) && (nextStartDate != nil);
+    if (scheduled && plan != nil && [nextStartDate compare:now] != NSOrderedDescending) {
+        [sessionManager startFastingWithPlan:plan startDate:nextStartDate];
         if (self.navigationController.topViewController == self) {
-            [self.navigationController pushViewController:[FSTActiveFastingViewController new] animated:YES];
+            [FSTAppRouter pushActiveFastingFrom:self promptForStartTime:NO];
         }
         return;
     }
 
-    [self applyReadyDisplayState:state];
+    // 吃窗口推导 — 基于 plan.eatingHours / fastingHours 与 nextStart/latestEnd 时刻。
+    NSTimeInterval eatingHours  = plan.eatingHours  > 0 ? plan.eatingHours  : 10.0;
+    NSTimeInterval fastingHours = plan.fastingHours > 0 ? plan.fastingHours : 14.0;
+    NSTimeInterval eatingWindowSeconds  = MAX(1, eatingHours  * 3600.0);
+    NSTimeInterval fastingWindowSeconds = MAX(1, fastingHours * 3600.0);
+    NSDate *resolvedNextStart = nextStartDate ?: [now dateByAddingTimeInterval:eatingWindowSeconds];
+    NSDate *windowStartDate   = [resolvedNextStart dateByAddingTimeInterval:-eatingWindowSeconds];
+    NSDate *resolvedNextEnd   = [resolvedNextStart dateByAddingTimeInterval:fastingWindowSeconds];
+    NSTimeInterval elapsed    = MAX(0, [now timeIntervalSinceDate:windowStartDate]);
+    NSTimeInterval remaining  = MAX(0, [resolvedNextStart timeIntervalSinceDate:now]);
+    BOOL readyToStart         = remaining <= 0.0;
+    NSDate *latestFastEnd = [[FSTRecordsRepository sharedRepository] latestFastingEndDate] ?: windowStartDate;
+    // 可开始态以 nextStart 为基准衡量"已超时多久"；普通态以 latestFastEnd 为基准
+    NSTimeInterval timeSinceLastFast = readyToStart
+        ? MAX(0, [now timeIntervalSinceDate:resolvedNextStart])
+        : MAX(0, [now timeIntervalSinceDate:latestFastEnd]);
+    CGFloat windowProgress = (CGFloat)MIN(1.0, elapsed / eatingWindowSeconds);
+
+    // 三态：scheduledCountdown 优先（即便吃窗口耗尽也保留倒计时视觉）。
+    BOOL scheduledCountdown = scheduled && [nextStartDate compare:now] == NSOrderedDescending;
+    BOOL readyAfterEating = !scheduledCountdown && readyToStart;
+    BOOL compactLayout = scheduledCountdown || readyAfterEating;
+
+    self.readyView.titleText = scheduledCountdown ? @"Ready to start fasting!"
+                             : (readyAfterEating ? @"Ready to start fasting?" : @"Eating Time");
+    self.readyView.ringPresentationState = scheduledCountdown ? FSTDailyPlanReadyRingPresentationScheduledCountdown
+                                         : (readyAfterEating ? FSTDailyPlanReadyRingPresentationReadyToStartFasting
+                                                             : FSTDailyPlanReadyRingPresentationEatingWindow);
+    self.readyView.elapsedText           = FSTFormatHHMMSS(elapsed);
+    self.readyView.ringProgress          = scheduledCountdown
+        ? [self scheduledProgressForStartDate:nextStartDate referenceDate:now]
+        : windowProgress;
+    self.readyView.remainingText         = FSTFormatHHMMSS(scheduledCountdown
+        ? [nextStartDate timeIntervalSinceDate:now]
+        : remaining);
+    self.readyView.timeSinceLastFastText = FSTFormatHHMMSS(timeSinceLastFast);
+    self.readyView.nextFastStartText     = FSTFormatRelativeDateTime(resolvedNextStart);
+    self.readyView.nextFastEndText       = FSTFormatRelativeDateTime(resolvedNextEnd);
+    self.readyView.primaryActionMode     = scheduledCountdown ? FSTDailyPlanReadyPrimaryActionAbortPlan
+                                                              : FSTDailyPlanReadyPrimaryActionStartFasting;
+    [self.readyView applyReadyToStartLayout:compactLayout];
 }
 
-- (void)applyReadyDisplayState:(FSTDailyPlanReadyDisplayState *)state {
-    self.readyView.titleText             = state.titleText;
-    self.readyView.ringPresentationState = state.ringPresentationState;
-    self.readyView.elapsedText           = state.elapsedText;
-    self.readyView.ringProgress          = state.ringProgress;
-    self.readyView.remainingText         = state.remainingText;
-    self.readyView.timeSinceLastFastText = state.timeSinceLastFastText;
-    self.readyView.nextFastStartText     = state.nextFastStartText;
-    self.readyView.nextFastEndText       = state.nextFastEndText;
-    self.readyView.primaryActionMode     = state.primaryActionMode;
-    [self.readyView applyReadyToStartLayout:state.compactLayout];
+/// ScheduledCountdown 圆环进度：从 anchorDate 到 startDate 的线性比例。
+- (CGFloat)scheduledProgressForStartDate:(NSDate *)startDate referenceDate:(NSDate *)referenceDate {
+    if (!startDate) return 0;
+    NSDate *anchorDate = [FSTSessionManager sharedManager].scheduledReadyAnchorDate ?: referenceDate;
+    NSTimeInterval total = MAX(1.0, [startDate timeIntervalSinceDate:anchorDate]);
+    NSTimeInterval elapsed = MAX(0, [referenceDate timeIntervalSinceDate:anchorDate]);
+    return (CGFloat)MIN(1.0, elapsed / total);
 }
 
 #pragma mark - 事件
@@ -307,14 +347,11 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 }
 
 - (void)handleSoftChangePlanTapped {
-    FSTPlanSelectViewController *plansViewController = [FSTPlanSelectViewController new];
-    plansViewController.modalPresentationStyle = UIModalPresentationFullScreen;
     __weak typeof(self) weakSelf = self;
-    plansViewController.onPlanPicked = ^(FSTPlan *picked) {
+    [FSTAppRouter presentPlanPickerFrom:self onPick:^(FSTPlan *picked) {
         [[FSTSessionManager sharedManager] switchToPlanPreservingState:picked];
         [weakSelf reloadRootContent];
-    };
-    [self presentViewController:plansViewController animated:YES completion:nil];
+    }];
 }
 
 - (void)handleEditNextFastStartTapped {
@@ -350,7 +387,7 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
         if (!currentPlan) return;
         [sessionManager setNextFastingStartDate:nil];
         [sessionManager startFastingWithPlan:currentPlan startDate:pickedDate];
-        [self.navigationController pushViewController:[FSTActiveFastingViewController new] animated:YES];
+        [FSTAppRouter pushActiveFastingFrom:self promptForStartTime:NO];
     } else {
         FSTScheduledReadySource source = sessionManager.scheduledReadySource;
         [sessionManager setNextFastingStartDate:pickedDate];
@@ -362,32 +399,30 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 }
 
 - (void)handleBellTapped {
-    [self showComingSoonAlertWithTitle:@"Reminder" message:@"Reminder feature coming soon."];
+    [FSTAppRouter showAlertFrom:self title:@"Reminder" message:@"Reminder feature coming soon." buttonTitle:@"Got it"];
 }
 
 - (void)handleAteTapped {
     // Plan tab 进入：保存后切到 Timeline 让新 meal 立刻可见。
-    FSTMealDetailViewController *mealDetailViewController =
-        [[FSTMealDetailViewController alloc] initWithMealRecord:nil returnsToTimelineTab:YES];
-    [self.navigationController pushViewController:mealDetailViewController animated:YES];
+    [FSTAppRouter pushMealDetailFrom:self record:nil returnsToTimeline:YES];
 }
 
 - (void)handleAddRecordTapped {
-    FSTQuickAddRecordViewController *vc = [FSTQuickAddRecordViewController new];
-    vc.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:vc animated:YES];
+    [FSTAppRouter pushQuickAddRecordFrom:self];
 }
 
 - (void)handleBreakingFastTapped {
-    [self showComingSoonAlertWithTitle:@"Breaking fast" message:@"Feature in development."];
-}
-
-- (void)showComingSoonAlertWithTitle:(NSString *)title message:(NSString *)message {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
-                                                                              message:message
-                                                                       preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Got it" style:UIAlertActionStyleDefault handler:nil]];
-    [self presentViewController:alertController animated:YES completion:nil];
+    // 复用 FSTModalDialogViewController（与 ActiveFasting 的 phaseDialog 同款居中卡片），
+    // 图标用现成的 breaking_fast_food 资源（FSTBreakingFastCardView 也在用）。
+    FSTModalDialogViewController *dialog =
+        [[FSTModalDialogViewController alloc] initWithIconImageName:@"breaking_fast_food"
+                                                              title:@"Breaking fast"
+                                                            message:@"Your fast is over. It's time to replenish with light, nutritious food."
+                                                       primaryTitle:@"Got it"
+                                                     secondaryTitle:nil
+                                                     primaryHandler:nil
+                                                   secondaryHandler:nil];
+    [self presentViewController:dialog animated:YES completion:nil];
 }
 
 - (void)handleAbortScheduledReadyTapped {
@@ -421,9 +456,7 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
         return;
     }
     [[FSTSessionManager sharedManager] startFastingWithPlan:currentPlan startDate:[NSDate date]];
-    FSTActiveFastingViewController *activeFastingViewController = [FSTActiveFastingViewController new];
-    activeFastingViewController.promptsForStartTimeOnFirstAppear = YES;
-    [self.navigationController pushViewController:activeFastingViewController animated:YES];
+    [FSTAppRouter pushActiveFastingFrom:self promptForStartTime:YES];
 }
 
 - (void)handlePlanTapped:(FSTPlan *)plan {

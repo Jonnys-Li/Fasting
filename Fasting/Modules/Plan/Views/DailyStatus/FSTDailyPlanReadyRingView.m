@@ -10,7 +10,13 @@
 #import "FSTRingProgressView.h"
 #import "FSTPlanChipPillView.h"
 #import "FSTTheme.h"
-#import "FSTPercentFormatter.h"
+#import <math.h>
+
+/// 把已用/目标比例钳到 UI 百分比：未达标上限 99（避免 99.6% 被四舍五入到 100），达标允许 100。
+static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
+    NSInteger percent = (NSInteger)lround(MAX(0, fraction) * 100.0);
+    return targetReached ? MIN(100, MAX(0, percent)) : MIN(99, MAX(0, percent));
+}
 
 @interface FSTDailyPlanReadyRingView ()
 @property (nonatomic, strong) FSTRingProgressView *ringProgressView;
@@ -129,7 +135,7 @@
     self.ringProgressView.arrowHeadTintColor = readyToStart ? [UIColor whiteColor] : [UIColor fst_amber];
 
     if (scheduledCountdown) {
-        NSInteger elapsedPercent = [FSTPercentFormatter clampedPercentForFraction:clampedProgress targetReached:clampedProgress >= 1.0];
+        NSInteger elapsedPercent = FSTRingElapsedPercent(clampedProgress, clampedProgress >= 1.0);
         NSInteger remainingPercent = clampedProgress >= 1.0 ? 0 : (100 - elapsedPercent);
         self.ringProgressView.fillStyle = FSTRingFillStyleRecedingFromStart;
         self.captionLabel.text = [NSString stringWithFormat:@"Remaining time %ld%%", (long)remainingPercent];
@@ -147,7 +153,7 @@
         return;
     }
 
-    NSInteger elapsedPercent = [FSTPercentFormatter clampedPercentForFraction:clampedProgress targetReached:clampedProgress >= 1.0];
+    NSInteger elapsedPercent = FSTRingElapsedPercent(clampedProgress, clampedProgress >= 1.0);
     self.ringProgressView.fillStyle = self.isShowingRemaining ? FSTRingFillStyleRecedingFromStart : FSTRingFillStyleForward;
     if (self.isShowingRemaining) {
         self.captionLabel.text = [NSString stringWithFormat:@"Remaining time %ld%%", (long)(100 - elapsedPercent)];

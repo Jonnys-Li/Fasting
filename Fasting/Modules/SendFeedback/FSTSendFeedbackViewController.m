@@ -3,14 +3,13 @@
 //  Fasting
 //
 //  Send Feedback 页面：选择反馈类别 + 可选文字描述 + 可选图片 + 提交。
+//  当前实现：UI 完整保留，但 submit / addPicture 仅做"样子"，不真实上传或选图。
 //
 
 #import "FSTSendFeedbackViewController.h"
 #import "FSTSendFeedbackRootView.h"
-#import <PhotosUI/PhotosUI.h>
 
-@interface FSTSendFeedbackViewController () <UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
-@property (nonatomic, strong) UIImage *pickedImage;
+@interface FSTSendFeedbackViewController () <UITextViewDelegate>
 @end
 
 @implementation FSTSendFeedbackViewController
@@ -32,15 +31,9 @@
     self.rootView.textView.delegate = self;
 
     __weak typeof(self) weakSelf = self;
-    self.rootView.onBackTapped = ^{
-        [weakSelf handleBack];
-    };
-    self.rootView.onSubmitTapped = ^{
-        [weakSelf handleSubmit];
-    };
-    self.rootView.onAddPictureTapped = ^{
-        [weakSelf handleAddPicture];
-    };
+    self.rootView.onBackTapped       = ^{ [weakSelf handleBack]; };
+    self.rootView.onSubmitTapped     = ^{ [weakSelf handleSubmit]; };
+    self.rootView.onAddPictureTapped = ^{ /* 样子化：保留按钮，点击 noop */ };
 }
 
 #pragma mark - UITextViewDelegate
@@ -55,35 +48,9 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)handleAddPicture {
-    UIImagePickerController *picker = [UIImagePickerController new];
-    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    picker.delegate = self;
-    [self presentViewController:picker animated:YES completion:nil];
-}
-
 - (void)handleSubmit {
-    NSLog(@"Feedback submitted: category=%@, text=%@, hasImage=%d",
-          self.rootView.selectedChipIndex >= 0 ? self.rootView.chipTitles[self.rootView.selectedChipIndex] : @"(none)",
-          self.rootView.textView.text,
-          self.pickedImage != nil);
+    // 样子化：不做真实提交，直接 pop。
     [self.navigationController popViewControllerAnimated:YES];
-}
-
-#pragma mark - UIImagePickerControllerDelegate
-
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey,id> *)info {
-    UIImage *image = info[UIImagePickerControllerOriginalImage];
-    if (image) {
-        self.pickedImage = image;
-        self.rootView.pickedImageView.image = image;
-        self.rootView.pickedImageView.hidden = NO;
-    }
-    [picker dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-    [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

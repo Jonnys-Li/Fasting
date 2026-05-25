@@ -7,14 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		85FA0416217C5A0404B362CB /* FSTRecordsRepositoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E340E6EE236C543B490D6AA /* FSTRecordsRepositoryTests.m */; };
 		C35284A13B8BDB1E0C2BB31A /* Pods_Fasting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46882F83CF9542E6F274E5AD /* Pods_Fasting.framework */; };
+		CBC9A54F0784690F948B6C18 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E67093BE420297D6A0FB0975 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A77837F21FFEFD92783D514B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 70B4ECC42FB41A7500EEBB11 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 70B4ECCB2FB41A7500EEBB11;
+			remoteInfo = Fasting;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		3E340E6EE236C543B490D6AA /* FSTRecordsRepositoryTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = FSTRecordsRepositoryTests.m; sourceTree = "<group>"; };
 		46882F83CF9542E6F274E5AD /* Pods_Fasting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Fasting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		47E9C279D0A8935C265F1A43 /* Pods-Fasting.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fasting.release.xcconfig"; path = "Target Support Files/Pods-Fasting/Pods-Fasting.release.xcconfig"; sourceTree = "<group>"; };
 		70B4ECCC2FB41A7500EEBB11 /* Fasting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fasting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A87D1D28FE59205E76E4DF4 /* Pods-Fasting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fasting.debug.xcconfig"; path = "Target Support Files/Pods-Fasting/Pods-Fasting.debug.xcconfig"; sourceTree = "<group>"; };
+		BC8FF27AC4BEE5A2402E43E8 /* FastingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E67093BE420297D6A0FB0975 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -39,6 +54,14 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6AB0F1CD637F19BDE9F5C6AC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBC9A54F0784690F948B6C18 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		70B4ECC92FB41A7500EEBB11 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -59,6 +82,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		5A829788A8CF34C5AB0E1C53 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				E67093BE420297D6A0FB0975 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 		70B4ECC32FB41A7500EEBB11 = {
 			isa = PBXGroup;
 			children = (
@@ -66,6 +97,7 @@
 				70B4ECCD2FB41A7500EEBB11 /* Products */,
 				3911EF5A1B2EDF257C345462 /* Pods */,
 				AE1D674F7A94424AD6664F72 /* Frameworks */,
+				AAF2A00BF5B061AEDD8F04D4 /* FastingTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,14 +105,24 @@
 			isa = PBXGroup;
 			children = (
 				70B4ECCC2FB41A7500EEBB11 /* Fasting.app */,
+				BC8FF27AC4BEE5A2402E43E8 /* FastingTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AAF2A00BF5B061AEDD8F04D4 /* FastingTests */ = {
+			isa = PBXGroup;
+			children = (
+				3E340E6EE236C543B490D6AA /* FSTRecordsRepositoryTests.m */,
+			);
+			path = FastingTests;
 			sourceTree = "<group>";
 		};
 		AE1D674F7A94424AD6664F72 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				46882F83CF9542E6F274E5AD /* Pods_Fasting.framework */,
+				5A829788A8CF34C5AB0E1C53 /* iOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -109,6 +151,24 @@
 			productName = Fasting;
 			productReference = 70B4ECCC2FB41A7500EEBB11 /* Fasting.app */;
 			productType = "com.apple.product-type.application";
+		};
+		8BDB71B9DF06CB3AEF52C802 /* FastingTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FE70B5EB706105DF68560BDA /* Build configuration list for PBXNativeTarget "FastingTests" */;
+			buildPhases = (
+				2F156802D703721836C6D7A0 /* Sources */,
+				6AB0F1CD637F19BDE9F5C6AC /* Frameworks */,
+				5806EA1839F445EC68ABD472 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AC4E0F33494FD0543E29657E /* PBXTargetDependency */,
+			);
+			name = FastingTests;
+			productName = FastingTests;
+			productReference = BC8FF27AC4BEE5A2402E43E8 /* FastingTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -139,11 +199,19 @@
 			projectRoot = "";
 			targets = (
 				70B4ECCB2FB41A7500EEBB11 /* Fasting */,
+				8BDB71B9DF06CB3AEF52C802 /* FastingTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5806EA1839F445EC68ABD472 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		70B4ECCA2FB41A7500EEBB11 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -200,6 +268,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2F156802D703721836C6D7A0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				85FA0416217C5A0404B362CB /* FSTRecordsRepositoryTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		70B4ECC82FB41A7500EEBB11 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -209,7 +285,38 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		AC4E0F33494FD0543E29657E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Fasting;
+			target = 70B4ECCB2FB41A7500EEBB11 /* Fasting */;
+			targetProxy = A77837F21FFEFD92783D514B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		07C34025102281112D593383 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9VJL9UB9HD;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = li.FastingTests;
+				PRODUCT_BUNDLE_PACKAGE_TYPE = BNDL;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
 		70B4ECE52FB41A7600EEBB11 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8A87D1D28FE59205E76E4DF4 /* Pods-Fasting.debug.xcconfig */;
@@ -384,6 +491,29 @@
 			};
 			name = Release;
 		};
+		8DF805EBB84237C720515BE4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9VJL9UB9HD;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = li.FastingTests;
+				PRODUCT_BUNDLE_PACKAGE_TYPE = BNDL;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -401,6 +531,15 @@
 			buildConfigurations = (
 				70B4ECE52FB41A7600EEBB11 /* Debug */,
 				70B4ECE62FB41A7600EEBB11 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FE70B5EB706105DF68560BDA /* Build configuration list for PBXNativeTarget "FastingTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8DF805EBB84237C720515BE4 /* Release */,
+				07C34025102281112D593383 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

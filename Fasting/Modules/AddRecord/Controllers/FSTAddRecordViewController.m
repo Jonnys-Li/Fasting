@@ -12,10 +12,10 @@
 #import "FSTAddRecordWeightCardView.h"
 #import "FSTAddRecordFeelingCardView.h"
 #import "FSTAddRecordNoteCardView.h"
-#import "FSTWeightInputViewController.h"
+#import "FSTAppRouter.h"
 #import "FSTSessionManager.h"
+#import "FSTFastingRecordBuilder.h"
 #import "FSTRecordsRepository.h"
-#import "FSTRootTabBarController.h"
 #import "FSTTheme.h"
 
 @interface FSTAddRecordViewController ()
@@ -142,41 +142,31 @@
 }
 
 - (void)handleWeightEditTapped {
-    FSTWeightInputViewController *weightViewController = [FSTWeightInputViewController new];
-    weightViewController.weightKg = self.weightKg > 0 ? self.weightKg : 70.0;
     __weak typeof(self) weakSelf = self;
-    weightViewController.onSave = ^(CGFloat newWeightKg) {
+    [FSTAppRouter presentWeightInputFrom:self
+                                weightKg:self.weightKg > 0 ? self.weightKg : 70.0
+                                  onSave:^(CGFloat newWeightKg) {
         if (newWeightKg <= 0) return;
         weakSelf.weightKg = newWeightKg;
         weakSelf.rootView.weightCardView.weightKg = newWeightKg;
-    };
-    weightViewController.modalPresentationStyle = UIModalPresentationOverFullScreen;
-    weightViewController.modalTransitionStyle   = UIModalTransitionStyleCrossDissolve;
-    [self presentViewController:weightViewController animated:YES completion:nil];
+    }];
 }
 
 - (void)handleSaveTapped {
     if ([self.endDate compare:self.startDate] != NSOrderedDescending) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Time"
-                                                                       message:@"End time must be after start time."
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Got it" style:UIAlertActionStyleDefault handler:nil]];
-        [self presentViewController:alert animated:YES completion:nil];
+        [FSTAppRouter showAlertFrom:self
+                              title:@"Invalid Time"
+                            message:@"End time must be after start time."
+                        buttonTitle:@"Got it"];
         return;
     }
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    FSTFastingRecord *record = self.editingExistingRecord ? self.editingRecord : [FSTFastingRecord new];
-    record.recordID     = record.recordID.length ? record.recordID : [[NSUUID UUID] UUIDString];
-    record.planName     = record.planName.length ? record.planName : (sessionManager.currentPlan.name ?: @"14-10");
-    record.fastingHours = record.fastingHours > 0 ? record.fastingHours : sessionManager.currentPlan.fastingHours;
-    record.startDate    = self.startDate;
-    record.endDate      = self.endDate;
-    record.weightKg     = self.weightKg;
-    record.initialWeightKg    = self.initialWeightKg;
-    record.targetWeightKg     = self.targetWeightKg;
-    record.appleHealthEnabled = self.appleHealthEnabled;
-    record.feelingLevel = self.rootView.feelingCardView.feelingLevel;
-    record.note         = self.rootView.noteCardView.text ?: @"";
+    FSTFastingRecord *record = FSTBuildFastingRecord(self.editingExistingRecord ? self.editingRecord : nil,
+                                                      self.startDate, self.endDate,
+                                                      self.weightKg, self.initialWeightKg, self.targetWeightKg,
+                                                      self.rootView.feelingCardView.feelingLevel,
+                                                      self.rootView.noteCardView.text,
+                                                      self.appleHealthEnabled);
 
     if (self.editingExistingRecord) {
         [[FSTRecordsRepository sharedRepository] updateFastingRecord:record];
@@ -184,15 +174,12 @@
         return;
     }
 
-    FSTRootTabBarController *tabBarController = (FSTRootTabBarController *)self.tabBarController;
-    if ([tabBarController isKindOfClass:[FSTRootTabBarController class]]) {
-        [tabBarController fst_finishFlowReturningToTimelineWithUpdates:^{
-            [sessionManager finishFastingWithRecord:record];
-        }];
-    } else {
+    [FSTAppRouter finishFlowFrom:self
+                         updates:^{ [sessionManager finishFastingWithRecord:record]; }
+                        fallback:^{
         [sessionManager finishFastingWithRecord:record];
         [self.navigationController popToRootViewControllerAnimated:YES];
-    }
+    }];
 }
 
 @end

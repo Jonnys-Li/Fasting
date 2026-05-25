@@ -7,7 +7,6 @@
 #import "FSTBreakingFastCardView.h"
 #import "FSTFastingTimesRow.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 
 static const CGFloat kFSTDailyPlanReadyAddRecordTopOffset = 20;
 static const CGFloat kFSTDailyPlanReadyAddRecordHeight    = 56;
@@ -57,52 +56,36 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
 - (void)buildSubviews {
     __weak typeof(self) weakSelf = self;
 
-    self.eatingTitleLabel = [UILabel new];
-    self.eatingTitleLabel.text          = @"Eating Time";
-    self.eatingTitleLabel.font          = FSTFontAvenirBold(22);
-    self.eatingTitleLabel.textColor     = [UIColor fst_textHeading];
-    self.eatingTitleLabel.textAlignment = NSTextAlignmentCenter;
-    [self addSubview:self.eatingTitleLabel];
+    self.eatingTitleLabel = [UILabel fst_labelWithText:@"Eating Time" font:FSTFontAvenirBold(22) color:[UIColor fst_textHeading] alignment:NSTextAlignmentCenter];
 
     self.breakingFastCardView = [FSTBreakingFastCardView new];
-    self.breakingFastCardView.onTapped = ^{
-        if (weakSelf.onBreakingFastTapped) weakSelf.onBreakingFastTapped();
-    };
-    [self addSubview:self.breakingFastCardView];
+    self.breakingFastCardView.onTapped = ^{ if (weakSelf.onBreakingFastTapped) weakSelf.onBreakingFastTapped(); };
 
     self.readyRingView = [FSTDailyPlanReadyRingView new];
-    self.readyRingView.onChangePlanTapped = ^{
-        if (weakSelf.onChangePlanTapped) weakSelf.onChangePlanTapped();
-    };
-    [self addSubview:self.readyRingView];
+    self.readyRingView.onChangePlanTapped = ^{ if (weakSelf.onChangePlanTapped) weakSelf.onChangePlanTapped(); };
 
     self.nextFastTimesRow = [[FSTFastingTimesRow alloc] initWithStartCaption:@"Next fast starts"
                                                                   endCaption:@"Next fast ends"
                                                                     editable:YES
                                                          startHighlightColor:nil];
-    self.nextFastTimesRow.onEditStartTapped = ^{
-        if (weakSelf.onEditNextFastStartTapped) weakSelf.onEditNextFastStartTapped();
-    };
-    self.nextFastTimesRow.onEditEndTapped = ^{
-        if (weakSelf.onEditNextFastEndTapped) weakSelf.onEditNextFastEndTapped();
-    };
-    [self addSubview:self.nextFastTimesRow];
+    self.nextFastTimesRow.onEditStartTapped = ^{ if (weakSelf.onEditNextFastStartTapped) weakSelf.onEditNextFastStartTapped(); };
+    self.nextFastTimesRow.onEditEndTapped   = ^{ if (weakSelf.onEditNextFastEndTapped) weakSelf.onEditNextFastEndTapped(); };
 
     self.startFastingButton = [UIButton fst_greenPillButtonWithTitle:@"Start Fasting"];
     self.startFastingButton.layer.cornerRadius = kFSTDailyPlanReadyButtonCornerRadius;
     self.startFastingButton.titleLabel.font    = FSTFontSubhead();
     [self.startFastingButton addTarget:self action:@selector(handleStartFastingTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:self.startFastingButton];
 
     self.logMealButton = [UIButton fst_yellowPillButtonWithTitle:@"LOG MEAL"];
     self.logMealButton.backgroundColor    = [UIColor fst_orangeCTA];
     self.logMealButton.layer.cornerRadius = kFSTDailyPlanReadyButtonCornerRadius;
     self.logMealButton.titleLabel.font    = FSTFontSubhead();
     [self.logMealButton addTarget:self action:@selector(handleLogMealTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:self.logMealButton];
 
     self.addRecordRow = [self buildAddRecordRow];
-    [self addSubview:self.addRecordRow];
+
+    [self fst_addSubviews:@[self.eatingTitleLabel, self.breakingFastCardView, self.readyRingView,
+                            self.nextFastTimesRow, self.startFastingButton, self.logMealButton, self.addRecordRow]];
 }
 
 #pragma mark - 约束
@@ -260,23 +243,17 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
 #pragma mark - Add Record Row
 
 - (UIView *)buildAddRecordRow {
-    UIView *row = [UIView new];
-    row.backgroundColor = [UIColor whiteColor];
-    row.layer.cornerRadius = kFSTDailyPlanReadyAddRecordRadius;
+    UIView *row = [UIView fst_whiteCardWithRadius:kFSTDailyPlanReadyAddRecordRadius];
 
     UIImageView *plusIcon = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"add_record_plus"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
     plusIcon.contentMode = UIViewContentModeScaleAspectFit;
-    [row addSubview:plusIcon];
 
-    UILabel *textLabel = [UILabel new];
-    textLabel.text = @"Add new record";
-    textLabel.font = FSTFontBold(17);
-    textLabel.textColor = [UIColor blackColor];
-    [row addSubview:textLabel];
+    UILabel *textLabel = [UILabel fst_labelWithText:@"Add new record" font:FSTFontBold(17) color:[UIColor blackColor]];
 
     UIImageView *chevron = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"feedback_chevron"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
     chevron.contentMode = UIViewContentModeScaleAspectFit;
-    [row addSubview:chevron];
+
+    [row fst_addSubviews:@[plusIcon, textLabel, chevron]];
 
     [plusIcon mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(row).offset(16);

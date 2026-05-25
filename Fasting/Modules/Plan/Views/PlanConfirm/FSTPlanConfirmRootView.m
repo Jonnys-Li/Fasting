@@ -8,7 +8,6 @@
 #import "FSTPlanPrepCardView.h"
 #import "UIButton+FST.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 
 @interface FSTPlanConfirmRootView ()
 @property (nonatomic, strong, readwrite) UILabel *titleLabel;

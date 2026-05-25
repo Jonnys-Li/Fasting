@@ -7,11 +7,11 @@
 //  - 写入方：上游 VC 用 self.feelingLevel = record.feelingLevel 推入初值；用户点 emoji 也会修改此值。
 //
 
-#import <UIKit/UIKit.h>
+#import "FSTAddRecordBaseCardView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FSTAddRecordFeelingCardView : UIView
+@interface FSTAddRecordFeelingCardView : FSTAddRecordBaseCardView
 
 /// 当前心情等级（与 FSTFastingRecord.feelingLevel 同义）。
 /// 取值：0 = 有点难 😣，1 = 还可以 😐，2 = 简单 😊。

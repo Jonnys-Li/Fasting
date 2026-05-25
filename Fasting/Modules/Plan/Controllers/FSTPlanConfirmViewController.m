@@ -63,14 +63,10 @@
 - (void)handleEditStartTapped {
     NSDate *initialDate = self.selectedStartDate ?: [NSDate date];
     __weak typeof(self) weakSelf = self;
+    // 无 align chip 场景，走 Category 简版接口
     [self fst_presentTimeEditorWithTitle:@"When to start fasting?"
                              initialDate:initialDate
-                             minimumDate:nil
-                             maximumDate:nil
-                           alignChipText:nil
-                             alignedDate:nil
-                         initiallyAligned:NO
-                                 onCommit:^(NSDate *pickedDate, BOOL aligned) {
+                                onCommit:^(NSDate *pickedDate) {
         weakSelf.selectedStartDate = pickedDate ?: [NSDate date];
         [weakSelf refreshPlanLabels];
     }];

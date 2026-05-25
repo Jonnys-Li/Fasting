@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 断食记录列表。VC 设置 dataSource/delegate。
 @property (nonatomic, strong, readonly) UITableView *tableView;
 
+/// 顶部「相对日期」标签的文案（默认 Today）。VC 在滚动时按可见 record 的日期更新。
+@property (nonatomic, copy) NSString *todayText;
+
 /// 返回按钮点击回调。
 @property (nonatomic, copy, nullable) void (^onBackTapped)(void);
 

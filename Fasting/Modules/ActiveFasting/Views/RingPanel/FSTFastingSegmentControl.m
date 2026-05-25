@@ -5,7 +5,6 @@
 
 #import "FSTFastingSegmentControl.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
 #import <Masonry/Masonry.h>
 
 @interface FSTFastingSegmentControl ()

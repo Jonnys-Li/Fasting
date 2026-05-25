@@ -15,7 +15,17 @@
 #import "FSTMealDetailContentCardView.h"
 #import "FSTRootTabBarController.h"
 #import "FSTRecordsRepository.h"
-#import "FSTMealImageService.h"
+/// 把 UIImage 压缩到 0.82 质量并写入 Documents/meal-images/{UUID}.jpg；返回完整路径或 nil。
+/// 0.82 = 食物照片体积/画质的最优拐点（再高肉眼难分辨但文件大幅增长）。
+static NSString *FSTMealDetailSaveImage(UIImage *image) {
+    if (!image) return nil;
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.82);
+    if (!imageData) return nil;
+    NSString *directory = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/meal-images"];
+    [[NSFileManager defaultManager] createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:nil];
+    NSString *filePath = [directory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", [[NSUUID UUID] UUIDString]]];
+    return [imageData writeToFile:filePath atomically:YES] ? filePath : nil;
+}
 
 @interface FSTMealDetailViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) FSTMealRecord *record;
@@ -82,7 +92,7 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey,id> *)info {
     UIImage *image = info[UIImagePickerControllerOriginalImage];
-    NSString *filePath = [FSTMealImageService saveImage:image];
+    NSString *filePath = FSTMealDetailSaveImage(image);
     if (filePath) {
         self.imagePath = filePath;
         self.rootView.detailCardView.imagePath = filePath;

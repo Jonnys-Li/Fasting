@@ -3,16 +3,14 @@
 //  Fasting
 //
 //  时间轴 Tab 主页：展示两个模块——"进食时间"（最近断食摘要）+"食物日记"（最近一条饮食）。
-//  点击任一模块进入对应的列表 / 详情页。
+//  点击任一模块进入对应的列表 / 详情页（导航统一走 FSTAppRouter）。
 //
 
 #import "FSTTimelineViewController.h"
 #import "FSTTimelineRootView.h"
 #import "FSTFastingTimelineCardView.h"
 #import "FSTTimelineModuleView.h"
-#import "FSTFastingHistoryViewController.h"
-#import "FSTMealDetailViewController.h"
-#import "FSTMealDiaryViewController.h"
+#import "FSTAppRouter.h"
 #import "FSTRecordsRepository.h"
 #import "FSTTheme.h"
 
@@ -51,9 +49,7 @@
 
 - (void)bindCallbacks {
     __weak typeof(self) weakSelf = self;
-    self.rootView.fastingModuleView.onMoreTapped = ^{
-        [weakSelf handleMoreFastingTapped];
-    };
+    self.rootView.fastingModuleView.onMoreTapped = ^{ [weakSelf handleMoreFastingTapped]; };
     self.rootView.mealModuleView.onChevronTapped = ^{ [weakSelf handleMealChevronTapped]; };
     self.rootView.mealModuleView.onAddTapped     = ^{ [weakSelf handleMealAddTapped]; };
     self.rootView.mealModuleView.onEntryTapped   = ^{ [weakSelf handleMealEntryTapped]; };
@@ -78,29 +74,21 @@
 #pragma mark - 事件
 
 - (void)handleMoreFastingTapped {
-    FSTFastingHistoryViewController *historyViewController = [FSTFastingHistoryViewController new];
-    historyViewController.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:historyViewController animated:YES];
+    [FSTAppRouter pushFastingHistoryFrom:self];
 }
 
 /// ">" 箭头：跳转食物日记列表页。
 - (void)handleMealChevronTapped {
-    FSTMealDiaryViewController *diaryViewController = [FSTMealDiaryViewController new];
-    diaryViewController.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:diaryViewController animated:YES];
+    [FSTAppRouter pushMealDiaryFrom:self];
 }
 
 /// "+ 增加"：新建饮食记录。
 - (void)handleMealAddTapped {
-    FSTMealDetailViewController *detailVC = [[FSTMealDetailViewController alloc] initWithMealRecord:nil];
-    detailVC.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:detailVC animated:YES];
+    [FSTAppRouter pushMealDetailFrom:self record:nil returnsToTimeline:NO];
 }
 
 - (void)handleMealEntryTapped {
-    FSTMealDetailViewController *detailVC = [[FSTMealDetailViewController alloc] initWithMealRecord:self.latestMealRecord];
-    detailVC.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:detailVC animated:YES];
+    [FSTAppRouter pushMealDetailFrom:self record:self.latestMealRecord returnsToTimeline:NO];
 }
 
 @end

@@ -6,7 +6,7 @@
 //  圆环下方的 plan chip 是打开计划选择器的入口；顶部 segment 仅作视觉装饰。
 //
 //  UI 布局由 FSTActiveFastingRootView 承担；VC 负责 topBar 创建、计时器、
-//  状态刷新（refreshUI）、事件处理与导航。
+//  状态刷新（refreshUI）、事件处理与导航（导航统一走 FSTAppRouter）。
 //
 
 #import "FSTActiveFastingViewController.h"
@@ -14,9 +14,9 @@
 #import "FSTAddRecordViewController.h"
 #import "FSTDailyPlanViewController.h"
 #import "FSTModalDialogViewController.h"
+#import "FSTAppRouter.h"
 #import "FSTSessionManager.h"
 #import "FSTPlan.h"
-#import "FSTPlanSelectViewController.h"
 #import "FSTFastingSegmentControl.h"
 #import "FSTFastingPhaseSummaryCard.h"
 #import "FSTFastingRingPanelView.h"
@@ -28,10 +28,7 @@
 #import "FSTTimeEditorSheetViewController.h"
 #import "UINavigationController+FSTHelpers.h"
 #import "FSTTheme.h"
-#import "UIColor+FST.h"
-#import "FSTActiveFastingDisplayState.h"
-#import "FSTSendFeedbackViewController.h"
-#import "FSTShareCardViewController.h"
+#import <math.h>
 
 static const CGFloat kFSTActiveFastingNavButtonDiameter = 46;
 static const CGFloat kFSTActiveFastingPlainIconSize     = 34;
@@ -43,8 +40,12 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 @property (nonatomic, strong) FSTFastingTopBar *topBar;
 @property (nonatomic, strong) FSTFastingSegmentControl *segment;
 @property (nonatomic, assign) FSTRingDisplayMode displayMode;
-@property (nonatomic, strong, nullable) FSTActiveFastingDisplayState *cachedDisplayState;
 @property (nonatomic, assign) BOOL initialStartTimePromptDisplayed;
+// 缓存 phase dialog / stop button 的当前数据，避免 dialog 弹出时再算一次。
+@property (nonatomic, assign) BOOL cachedTargetReached;
+@property (nonatomic, copy, nullable) NSString *cachedPhaseDialogTitle;
+@property (nonatomic, copy, nullable) NSString *cachedPhaseDialogMessage;
+@property (nonatomic, copy, nullable) NSString *cachedPhaseDialogIcon;
 @end
 
 @implementation FSTActiveFastingViewController
@@ -150,44 +151,84 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     [self refreshUI];
 }
 
+/// 每秒 / 每次通知触发：根据 sessionManager 当前状态推导整页 UI 数据并下发到 rootView 子视图。
+/// 设计：本方法是状态判定的单一权威，VC 其他事件方法只读 cachedXxx 缓存（dialog 等异步路径）。
 - (void)refreshUI {
-    FSTActiveFastingDisplayState *state = [FSTActiveFastingDisplayState currentStateWithDisplayMode:self.displayMode];
-    if (state.sessionInvalid) {
+    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
+    // 兜底：sessionInvalid（plan 已被外部清除瞬态）— 直接 pop 避免后续读 nil 字段崩。
+    if (![sessionManager hasActiveFasting]) {
         [self.navigationController popToRootViewControllerAnimated:NO];
         return;
     }
-    self.cachedDisplayState = state;
-    [self applyDisplayState:state];
-}
 
-- (void)applyDisplayState:(FSTActiveFastingDisplayState *)state {
-    FSTActiveFastingRootView *rootView = self.rootView;
+    // Timing 派生：保证 target 钳到 ≥1 防除零；fraction 未达标钳到 99 防四舍五入到 100%。
+    NSTimeInterval safeElapsed = MAX(0, sessionManager.elapsedSeconds);
+    NSTimeInterval safeTarget  = MAX(1, sessionManager.activeTargetDurationSeconds);
+    NSTimeInterval remaining   = MAX(0, safeTarget - safeElapsed);
+    NSTimeInterval overtime    = MAX(0, safeElapsed - safeTarget);
+    CGFloat fraction        = (CGFloat)(safeElapsed / safeTarget);
+    CGFloat clampedFraction = MIN(1.0, fraction);
+    BOOL targetReached  = safeElapsed >= safeTarget;
+    BOOL inOvertime     = (NSInteger)floor(overtime) > 0;
+    NSInteger basePercent     = (NSInteger)lround(MAX(0, fraction) * 100.0);
+    NSInteger elapsedPercent  = targetReached ? MIN(100, MAX(0, basePercent)) : MIN(99, MAX(0, basePercent));
+    NSInteger remainingPercent = targetReached ? 0 : (100 - elapsedPercent);
+    NSInteger overtimePercent  = inOvertime ? MAX(101, (NSInteger)ceil(fraction * 100.0)) : elapsedPercent;
 
-    rootView.ringPanel.presentationState = state.ringState;
-    rootView.ringPanel.timerCaption      = state.timerCaption;
-    rootView.ringPanel.timerText         = state.timerText;
-    rootView.ringPanel.overtimeDetailText = state.overtimeDetailText;
-    rootView.ringPanel.overtimeTotalText  = state.overtimeTotalText;
-    rootView.ringPanel.endText           = state.endText;
-    rootView.ringPanel.percentText       = state.percentText;
-    rootView.ringPanel.planName          = state.planName;
-    rootView.ringPanel.progress          = state.ringProgress;
-    rootView.ringPanel.flameProgress     = state.flameProgress;
-    rootView.ringPanel.displayMode       = self.displayMode;
+    BOOL isRemainingMode = (self.displayMode == FSTRingDisplayRemaining);
+    NSInteger displayedPercent = isRemainingMode ? remainingPercent : elapsedPercent;
 
-    if (state.showAutophagyPhase) {
-        [rootView.phaseCard configureForAutophagyState];
+    // 圆环三态判定优先级：overtime > complete > active（红覆盖绿）。
+    FSTRingPresentationState ringState = inOvertime ? FSTRingPresentationOvertime
+                                       : (targetReached ? FSTRingPresentationComplete : FSTRingPresentationActive);
+
+    NSDate *startDate = sessionManager.activeStartDate ?: [NSDate date];
+    NSDate *endDate   = [sessionManager activeExpectedEndDate] ?: [startDate dateByAddingTimeInterval:safeTarget];
+
+    NSString *timerCaption = (ringState != FSTRingPresentationActive)
+        ? @"Time exceeded"
+        : [NSString stringWithFormat:@"%@ %ld%%", isRemainingMode ? @"Remaining time" : @"Elapsed time", (long)displayedPercent];
+    NSString *timerText;
+    if (ringState == FSTRingPresentationComplete) {
+        timerText = @"100%";
+    } else if (ringState == FSTRingPresentationOvertime) {
+        timerText = [NSString stringWithFormat:@"+%@", FSTFormatHHMMSS(overtime)];
     } else {
-        [rootView.phaseCard configureForBloodGlucoseStage];
+        timerText = FSTFormatHHMMSS(isRemainingMode ? remaining : safeElapsed);
     }
-    [rootView.tipsSection configureForStage:state.tipsStage];
 
-    rootView.stopButton.backgroundColor = state.stopButtonBackgroundColor;
-    [rootView.stopButton setTitle:state.stopButtonTitle forState:UIControlStateNormal];
-    [rootView.stopButton setTitleColor:state.stopButtonTitleColor forState:UIControlStateNormal];
+    FSTActiveFastingRootView *rootView = self.rootView;
+    rootView.ringPanel.presentationState  = ringState;
+    rootView.ringPanel.timerCaption       = timerCaption;
+    rootView.ringPanel.timerText          = timerText;
+    rootView.ringPanel.overtimeDetailText = inOvertime ? [NSString stringWithFormat:@"Elapsed time (%ld%%)", (long)overtimePercent] : nil;
+    rootView.ringPanel.overtimeTotalText  = inOvertime ? FSTFormatHHMMSS(safeElapsed) : nil;
+    rootView.ringPanel.endText            = FSTFormatRelativeDateTime(endDate);
+    rootView.ringPanel.percentText        = [NSString stringWithFormat:@"%ld%%", (long)displayedPercent];
+    rootView.ringPanel.planName           = sessionManager.currentPlan.name ?: @"14-10";
+    rootView.ringPanel.progress           = targetReached ? 1.0 : clampedFraction;
+    rootView.ringPanel.flameProgress      = clampedFraction;
+    rootView.ringPanel.displayMode        = self.displayMode;
 
-    rootView.timesRow.startText = state.startText;
-    rootView.timesRow.endText   = state.endTimeText;
+    if (targetReached) [rootView.phaseCard configureForAutophagyState];
+    else               [rootView.phaseCard configureForBloodGlucoseStage];
+    [rootView.tipsSection configureForStage:targetReached ? FSTTipsFastingStageAfter : FSTTipsFastingStageDuring];
+
+    // Stop button — 用户视角：未达标=END（灰底确认弹窗）vs 达标=COMPLETE（绿底直跳 AddRecord）。
+    rootView.stopButton.backgroundColor = targetReached ? [UIColor fst_eatingTimeGreen] : [UIColor fst_buttonInactive];
+    [rootView.stopButton setTitle:targetReached ? @"COMPLETE FASTING" : @"END FASTING" forState:UIControlStateNormal];
+    [rootView.stopButton setTitleColor:targetReached ? [UIColor whiteColor] : [UIColor fst_textHeading] forState:UIControlStateNormal];
+
+    rootView.timesRow.startText = FSTFormatRelativeDateTime(startDate);
+    rootView.timesRow.endText   = FSTFormatRelativeDateTime(endDate);
+
+    // 缓存 phase dialog / stop button 状态：dialog 弹出时直接读，不再算一次。
+    self.cachedTargetReached      = targetReached;
+    self.cachedPhaseDialogTitle   = targetReached ? @"Autophagy Starts!" : @"Blood Glucose Rise";
+    self.cachedPhaseDialogMessage = targetReached
+        ? @"Fasting goal reached. Your body is entering the autophagy phase."
+        : @"Blood sugar fluctuation is normal in early fasting. Keep going with your plan.";
+    self.cachedPhaseDialogIcon    = targetReached ? @"autophagy_stage" : @"blood_glucose_stage";
 }
 
 #pragma mark - 事件
@@ -198,12 +239,11 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 }
 
 - (void)showPhaseDialog {
-    FSTActiveFastingDisplayState *state = self.cachedDisplayState;
-    if (!state) return;  // refresh 尚未发生过的边缘场景，避免 nil 字段进 dialog 初始化
+    if (!self.cachedPhaseDialogIcon) return;  // refresh 尚未发生过的边缘场景
     FSTModalDialogViewController *dialog =
-        [[FSTModalDialogViewController alloc] initWithIconImageName:state.phaseDialogIconName
-                                                              title:state.phaseDialogTitle
-                                                            message:state.phaseDialogMessage
+        [[FSTModalDialogViewController alloc] initWithIconImageName:self.cachedPhaseDialogIcon
+                                                              title:self.cachedPhaseDialogTitle
+                                                            message:self.cachedPhaseDialogMessage
                                                        primaryTitle:@"Got it"
                                                      secondaryTitle:nil
                                                      primaryHandler:nil
@@ -216,7 +256,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 ///   未达标（targetReached=NO） → "END FASTING"，是放弃，先弹确认 dialog（避免误触损失正在进行的断食）。
 /// 注意 primary 按钮是 "否"（不放弃）；secondary 才是 "是"（放弃） — 设计上让默认动作偏保守。
 - (void)handleStopTapped {
-    if (self.cachedDisplayState.targetReached) {
+    if (self.cachedTargetReached) {
         [self proceedToFinishFasting];
         return;
     }
@@ -257,44 +297,37 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 }
 
 - (void)handleShareTapped {
-    UIImage *ringSnapshot = [self.rootView.ringPanel snapshotForSharing];
-    FSTShareCardViewController *shareVC = [[FSTShareCardViewController alloc] initWithRingSnapshot:ringSnapshot];
-    [self presentViewController:shareVC animated:YES completion:nil];
+    [FSTAppRouter presentShareFrom:self ringSnapshot:[self.rootView.ringPanel snapshotForSharing]];
 }
 
 - (void)handleSendFeedbackTapped {
-    FSTSendFeedbackViewController *vc = [FSTSendFeedbackViewController new];
-    vc.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:vc animated:YES];
+    [FSTAppRouter pushFeedbackFrom:self];
 }
 
 - (void)presentPlanPicker {
-    FSTPlanSelectViewController *picker = [FSTPlanSelectViewController new];
-    picker.modalPresentationStyle = UIModalPresentationFullScreen;
     __weak typeof(self) weakSelf = self;
-    picker.onPlanPicked = ^(FSTPlan *picked) {
+    [FSTAppRouter presentPlanPickerFrom:self onPick:^(FSTPlan *picked) {
         [[FSTSessionManager sharedManager] switchToPlanPreservingState:picked];
         [weakSelf refreshUI];
-    };
-    [self presentViewController:picker animated:YES completion:nil];
+    }];
 }
 
 - (void)handleEditActiveStartTapped {
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    NSDate *savedStartDate = sessionManager.activeStartDate ?: [NSDate date];
     NSTimeInterval planDuration = MAX(1, sessionManager.targetDurationSeconds);
-    NSDate *expectedEndDate = [sessionManager activeExpectedEndDate] ?: [savedStartDate dateByAddingTimeInterval:planDuration];
-    NSDate *alignedStartDate = [expectedEndDate dateByAddingTimeInterval:-planDuration];
     NSString *alignText = [NSString stringWithFormat:@"Align with %@", sessionManager.currentPlan.name ?: @"14-10"];
     __weak typeof(self) weakSelf = self;
+    // Align 行为：StartFast 模式 — chip 默认绿色可点；点 chip 把 start 拉到 (now - planDuration)
+    // 让现在正好是完成点；用户改 picker 后 chip 重新可点（参考 demo1）。
     [self fst_presentTimeEditorWithTitle:@"When did you start your fast?"
-                             initialDate:[NSDate date]      // 默认吸附到现在，不用滚到今天
+                             initialDate:[NSDate date]      // 默认吸附到现在
                              minimumDate:nil
                              maximumDate:nil
                            alignChipText:alignText
-                             alignedDate:alignedStartDate
-                         initiallyAligned:NO
-                                 onCommit:^(NSDate *pickedDate, BOOL aligned) {
+                    alignDurationSeconds:planDuration
+                               alignMode:FSTTimeEditorAlignModeStartFast
+                      alignReferenceDate:nil
+                                onCommit:^(NSDate *pickedDate, BOOL aligned) {
         FSTSessionManager *manager = [FSTSessionManager sharedManager];
         if ([pickedDate compare:[NSDate date]] == NSOrderedDescending) {
             [weakSelf enterScheduledReadyFromFutureStartDate:pickedDate source:FSTScheduledReadySourceFromActiveSession];
@@ -310,18 +343,20 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     NSTimeInterval planDuration = MAX(1, sessionManager.targetDurationSeconds);
     NSDate *startDate = sessionManager.activeStartDate ?: [NSDate date];
     NSDate *currentEnd = [sessionManager activeExpectedEndDate] ?: [startDate dateByAddingTimeInterval:planDuration];
-    NSDate *alignedEndDate = [startDate dateByAddingTimeInterval:planDuration];
     NSDate *minimumDate = [startDate dateByAddingTimeInterval:60.0];
     NSString *alignText = [NSString stringWithFormat:@"Align with %@", sessionManager.currentPlan.name ?: @"14-10"];
     __weak typeof(self) weakSelf = self;
+    // Align 行为：EndFast 模式 — chip 默认灰色（防误触）；用户改 picker 后 chip 启用；
+    // 点 chip 把 end 拉到 (startDate + planDuration)，chip 又变灰（参考 demo1）。
     [self fst_presentTimeEditorWithTitle:@"Your fast is expected to end at"
                              initialDate:currentEnd
                              minimumDate:minimumDate
                              maximumDate:nil
                            alignChipText:alignText
-                             alignedDate:alignedEndDate
-                         initiallyAligned:NO
-                                 onCommit:^(NSDate *pickedDate, BOOL aligned) {
+                    alignDurationSeconds:planDuration
+                               alignMode:FSTTimeEditorAlignModeEndFast
+                      alignReferenceDate:startDate
+                                onCommit:^(NSDate *pickedDate, BOOL aligned) {
         [[FSTSessionManager sharedManager] editActiveEndDate:pickedDate alignWithPlan:aligned];
         [weakSelf refreshUI];
     }];
@@ -346,9 +381,10 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
                                                     minimumDate:nil
                                                     maximumDate:nil
                                                   alignChipText:nil
-                                                    alignedDate:nil
-                                                initiallyAligned:NO
-                                                        onCommit:^(NSDate *pickedDate, BOOL aligned) {
+                                           alignDurationSeconds:0
+                                                      alignMode:FSTTimeEditorAlignModeStartFast
+                                             alignReferenceDate:nil
+                                                       onCommit:^(NSDate *pickedDate, BOOL aligned) {
         if ([pickedDate compare:[NSDate date]] == NSOrderedDescending) {
             [weakSelf enterScheduledReadyFromFutureStartDate:pickedDate source:FSTScheduledReadySourcePreStart];
         } else {
