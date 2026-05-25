@@ -60,7 +60,7 @@
     [self refreshDateHeader];
 }
 
-/// 顶部「相对日期」label 跟随当前最上方可见 record 的 startDate 切换文案
+/// 顶部「相对日期」label 跟随当前最上方可见 record 的最新日期切换文案
 /// （Today / Yesterday / Tomorrow / May 12 等）。
 - (void)refreshDateHeader {
     NSIndexPath *topVisible = self.rootView.tableView.indexPathsForVisibleRows.firstObject;
@@ -68,7 +68,7 @@
         self.rootView.todayText = @"Today";
         return;
     }
-    NSDate *date = self.records[topVisible.row].startDate ?: [NSDate date];
+    NSDate *date = self.records[topVisible.row].endDate ?: self.records[topVisible.row].startDate ?: [NSDate date];
     self.rootView.todayText = FSTFormatRelativeDay(date);
 }
 
