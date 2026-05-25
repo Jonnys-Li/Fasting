@@ -109,6 +109,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// 底部按钮文字色：深灰（#272A33）vs 白色，与背景色配对切换。
 @property (nonatomic, strong) UIColor *stopButtonTitleColor;
 
+/// Phase 阶段 dialog（点击 phaseCard 弹出）的三段文案/图标，由 targetReached 派生：
+///  - 未达标：title "Blood Glucose Rise" / message "Blood sugar fluctuation is normal ..."  / icon "blood_glucose_stage"
+///  - 已达标：title "Autophagy Starts!"   / message "Fasting goal reached. Your body ..." / icon "autophagy_stage"
+/// 读取方：VC 的 -showPhaseDialog 直接读这三个字段构造 dialog，不再在 VC 里 if/else。
+@property (nonatomic, copy) NSString *phaseDialogTitle;
+@property (nonatomic, copy) NSString *phaseDialogMessage;
+@property (nonatomic, copy) NSString *phaseDialogIconName;
+
 /// 工厂方法：基于 [FSTSessionManager sharedManager] 当前 active 状态计算完整 DisplayState。
 /// @param displayMode 圆环中央显示模式（Elapsed / Remaining）。由 VC 的 _ringDisplayMode ivar 推入，
 ///                    用户点击圆环中心按钮翻转。仅影响 timerCaption / timerText / percentText 的格式分支。

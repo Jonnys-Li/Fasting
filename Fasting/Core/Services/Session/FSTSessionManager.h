@@ -84,6 +84,11 @@ typedef NS_ENUM(NSInteger, FSTScheduledReadySource) {
 - (void)clearScheduledReadyState;
 - (void)beginEatingWindowFromDate:(NSDate * _Nullable)date;
 
+/// 原子化"切到 scheduled-ready 态"：cancelActiveFasting + setNextFastingStartDate +
+/// markScheduledReadyWithSource 三步合一。调用方：在 active 中编辑 startDate 到未来、或
+/// 在首次开始断食时选择"未来某时开始"。futureDate 为 nil 时不生效。
+- (void)scheduleFastingAtFutureDate:(NSDate *)futureDate source:(FSTScheduledReadySource)source;
+
 // 体重单位偏好
 @property (nonatomic, assign) FSTWeightUnit preferredWeightUnit;
 

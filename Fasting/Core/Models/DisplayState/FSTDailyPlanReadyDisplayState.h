@@ -74,6 +74,15 @@ NS_ASSUME_NONNULL_BEGIN
 /// 读取方：VC 调 [readyView applyReadyToStartLayout:compactLayout]。
 @property (nonatomic, assign) BOOL compactLayout;
 
+/// 工厂判定"现在应该自动起始已预约的断食"。
+/// 取值条件：scheduledReadySource != None && nextStartDate <= now && currentPlan 存在。
+/// VC 用法：refreshReadyState 末尾 if (state.shouldAutoStartScheduledFasting) → startFasting + push Active；
+///        替代原 startScheduledFastingIfDueWithNextStartDate: 的每秒重判逻辑。
+@property (nonatomic, assign) BOOL shouldAutoStartScheduledFasting;
+
+/// shouldAutoStartScheduledFasting==YES 时的预约起始时间。VC 直接传给 startFastingWithPlan:startDate:。
+@property (nonatomic, strong, nullable) NSDate *scheduledFireDate;
+
 /// 工厂方法：基于当前 [FSTSessionManager sharedManager] 状态推导 ReadyDisplayState。
 /// @param plan 当前选中的计划（由 VC 传入，通常 = sessionManager.currentPlan）。其 eatingHours 用于吃窗口换算。
 /// @return 完整快照。

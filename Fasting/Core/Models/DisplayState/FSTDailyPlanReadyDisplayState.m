@@ -53,6 +53,16 @@
 
     state.compactLayout         = compactLayout;
 
+    // 自动起始判定 — 把原本散在 VC.refreshReadyState 的"每秒重判调度是否触发"逻辑收敛到工厂里。
+    // 条件：已 scheduled && nextStartDate 已到达/越过 now && plan 存在。
+    // plan 缺失时 shouldAutoStartScheduledFasting = NO，让 VC 在下一次 reload 自动落回 Picker。
+    BOOL fireDue = sessionManager.scheduledReadySource != FSTScheduledReadySourceNone &&
+                   nextStartDate != nil &&
+                   [nextStartDate compare:now] != NSOrderedDescending &&
+                   plan != nil;
+    state.shouldAutoStartScheduledFasting = fireDue;
+    state.scheduledFireDate               = fireDue ? nextStartDate : nil;
+
     return state;
 }
 

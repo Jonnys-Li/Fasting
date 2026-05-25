@@ -30,7 +30,6 @@
 #import "FSTTheme.h"
 #import "UIColor+FST.h"
 #import "FSTActiveFastingDisplayState.h"
-#import "FSTFastingTimingService.h"
 #import "FSTSendFeedbackViewController.h"
 #import "FSTShareCardViewController.h"
 
@@ -44,7 +43,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 @property (nonatomic, strong) FSTFastingTopBar *topBar;
 @property (nonatomic, strong) FSTFastingSegmentControl *segment;
 @property (nonatomic, assign) FSTRingDisplayMode displayMode;
-@property (nonatomic, assign) BOOL fastingTargetReached;
+@property (nonatomic, strong, nullable) FSTActiveFastingDisplayState *cachedDisplayState;
 @property (nonatomic, assign) BOOL initialStartTimePromptDisplayed;
 @end
 
@@ -157,7 +156,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
         [self.navigationController popToRootViewControllerAnimated:NO];
         return;
     }
-    self.fastingTargetReached = state.targetReached;
+    self.cachedDisplayState = state;
     [self applyDisplayState:state];
 }
 
@@ -199,16 +198,12 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 }
 
 - (void)showPhaseDialog {
-    BOOL targetReached = [self isCurrentFastingTargetReached];
-    NSString *title = targetReached ? @"Autophagy Starts!" : @"Blood Glucose Rise";
-    NSString *message = targetReached
-        ? @"Fasting goal reached. Your body is entering the autophagy phase."
-        : @"Blood sugar fluctuation is normal in early fasting. Keep going with your plan.";
-    NSString *iconName = targetReached ? @"autophagy_stage" : @"blood_glucose_stage";
+    FSTActiveFastingDisplayState *state = self.cachedDisplayState;
+    if (!state) return;  // refresh 尚未发生过的边缘场景，避免 nil 字段进 dialog 初始化
     FSTModalDialogViewController *dialog =
-        [[FSTModalDialogViewController alloc] initWithIconImageName:iconName
-                                                              title:title
-                                                            message:message
+        [[FSTModalDialogViewController alloc] initWithIconImageName:state.phaseDialogIconName
+                                                              title:state.phaseDialogTitle
+                                                            message:state.phaseDialogMessage
                                                        primaryTitle:@"Got it"
                                                      secondaryTitle:nil
                                                      primaryHandler:nil
@@ -221,7 +216,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 ///   未达标（targetReached=NO） → "END FASTING"，是放弃，先弹确认 dialog（避免误触损失正在进行的断食）。
 /// 注意 primary 按钮是 "否"（不放弃）；secondary 才是 "是"（放弃） — 设计上让默认动作偏保守。
 - (void)handleStopTapped {
-    if ([self isCurrentFastingTargetReached]) {
+    if (self.cachedDisplayState.targetReached) {
         [self proceedToFinishFasting];
         return;
     }
@@ -240,13 +235,6 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     [self presentViewController:dialog animated:YES completion:nil];
 }
 
-- (BOOL)isCurrentFastingTargetReached {
-    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    FSTFastingTiming *timing = [FSTFastingTimingService timingForElapsedSeconds:sessionManager.elapsedSeconds
-                                                         targetDurationSeconds:sessionManager.activeTargetDurationSeconds];
-    return timing.targetReached || self.fastingTargetReached;
-}
-
 - (void)proceedToFinishFasting {
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
     NSDate *startDate = sessionManager.activeStartDate ?: [NSDate date];
@@ -258,10 +246,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 
 - (void)enterScheduledReadyFromFutureStartDate:(NSDate *)futureStartDate source:(FSTScheduledReadySource)source {
     if (!futureStartDate) return;
-    FSTSessionManager *manager = [FSTSessionManager sharedManager];
-    [manager cancelActiveFasting];
-    [manager setNextFastingStartDate:futureStartDate];
-    [manager markScheduledReadyWithSource:source anchorDate:[NSDate date]];
+    [[FSTSessionManager sharedManager] scheduleFastingAtFutureDate:futureStartDate source:source];
 
     UIViewController *planViewController = [self.navigationController fst_firstViewControllerOfClass:[FSTDailyPlanViewController class]];
     if (planViewController) {

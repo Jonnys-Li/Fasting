@@ -20,14 +20,20 @@
 @interface FSTMealDetailViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) FSTMealRecord *record;
 @property (nonatomic, copy) NSString *imagePath;
+@property (nonatomic, assign) BOOL returnsToTimelineTab;
 @end
 
 @implementation FSTMealDetailViewController
 
 - (instancetype)initWithMealRecord:(FSTMealRecord *)record {
+    return [self initWithMealRecord:record returnsToTimelineTab:NO];
+}
+
+- (instancetype)initWithMealRecord:(FSTMealRecord *)record returnsToTimelineTab:(BOOL)returnsToTimelineTab {
     if ((self = [super init])) {
         _record = [record copy] ?: [FSTMealRecord new];
         _imagePath = record.imagePath ?: @"";
+        _returnsToTimelineTab = returnsToTimelineTab;
         self.hidesBottomBarWhenPushed = YES;
     }
     return self;
@@ -100,22 +106,27 @@
     record.tasteLevel = root.tasteCardView.tasteLevel;
     record.detailDescription = root.detailCardView.detailDescription ?: @"";
     record.imagePath = self.imagePath ?: @"";
+
+    FSTRecordsRepository *repository = [FSTRecordsRepository sharedRepository];
     UINavigationController *currentNavigationController = self.navigationController;
+
+    // 默认：保存后只 pop 一层，留在当前 tab。涵盖 MealDiary 编辑、Timeline 自身新建/编辑两类入口。
+    if (!self.returnsToTimelineTab) {
+        [repository addOrUpdateMealRecord:record];
+        [currentNavigationController popViewControllerAnimated:YES];
+        return;
+    }
+
+    // returnsToTimelineTab=YES：从 Plan tab 等非 Timeline tab 进入，保存后切到 Timeline 让新记录立刻可见。
     FSTRootTabBarController *tabBarController = (FSTRootTabBarController *)currentNavigationController.tabBarController;
     if (![tabBarController isKindOfClass:[FSTRootTabBarController class]]) {
-        [[FSTRecordsRepository sharedRepository] addOrUpdateMealRecord:record];
+        // 防御兜底：tabBar 不在预期类，仍要保存，退化为 pop。
+        [repository addOrUpdateMealRecord:record];
         [currentNavigationController popViewControllerAnimated:YES];
         return;
     }
-
-    if (tabBarController.selectedIndex == FSTTabIndexTimeline) {
-        [[FSTRecordsRepository sharedRepository] addOrUpdateMealRecord:record];
-        [currentNavigationController popViewControllerAnimated:YES];
-        return;
-    }
-
     [tabBarController fst_finishFlowReturningToTimelineWithUpdates:^{
-        [[FSTRecordsRepository sharedRepository] addOrUpdateMealRecord:record];
+        [repository addOrUpdateMealRecord:record];
         UINavigationController *timelineNav = (UINavigationController *)tabBarController.viewControllers[FSTTabIndexTimeline];
         [timelineNav popToRootViewControllerAnimated:NO];
     }];

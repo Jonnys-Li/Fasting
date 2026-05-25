@@ -17,7 +17,6 @@
 #import "FSTDailyPlanPickerView.h"
 #import "FSTDailyPlanReadyView.h"
 #import "FSTSessionManager.h"
-#import "FSTEatingWindowService.h"
 #import "FSTDailyPlanReadyDisplayState.h"
 #import "FSTPlan.h"
 #import "FSTFastingTopBar.h"
@@ -266,11 +265,17 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 - (void)refreshReadyState {
     if (!self.showingReadyState || !self.readyView) return;
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    NSDate *now = [NSDate date];
-    NSDate *nextStartDate = [sessionManager nextFastingStartDate];
-    if ([self startScheduledFastingIfDueWithNextStartDate:nextStartDate referenceDate:now]) return;
-
     FSTDailyPlanReadyDisplayState *state = [FSTDailyPlanReadyDisplayState stateForPlan:sessionManager.currentPlan];
+
+    if (state.shouldAutoStartScheduledFasting) {
+        // 工厂已经判定"应该自动起始"——VC 这里只负责数据写入 + push 导航。
+        [sessionManager startFastingWithPlan:sessionManager.currentPlan startDate:state.scheduledFireDate];
+        if (self.navigationController.topViewController == self) {
+            [self.navigationController pushViewController:[FSTActiveFastingViewController new] animated:YES];
+        }
+        return;
+    }
+
     [self applyReadyDisplayState:state];
 }
 
@@ -285,25 +290,6 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
     self.readyView.nextFastEndText       = state.nextFastEndText;
     self.readyView.primaryActionMode     = state.primaryActionMode;
     [self.readyView applyReadyToStartLayout:state.compactLayout];
-}
-
-- (BOOL)startScheduledFastingIfDueWithNextStartDate:(NSDate *)nextStartDate referenceDate:(NSDate *)referenceDate {
-    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    if (sessionManager.scheduledReadySource == FSTScheduledReadySourceNone) return NO;
-    if (!nextStartDate || [nextStartDate compare:referenceDate] == NSOrderedDescending) return NO;
-
-    FSTPlan *currentPlan = sessionManager.currentPlan;
-    if (!currentPlan) {
-        [sessionManager clearScheduledReadyState];
-        [self reloadRootContent];
-        return YES;
-    }
-
-    [sessionManager startFastingWithPlan:currentPlan startDate:nextStartDate];
-    if (self.navigationController.topViewController == self) {
-        [self.navigationController pushViewController:[FSTActiveFastingViewController new] animated:YES];
-    }
-    return YES;
 }
 
 #pragma mark - 事件
@@ -380,8 +366,9 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 }
 
 - (void)handleAteTapped {
-    FSTMealDetailViewController *mealDetailViewController = [[FSTMealDetailViewController alloc] initWithMealRecord:nil];
-    mealDetailViewController.hidesBottomBarWhenPushed = YES;
+    // Plan tab 进入：保存后切到 Timeline 让新 meal 立刻可见。
+    FSTMealDetailViewController *mealDetailViewController =
+        [[FSTMealDetailViewController alloc] initWithMealRecord:nil returnsToTimelineTab:YES];
     [self.navigationController pushViewController:mealDetailViewController animated:YES];
 }
 

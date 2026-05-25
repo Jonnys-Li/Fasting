@@ -19,7 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FSTMealDetailViewController : FSTBaseViewController
 
 /// 用现有的 record 初始化（编辑场景）；传 nil 表示新建（自动生成 UUID + 默认字段）。
+/// 默认 returnsToTimelineTab=NO（保存后只 pop 一层，留在当前 tab）。
 - (instancetype)initWithMealRecord:(nullable FSTMealRecord *)record;
+
+/// returnsToTimelineTab=YES：保存后切到 Timeline tab + 双 nav pop 到 root。
+/// 用于 Plan tab "Log Meal" 入口——把刚保存的 meal 立刻展示在 Timeline 上。
+/// 其他入口（MealDiary 编辑、Timeline 自身新建/编辑）应传 NO 让保存后留在原位。
+- (instancetype)initWithMealRecord:(nullable FSTMealRecord *)record
+              returnsToTimelineTab:(BOOL)returnsToTimelineTab;
 
 @end
 

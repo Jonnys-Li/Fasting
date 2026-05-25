@@ -291,6 +291,13 @@ static NSString * const FSTPreferredWeightUnitKey  = @"kFSTPreferredWeightUnit";
     [self persistAllStateAndNotifySession];
 }
 
+- (void)scheduleFastingAtFutureDate:(NSDate *)futureDate source:(FSTScheduledReadySource)source {
+    if (!futureDate) return;
+    [self cancelActiveFasting];
+    [self setNextFastingStartDate:futureDate];
+    [self markScheduledReadyWithSource:source anchorDate:[NSDate date]];
+}
+
 /// 推导下一次断食起点。
 /// 优先级（自上而下，命中即返）：
 ///   1) override   — 用户在 Plan 页 Schedule 了具体时间（FSTNextStartOverrideKey）；

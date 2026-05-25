@@ -86,6 +86,13 @@
     state.stopButtonBackgroundColor = targetReached ? [UIColor fst_eatingTimeGreen] : [UIColor fst_buttonInactive];
     state.stopButtonTitleColor      = targetReached ? [UIColor whiteColor] : [UIColor fst_textHeading];
 
+    // Phase dialog 文案 — 跟 phaseCard 视觉互补：未达标讲血糖知识、已达标讲自噬启动。
+    state.phaseDialogTitle    = targetReached ? @"Autophagy Starts!" : @"Blood Glucose Rise";
+    state.phaseDialogMessage  = targetReached
+        ? @"Fasting goal reached. Your body is entering the autophagy phase."
+        : @"Blood sugar fluctuation is normal in early fasting. Keep going with your plan.";
+    state.phaseDialogIconName = targetReached ? @"autophagy_stage" : @"blood_glucose_stage";
+
     return state;
 }
 
