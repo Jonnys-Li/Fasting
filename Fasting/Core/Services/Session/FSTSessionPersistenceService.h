@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Next-start override: 用户在 Plan 页 Schedule 的下次起点（可为 nil）。
 + (NSDate *_Nullable)nextStartOverrideDate;
++ (NSDate *_Nullable)nextStartOverrideAnchorDate;
 + (void)setNextStartOverrideDate:(NSDate *_Nullable)date;
 + (void)clearNextStartOverride;
 

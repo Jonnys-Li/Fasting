@@ -160,6 +160,10 @@ NSNotificationName const FSTSessionDidChangeNotification = @"FSTSessionDidChange
     return [FSTNextFastService nextStartDateForSession:self];
 }
 
+- (NSDate *)nextFastingStartCountdownAnchorDate {
+    return [FSTSessionPersistenceService nextStartOverrideAnchorDate];
+}
+
 - (void)setNextFastingStartDate:(NSDate *)date {
     [FSTSessionPersistenceService setNextStartOverrideDate:date];
     [[NSNotificationCenter defaultCenter] postNotificationName:FSTSessionDidChangeNotification object:self];

@@ -4,6 +4,10 @@
 #import "../Fasting/Core/Models/Records/FSTMealRecord+Persistence.m"
 #import "../Fasting/Core/Models/Records/FSTPlan.m"
 #import "../Fasting/Core/Services/Records/FSTRecordsRepository.m"
+#import "../Fasting/Core/Services/Session/FSTSessionLifecycleService.m"
+#import "../Fasting/Core/Services/Session/FSTSessionManager.m"
+#import "../Fasting/Core/Services/Session/FSTSessionPersistenceService.m"
+#import "../Fasting/Core/Services/Session/FSTNextFastService.m"
 
 // Note: FSTFastingTimingService / FSTEatingWindowService 已在 MVC 重构中 inline 进
 // FSTActiveFastingViewController / FSTDailyPlanViewController（单一调用点）。
@@ -27,6 +31,8 @@
 - (void)clearRecordDefaults {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"kFSTRecords"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"kFSTMealRecords"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"kFSTNextStartOverride"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"kFSTNextStartOverrideAnchor"];
 }
 
 - (void)testRecordsRepositoryOrdersUpsertsAndDeletesFastingRecords {
@@ -87,6 +93,23 @@
     [repository deleteMealRecord:breakfast];
     XCTAssertEqual([repository allMealRecords].count, 1);
     XCTAssertEqualObjects([repository allMealRecords].firstObject.recordID, @"dinner");
+}
+
+- (void)testSessionManagerRecordsAndClearsNextStartOverrideAnchor {
+    FSTSessionManager *manager = [FSTSessionManager new];
+    NSDate *beforeSet = [NSDate date];
+    NSDate *nextStartDate = [beforeSet dateByAddingTimeInterval:60.0];
+
+    [manager setNextFastingStartDate:nextStartDate];
+
+    NSDate *anchorDate = [manager nextFastingStartCountdownAnchorDate];
+    XCTAssertNotNil(anchorDate);
+    XCTAssertTrue([anchorDate compare:beforeSet] != NSOrderedAscending);
+    XCTAssertTrue([anchorDate compare:[NSDate date]] != NSOrderedDescending);
+
+    [manager setNextFastingStartDate:nil];
+
+    XCTAssertNil([manager nextFastingStartCountdownAnchorDate]);
 }
 
 @end

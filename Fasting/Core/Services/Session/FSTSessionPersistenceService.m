@@ -14,6 +14,7 @@ static NSString * const FSTCurrentPlanKey            = @"kFSTCurrentPlan";
 static NSString * const FSTActiveStartTimeKey        = @"kFSTActiveStartTime";
 static NSString * const FSTActiveEndOverrideTimeKey  = @"kFSTActiveEndOverrideTime";
 static NSString * const FSTNextStartOverrideKey      = @"kFSTNextStartOverride";
+static NSString * const FSTNextStartOverrideAnchorKey = @"kFSTNextStartOverrideAnchor";
 static NSString * const FSTEatingWindowAnchorTimeKey = @"kFSTEatingWindowAnchorTime";
 static NSString * const FSTOnboardingCompletedKey    = @"kFSTOnboardingCompleted";
 static NSString * const FSTScheduledReadySourceKey   = @"kFSTScheduledReadySource";
@@ -116,12 +117,18 @@ static NSString * const FSTPreferredWeightUnitKey    = @"kFSTPreferredWeightUnit
     return [self dateForKey:FSTNextStartOverrideKey];
 }
 
++ (NSDate *)nextStartOverrideAnchorDate {
+    return [self dateForKey:FSTNextStartOverrideAnchorKey];
+}
+
 + (void)setNextStartOverrideDate:(NSDate *)date {
     [self setDate:date forKey:FSTNextStartOverrideKey];
+    [self setDate:date ? [NSDate date] : nil forKey:FSTNextStartOverrideAnchorKey];
 }
 
 + (void)clearNextStartOverride {
     [[self defaults] removeObjectForKey:FSTNextStartOverrideKey];
+    [[self defaults] removeObjectForKey:FSTNextStartOverrideAnchorKey];
 }
 
 @end

@@ -97,13 +97,11 @@
 
     [sessionManager startFastingWithPlan:self.plan startDate:startDate];
     if (self.onFastingStarted) {
-        [sessionManager requestActiveStartDatePrompt];
         self.onFastingStarted();
         return;
     }
 
     FSTActiveFastingViewController *activeFastingViewController = [FSTActiveFastingViewController new];
-    activeFastingViewController.promptsForStartTimeOnFirstAppear = YES;
     [self.navigationController pushViewController:activeFastingViewController animated:YES];
 }
 

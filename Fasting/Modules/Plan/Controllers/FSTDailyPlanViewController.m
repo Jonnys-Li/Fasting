@@ -302,16 +302,28 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
     BOOL scheduledCountdown = scheduled && [nextStartDate compare:now] == NSOrderedDescending;
     BOOL readyAfterEating = !scheduledCountdown && readyToStart;
     BOOL compactLayout = scheduledCountdown || readyAfterEating;
+    NSDate *countdownAnchorDate = [sessionManager nextFastingStartCountdownAnchorDate];
+    BOOL usesManualCountdownProgress = !scheduledCountdown &&
+                                       countdownAnchorDate != nil &&
+                                       [resolvedNextStart compare:countdownAnchorDate] == NSOrderedDescending;
+    NSTimeInterval ringElapsed = usesManualCountdownProgress
+        ? MAX(0, [now timeIntervalSinceDate:countdownAnchorDate])
+        : elapsed;
+    CGFloat ringProgress = windowProgress;
+    if (usesManualCountdownProgress) {
+        NSTimeInterval countdownTotal = MAX(1.0, [resolvedNextStart timeIntervalSinceDate:countdownAnchorDate]);
+        ringProgress = (CGFloat)MIN(1.0, ringElapsed / countdownTotal);
+    }
 
     self.readyView.titleText = scheduledCountdown ? @"Ready to start fasting!"
                              : (readyAfterEating ? @"Ready to start fasting?" : @"Eating Time");
     self.readyView.ringPresentationState = scheduledCountdown ? FSTDailyPlanReadyRingPresentationScheduledCountdown
                                          : (readyAfterEating ? FSTDailyPlanReadyRingPresentationReadyToStartFasting
                                                              : FSTDailyPlanReadyRingPresentationEatingWindow);
-    self.readyView.elapsedText           = FSTFormatHHMMSS(elapsed);
+    self.readyView.elapsedText           = FSTFormatHHMMSS(ringElapsed);
     self.readyView.ringProgress          = scheduledCountdown
         ? [self scheduledProgressForStartDate:nextStartDate referenceDate:now]
-        : windowProgress;
+        : ringProgress;
     self.readyView.remainingText         = FSTFormatHHMMSS(scheduledCountdown
         ? [nextStartDate timeIntervalSinceDate:now]
         : remaining);

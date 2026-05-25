@@ -94,6 +94,8 @@ typedef NS_ENUM(NSInteger, FSTScheduledReadySource) {
 
 // 准备态推导
 - (NSDate * _Nullable)nextFastingStartDate;
+/// 手动覆盖 nextFastingStartDate 时记录的设置时刻，用于 Eating / Prepare 圆环按本轮倒计时计算进度。
+- (NSDate * _Nullable)nextFastingStartCountdownAnchorDate;
 /// 覆盖下一次断食开始时间。传 nil 清除覆盖，让 nextFastingStartDate 回到默认推导。
 - (void)setNextFastingStartDate:(NSDate * _Nullable)date;
 
