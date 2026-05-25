@@ -416,7 +416,9 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
         if (source == FSTScheduledReadySourcePreStart) {
             [manager clearCurrentPlan];
         } else if (source == FSTScheduledReadySourceFromActiveSession) {
-            [manager beginEatingWindowFromDate:[NSDate date]];
+            // 与 PreStart 行为对齐：Abort plan 的语义就是"放弃这次计划"，应回到 Plan Picker，
+            // 而不是转入"普通进食窗口"（原 beginEatingWindowFromDate: 行为与设计意图不符）。
+            [manager clearCurrentPlan];
         } else {
             [manager clearScheduledReadyState];
         }
