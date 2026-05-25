@@ -24,7 +24,9 @@ typedef NS_ENUM(NSInteger, FSTTabIndex) {
 
 @interface FSTRootTabBarController : UITabBarController <UITabBarControllerDelegate>
 
-- (void)fst_switchToTimelineSuppressingTransitionChromeWithUpdates:(dispatch_block_t)updates;
+/// 完成"保存类"流程：切到 Timeline tab + pop Fasting nav 栈 + 执行 session 变更，全过程用快照遮罩抑制 chrome 闪烁。
+/// updates 仅承担 session 数据变更（写记录 / 清 active 等），导航编排交给本方法。
+- (void)fst_finishFlowReturningToTimelineWithUpdates:(dispatch_block_t)updates;
 
 @end
 

@@ -127,10 +127,8 @@
 
     FSTRootTabBarController *tab = (FSTRootTabBarController *)self.tabBarController;
     if ([tab isKindOfClass:[FSTRootTabBarController class]]) {
-        UINavigationController *fastingNav = (UINavigationController *)tab.viewControllers[FSTTabIndexFasting];
-        [tab fst_switchToTimelineSuppressingTransitionChromeWithUpdates:^{
+        [tab fst_finishFlowReturningToTimelineWithUpdates:^{
             [sm finishFastingWithRecord:record];
-            [fastingNav popToRootViewControllerAnimated:NO];
         }];
     } else {
         [sm finishFastingWithRecord:record];

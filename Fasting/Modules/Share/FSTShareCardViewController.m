@@ -2,15 +2,15 @@
 //  FSTShareCardViewController.m
 //  Fasting
 //
-//  分享卡弹窗：半透明遮罩 + 白色圆角卡片（圆环截图 + 品牌行）+ Save / Share 按钮。
+//  分享卡弹窗：复用 FSTBaseModalViewController 的遮罩 + cardContainer，
+//  内容（圆环截图 + 品牌行）放进 cardContainer；Save/Share 按钮挂在 self.view 上、位于卡片下方。
+//  按钮和卡片都不在 backdropView 内，因此点击它们不会触发 backdrop tap dismiss。
 //
 
 #import "FSTShareCardViewController.h"
 #import "FSTTheme.h"
 #import "UIColor+FST.h"
 
-static const CGFloat kFSTShareCardWidth          = 320;
-static const CGFloat kFSTShareCardCornerRadius   = 24;
 static const CGFloat kFSTShareCardPadding        = 24;
 static const CGFloat kFSTShareBrandIconSize      = 28;
 static const CGFloat kFSTShareButtonHeight       = 48;
@@ -20,7 +20,6 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
 @interface FSTShareCardViewController ()
 @property (nonatomic, strong) UIImage *ringSnapshot;
 @property (nonatomic, strong) UIImage *shareImage;
-@property (nonatomic, strong) UIView *cardView;
 @end
 
 @implementation FSTShareCardViewController
@@ -28,56 +27,39 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
 - (instancetype)initWithRingSnapshot:(UIImage *)snapshot {
     if ((self = [super init])) {
         _ringSnapshot = snapshot;
+        self.backdropAlpha = 0.5;
+        self.containerVerticalOffset = -40;
     }
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
-
-    UITapGestureRecognizer *bgTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDismiss)];
-    bgTap.cancelsTouchesInView = NO;
-    [self.view addGestureRecognizer:bgTap];
-
-    [self buildCard];
+    [self buildCardContent];
     [self buildButtons];
     [self renderShareImage];
 }
 
 #pragma mark - Card
 
-- (void)buildCard {
-    self.cardView = [UIView new];
-    self.cardView.backgroundColor = [UIColor whiteColor];
-    self.cardView.layer.cornerRadius = kFSTShareCardCornerRadius;
-    self.cardView.layer.masksToBounds = YES;
-    [self.view addSubview:self.cardView];
-
-    // Ring snapshot
+- (void)buildCardContent {
     UIImageView *ringImageView = [[UIImageView alloc] initWithImage:self.ringSnapshot];
     ringImageView.contentMode = UIViewContentModeScaleAspectFit;
-    [self.cardView addSubview:ringImageView];
+    [self.cardContainer addSubview:ringImageView];
 
-    // Brand row: app icon + "Fasting Tracker"
     UIView *brandRow = [self buildBrandRow];
-    [self.cardView addSubview:brandRow];
+    [self.cardContainer addSubview:brandRow];
 
-    [self.cardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.view);
-        make.centerY.equalTo(self.view).offset(-40);
-        make.width.mas_equalTo(kFSTShareCardWidth);
-    }];
     [ringImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.cardView).offset(kFSTShareCardPadding);
-        make.centerX.equalTo(self.cardView);
-        make.width.mas_equalTo(kFSTShareCardWidth - kFSTShareCardPadding * 2);
+        make.top.equalTo(self.cardContainer).offset(kFSTShareCardPadding);
+        make.left.equalTo(self.cardContainer).offset(kFSTShareCardPadding);
+        make.right.equalTo(self.cardContainer).offset(-kFSTShareCardPadding);
         make.height.equalTo(ringImageView.mas_width);
     }];
     [brandRow mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(ringImageView.mas_bottom).offset(16);
-        make.centerX.equalTo(self.cardView);
-        make.bottom.equalTo(self.cardView).offset(-kFSTShareCardPadding);
+        make.centerX.equalTo(self.cardContainer);
+        make.bottom.equalTo(self.cardContainer).offset(-kFSTShareCardPadding);
     }];
 }
 
@@ -117,15 +99,15 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
     [self.view addSubview:shareButton];
 
     [saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.cardView.mas_bottom).offset(20);
-        make.left.equalTo(self.cardView);
-        make.right.equalTo(self.cardView.mas_centerX).offset(-kFSTShareButtonSpacing / 2.0);
+        make.top.equalTo(self.cardContainer.mas_bottom).offset(20);
+        make.left.equalTo(self.cardContainer);
+        make.right.equalTo(self.cardContainer.mas_centerX).offset(-kFSTShareButtonSpacing / 2.0);
         make.height.mas_equalTo(kFSTShareButtonHeight);
     }];
     [shareButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(saveButton);
-        make.left.equalTo(self.cardView.mas_centerX).offset(kFSTShareButtonSpacing / 2.0);
-        make.right.equalTo(self.cardView);
+        make.left.equalTo(self.cardContainer.mas_centerX).offset(kFSTShareButtonSpacing / 2.0);
+        make.right.equalTo(self.cardContainer);
         make.height.mas_equalTo(kFSTShareButtonHeight);
     }];
 }
@@ -144,13 +126,12 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
 #pragma mark - Render share image
 
 - (void)renderShareImage {
-    // Render the card view to an image for saving/sharing
     [self.view layoutIfNeeded];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.cardView layoutIfNeeded];
-        UIGraphicsBeginImageContextWithOptions(self.cardView.bounds.size, NO, 0);
-        [self.cardView drawViewHierarchyInRect:self.cardView.bounds afterScreenUpdates:YES];
+        [self.cardContainer layoutIfNeeded];
+        UIGraphicsBeginImageContextWithOptions(self.cardContainer.bounds.size, NO, 0);
+        [self.cardContainer drawViewHierarchyInRect:self.cardContainer.bounds afterScreenUpdates:YES];
         self.shareImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
     });
@@ -175,10 +156,6 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
     if (!self.shareImage) return;
     UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[self.shareImage] applicationActivities:nil];
     [self presentViewController:activityVC animated:YES completion:nil];
-}
-
-- (void)handleDismiss {
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

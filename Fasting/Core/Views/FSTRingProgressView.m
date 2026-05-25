@@ -315,9 +315,17 @@
         endAnim.toValue = @(targetStrokeEnd);
         endAnim.duration = 0.25;
         [self.progressLayer addAnimation:endAnim forKey:@"strokeEndAnim"];
+        self.progressLayer.strokeStart = targetStrokeStart;
+        self.progressLayer.strokeEnd = targetStrokeEnd;
+    } else {
+        // animated:NO 必须瞬切：CALayer 的 strokeStart/strokeEnd 默认隐式动画 0.25s，
+        // 在切换 fillStyle（Elapsed↔Remaining）时会产生不必要的圆环过渡动画。
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        self.progressLayer.strokeStart = targetStrokeStart;
+        self.progressLayer.strokeEnd = targetStrokeEnd;
+        [CATransaction commit];
     }
-    self.progressLayer.strokeStart = targetStrokeStart;
-    self.progressLayer.strokeEnd = targetStrokeEnd;
     [self updateArrowHeadAnimated:animated];
 }
 

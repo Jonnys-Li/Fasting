@@ -274,8 +274,6 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 - (void)handleShareTapped {
     UIImage *ringSnapshot = [self.rootView.ringPanel snapshotForSharing];
     FSTShareCardViewController *shareVC = [[FSTShareCardViewController alloc] initWithRingSnapshot:ringSnapshot];
-    shareVC.modalPresentationStyle = UIModalPresentationOverFullScreen;
-    shareVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self presentViewController:shareVC animated:YES completion:nil];
 }
 

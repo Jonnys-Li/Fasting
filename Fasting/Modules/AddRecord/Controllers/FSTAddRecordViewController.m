@@ -14,6 +14,7 @@
 #import "FSTAddRecordNoteCardView.h"
 #import "FSTWeightInputViewController.h"
 #import "FSTSessionManager.h"
+#import "FSTRecordsRepository.h"
 #import "FSTRootTabBarController.h"
 #import "FSTTheme.h"
 
@@ -132,7 +133,7 @@
 
 - (void)handleTrashTapped {
     if (self.editingExistingRecord) {
-        [[FSTSessionManager sharedManager] deleteFastingRecord:self.editingRecord];
+        [[FSTRecordsRepository sharedRepository] deleteFastingRecord:self.editingRecord];
         [self.navigationController popViewControllerAnimated:YES];
         return;
     }
@@ -178,17 +179,15 @@
     record.note         = self.rootView.noteCardView.text ?: @"";
 
     if (self.editingExistingRecord) {
-        [sessionManager updateFastingRecord:record];
+        [[FSTRecordsRepository sharedRepository] updateFastingRecord:record];
         [self.navigationController popViewControllerAnimated:YES];
         return;
     }
 
     FSTRootTabBarController *tabBarController = (FSTRootTabBarController *)self.tabBarController;
     if ([tabBarController isKindOfClass:[FSTRootTabBarController class]]) {
-        UINavigationController *fastingNavigationController = (UINavigationController *)tabBarController.viewControllers[FSTTabIndexFasting];
-        [tabBarController fst_switchToTimelineSuppressingTransitionChromeWithUpdates:^{
+        [tabBarController fst_finishFlowReturningToTimelineWithUpdates:^{
             [sessionManager finishFastingWithRecord:record];
-            [fastingNavigationController popToRootViewControllerAnimated:NO];
         }];
     } else {
         [sessionManager finishFastingWithRecord:record];

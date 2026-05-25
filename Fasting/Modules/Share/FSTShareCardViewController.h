@@ -3,11 +3,11 @@
 //  Fasting
 //
 
-#import <UIKit/UIKit.h>
+#import "FSTBaseModalViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FSTShareCardViewController : UIViewController
+@interface FSTShareCardViewController : FSTBaseModalViewController
 
 - (instancetype)initWithRingSnapshot:(UIImage *)snapshot;
 
