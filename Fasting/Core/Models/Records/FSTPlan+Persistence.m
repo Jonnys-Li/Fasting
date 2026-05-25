@@ -18,8 +18,6 @@
     plan.fastingHours        = [dictionary[@"fastingHours"]    integerValue];
     plan.eatingHours         = [dictionary[@"eatingHours"]     integerValue];
     plan.difficultyLevel     = [dictionary[@"difficultyLevel"] integerValue];
-    plan.cardBackgroundHex   = 0xE6F3EA;
-    plan.accentBoltHex       = 0x3F9D5E;
     return plan;
 }
 

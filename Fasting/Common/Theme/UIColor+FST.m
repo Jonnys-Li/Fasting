@@ -25,10 +25,6 @@
 + (UIColor *)fst_textSecondary      { return [self fst_colorWithHex:0x7D8C9A]; }
 + (UIColor *)fst_separator          { return [self fst_colorWithHex:0xEDEEF0]; }
 + (UIColor *)fst_redDot             { return [self fst_colorWithHex:0xFF6B6B]; }
-+ (UIColor *)fst_planOrange         { return [self fst_colorWithHex:0xFBE9E3]; }
-+ (UIColor *)fst_planBlue           { return [self fst_colorWithHex:0xE7ECFA]; }
-+ (UIColor *)fst_planYellow         { return [self fst_colorWithHex:0xFAF1DE]; }
-+ (UIColor *)fst_planGreen          { return [self fst_colorWithHex:0xE6F3EA]; }
 
 + (UIColor *)fst_amber              { return [self fst_colorWithHex:0xDEA006]; }
 + (UIColor *)fst_progressCream      { return [self fst_colorWithHex:0xFEECAC]; }

@@ -35,12 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 红色小圆点。Fast ends 提醒标记、未读徽标。
 + (UIColor *)fst_redDot;
 
-// MARK: - Plan 卡片配色（与 FSTPlan.cardBackgroundColor 一一对应）
-+ (UIColor *)fst_planOrange;         ///< 14:10 卡片色（难度 1）
-+ (UIColor *)fst_planBlue;           ///< 16:8  卡片色（难度 2）
-+ (UIColor *)fst_planYellow;         ///< 18:6  卡片色（难度 3）
-+ (UIColor *)fst_planGreen;          ///< 20:4  卡片色（难度 4）
-
 // MARK: - Eating Time 设计色（参考 pic/Eating Time/）
 
 /// #DEA006 Eating Time 圆环箭头、强调色。
