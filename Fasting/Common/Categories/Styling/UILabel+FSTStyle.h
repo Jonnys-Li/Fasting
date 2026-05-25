@@ -27,6 +27,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// 居中文本：指定 font/color + center alignment。
 + (instancetype)fst_centerLabelWithFont:(UIFont *)font color:(UIColor *)color;
 
+/// 全参数 label。覆盖前 3 个偏特化方法触及不到的"任意 font + 任意 color"场景，
+/// 用于业务 view 内大量 [UILabel new] + 立即赋值 font/textColor 的 boilerplate。
++ (instancetype)fst_labelWithText:(nullable NSString *)text
+                             font:(UIFont *)font
+                            color:(UIColor *)color;
+
+/// 全参数 label + 文本对齐。专用于需要 textAlignment 的场景（如顶栏标题、居右数值）。
++ (instancetype)fst_labelWithText:(nullable NSString *)text
+                             font:(UIFont *)font
+                            color:(UIColor *)color
+                         alignment:(NSTextAlignment)alignment;
+
 @end
 
 NS_ASSUME_NONNULL_END

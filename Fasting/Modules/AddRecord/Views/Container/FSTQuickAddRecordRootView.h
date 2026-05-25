@@ -7,38 +7,28 @@
 
 #import <UIKit/UIKit.h>
 
+@class FSTTimeRowView;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /// QuickAddRecord 页的根视图。承担全部 UI 创建与 Masonry 约束，
 /// VC 仅负责通过暴露的子视图属性进行状态推送与回调接线。
 @interface FSTQuickAddRecordRootView : UIView
 
-/// 断食时长数值。
+/// 断食时长数值（如 "13hr 24min"）。
 @property (nonatomic, strong, readonly) UILabel *durationValueLabel;
 
-/// 开始时间文字。
-@property (nonatomic, strong, readonly) UILabel *startDateLabel;
+/// 开始时间行（绿点 + "Fast starts" + 时间 + picker）。
+@property (nonatomic, strong, readonly) FSTTimeRowView *startRow;
 
-/// 结束时间文字。
-@property (nonatomic, strong, readonly) UILabel *endDateLabel;
-
-/// 开始时间选择器。
-@property (nonatomic, strong, readonly) UIDatePicker *startPicker;
-
-/// 结束时间选择器。
-@property (nonatomic, strong, readonly) UIDatePicker *endPicker;
+/// 结束时间行（红点 + "Fast ends" + 时间 + picker）。
+@property (nonatomic, strong, readonly) FSTTimeRowView *endRow;
 
 /// 返回按钮点击回调。
 @property (nonatomic, copy, nullable) void (^onBackTapped)(void);
 
 /// 保存按钮点击回调。
 @property (nonatomic, copy, nullable) void (^onSaveTapped)(void);
-
-/// 开始时间选择器变更回调。
-@property (nonatomic, copy, nullable) void (^onStartPickerChanged)(void);
-
-/// 结束时间选择器变更回调。
-@property (nonatomic, copy, nullable) void (^onEndPickerChanged)(void);
 
 @end
 

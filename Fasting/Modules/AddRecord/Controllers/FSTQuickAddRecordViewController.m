@@ -7,6 +7,7 @@
 
 #import "FSTQuickAddRecordViewController.h"
 #import "FSTQuickAddRecordRootView.h"
+#import "FSTTimeRowView.h"
 #import "FSTSessionManager.h"
 #import "FSTFastingRecord.h"
 #import "FSTRootTabBarController.h"
@@ -59,15 +60,13 @@
     self.rootView.onSaveTapped = ^{
         [weakSelf handleSave];
     };
-    self.rootView.onStartPickerChanged = ^{
-        __strong typeof(weakSelf) self = weakSelf;
-        self.startDate = self.rootView.startPicker.date;
-        [self refreshDisplay];
+    self.rootView.startRow.onDateChanged = ^(NSDate *date) {
+        weakSelf.startDate = date;
+        [weakSelf refreshDisplay];
     };
-    self.rootView.onEndPickerChanged = ^{
-        __strong typeof(weakSelf) self = weakSelf;
-        self.endDate = self.rootView.endPicker.date;
-        [self refreshDisplay];
+    self.rootView.endRow.onDateChanged = ^(NSDate *date) {
+        weakSelf.endDate = date;
+        [weakSelf refreshDisplay];
     };
 }
 
@@ -76,11 +75,11 @@
 - (void)refreshDisplay {
     FSTQuickAddRecordRootView *rv = self.rootView;
 
-    rv.startPicker.date = self.startDate;
-    rv.endPicker.date   = self.endDate;
+    rv.startRow.picker.date = self.startDate;
+    rv.endRow.picker.date   = self.endDate;
 
-    rv.startDateLabel.text = [self.displayFormatter stringFromDate:self.startDate];
-    rv.endDateLabel.text   = [self.displayFormatter stringFromDate:self.endDate];
+    rv.startRow.dateText = [self.displayFormatter stringFromDate:self.startDate];
+    rv.endRow.dateText   = [self.displayFormatter stringFromDate:self.endDate];
 
     NSTimeInterval duration = [self.endDate timeIntervalSinceDate:self.startDate];
     if (duration < 0) duration = 0;

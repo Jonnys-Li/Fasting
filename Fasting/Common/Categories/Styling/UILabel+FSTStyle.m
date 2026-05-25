@@ -41,4 +41,18 @@
     return label;
 }
 
++ (instancetype)fst_labelWithText:(NSString *)text font:(UIFont *)font color:(UIColor *)color {
+    UILabel *label = [UILabel new];
+    label.text = text;
+    label.font = font;
+    label.textColor = color;
+    return label;
+}
+
++ (instancetype)fst_labelWithText:(NSString *)text font:(UIFont *)font color:(UIColor *)color alignment:(NSTextAlignment)alignment {
+    UILabel *label = [self fst_labelWithText:text font:font color:color];
+    label.textAlignment = alignment;
+    return label;
+}
+
 @end
