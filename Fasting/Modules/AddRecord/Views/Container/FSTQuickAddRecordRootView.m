@@ -102,7 +102,7 @@ static const CGFloat kQuickAddDotSize      = 8;
 
 - (void)buildSeparator {
     self.separator = [UIView new];
-    self.separator.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0];
+    self.separator.backgroundColor = [UIColor fst_colorWithHex:0xE5E5E5];
     [self.contentView addSubview:self.separator];
 }
 
@@ -157,7 +157,7 @@ static const CGFloat kQuickAddDotSize      = 8;
     self.startPicker = [UIDatePicker new];
     self.startPicker.datePickerMode = UIDatePickerModeDateAndTime;
     self.startPicker.preferredDatePickerStyle = UIDatePickerStyleWheels;
-    self.startPicker.backgroundColor = [UIColor colorWithRed:0.96 green:0.97 blue:0.98 alpha:1.0];
+    self.startPicker.backgroundColor = [UIColor fst_inputBackground];
     self.startPicker.layer.cornerRadius = 16;
     self.startPicker.layer.masksToBounds = YES;
     [self.startPicker addTarget:self action:@selector(handleStartPickerChanged) forControlEvents:UIControlEventValueChanged];
@@ -181,7 +181,7 @@ static const CGFloat kQuickAddDotSize      = 8;
     [self.endSection addSubview:headerRow];
 
     UIView *dot = [UIView new];
-    dot.backgroundColor = [UIColor colorWithRed:1.0 green:0.45 blue:0.45 alpha:1.0];
+    dot.backgroundColor = [UIColor fst_colorWithHex:0xFF7373];
     dot.layer.cornerRadius = kQuickAddDotSize / 2.0;
     [headerRow addSubview:dot];
 
@@ -222,7 +222,7 @@ static const CGFloat kQuickAddDotSize      = 8;
     self.endPicker = [UIDatePicker new];
     self.endPicker.datePickerMode = UIDatePickerModeDateAndTime;
     self.endPicker.preferredDatePickerStyle = UIDatePickerStyleWheels;
-    self.endPicker.backgroundColor = [UIColor colorWithRed:0.96 green:0.97 blue:0.98 alpha:1.0];
+    self.endPicker.backgroundColor = [UIColor fst_inputBackground];
     self.endPicker.layer.cornerRadius = 16;
     self.endPicker.layer.masksToBounds = YES;
     [self.endPicker addTarget:self action:@selector(handleEndPickerChanged) forControlEvents:UIControlEventValueChanged];

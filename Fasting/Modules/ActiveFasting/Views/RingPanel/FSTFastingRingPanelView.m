@@ -237,7 +237,7 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
     if (self.presentationState == FSTRingPresentationComplete) {
         self.timerCaptionLabel.font = FSTFontRegular(20);
         self.timerCaptionLabel.textColor = [UIColor fst_textCaption];
-        self.timerLabel.font = [UIFont systemFontOfSize:58 weight:UIFontWeightHeavy];
+        self.timerLabel.font = FSTFontHeavy(58);
         self.timerLabel.textColor = [UIColor fst_textHeading];
 
         [self.timerCaptionLabel mas_remakeConstraints:^(MASConstraintMaker *make) {

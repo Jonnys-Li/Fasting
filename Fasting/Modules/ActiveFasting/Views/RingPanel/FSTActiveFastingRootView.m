@@ -193,7 +193,7 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
 
     UILabel *emojiLabel = [UILabel new];
     emojiLabel.text = @"\U0001F4E9";
-    emojiLabel.font = [UIFont systemFontOfSize:28];
+    emojiLabel.font = FSTFontRegular(28);
     [row addSubview:emojiLabel];
 
     UILabel *textLabel = [UILabel new];

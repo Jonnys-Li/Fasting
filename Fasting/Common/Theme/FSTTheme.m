@@ -21,6 +21,7 @@ UIFont *FSTFontRegular(CGFloat size)  { return [UIFont systemFontOfSize:size wei
 UIFont *FSTFontMedium(CGFloat size)   { return [UIFont systemFontOfSize:size weight:UIFontWeightMedium]; }
 UIFont *FSTFontSemibold(CGFloat size) { return [UIFont systemFontOfSize:size weight:UIFontWeightSemibold]; }
 UIFont *FSTFontBold(CGFloat size)     { return [UIFont systemFontOfSize:size weight:UIFontWeightBold]; }
+UIFont *FSTFontHeavy(CGFloat size)    { return [UIFont systemFontOfSize:size weight:UIFontWeightHeavy]; }
 UIFont *FSTFontAvenirBold(CGFloat size)     { return [UIFont fontWithName:@"AvenirNext-Bold" size:size] ?: FSTFontBold(size); }
 UIFont *FSTFontAvenirDemiBold(CGFloat size) { return [UIFont fontWithName:@"AvenirNext-DemiBold" size:size] ?: FSTFontSemibold(size); }
 

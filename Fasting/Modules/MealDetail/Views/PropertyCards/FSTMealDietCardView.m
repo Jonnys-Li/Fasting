@@ -76,7 +76,7 @@
 
     UILabel *iconLabel = [UILabel new];
     iconLabel.text = icon;
-    iconLabel.font = [UIFont systemFontOfSize:32];
+    iconLabel.font = FSTFontRegular(32);
     [row addSubview:iconLabel];
 
     UILabel *titleLabel = [UILabel new];

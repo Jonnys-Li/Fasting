@@ -25,6 +25,7 @@ UIFont *FSTFontRegular(CGFloat size);    ///< Regular 字重，正文用。
 UIFont *FSTFontMedium(CGFloat size);     ///< Medium 字重，副标题/列表项。
 UIFont *FSTFontSemibold(CGFloat size);   ///< Semibold 字重，按钮/卡片标题。
 UIFont *FSTFontBold(CGFloat size);       ///< Bold 字重，主标题/大数字。
+UIFont *FSTFontHeavy(CGFloat size);      ///< Heavy 字重，超大数字强调态（ActiveFasting 完成态 timer）。
 UIFont *FSTFontAvenirBold(CGFloat size);     ///< AvenirNext-Bold，fallback Bold。
 UIFont *FSTFontAvenirDemiBold(CGFloat size); ///< AvenirNext-DemiBold，fallback Semibold。
 

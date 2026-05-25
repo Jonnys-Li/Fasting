@@ -64,7 +64,7 @@ static const CGFloat kAddButtonHeight   = 48;
     // 🍴 图标
     self.forkIconLabel = [UILabel new];
     self.forkIconLabel.text = @"🍴";
-    self.forkIconLabel.font = [UIFont systemFontOfSize:28];
+    self.forkIconLabel.font = FSTFontRegular(28);
     [self addSubview:self.forkIconLabel];
 
     // 标题
@@ -167,7 +167,7 @@ static const CGFloat kAddButtonHeight   = 48;
     self.foodIconLabel.backgroundColor = [UIColor whiteColor];
     self.foodIconLabel.layer.cornerRadius = FSTRadiusM;
     self.foodIconLabel.clipsToBounds = YES;
-    self.foodIconLabel.font = [UIFont systemFontOfSize:34];
+    self.foodIconLabel.font = FSTFontRegular(34);
     self.foodIconLabel.textAlignment = NSTextAlignmentCenter;
     self.foodIconLabel.userInteractionEnabled = NO;
     [self.cardView addSubview:self.foodIconLabel];

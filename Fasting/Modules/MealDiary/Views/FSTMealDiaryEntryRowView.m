@@ -160,7 +160,7 @@
     iconLabel.layer.cornerRadius = FSTRadiusM;
     iconLabel.clipsToBounds = YES;
     iconLabel.text = [self.category isEqualToString:@"Snack"] ? @"\U0001F34E" : @"\U0001F37D";
-    iconLabel.font = [UIFont systemFontOfSize:34];
+    iconLabel.font = FSTFontRegular(34);
     iconLabel.textAlignment = NSTextAlignmentCenter;
     return iconLabel;
 }

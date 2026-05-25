@@ -37,7 +37,7 @@
 
     UILabel *calendarIconLabel = [UILabel new];
     calendarIconLabel.text = @"📅";
-    calendarIconLabel.font = [UIFont systemFontOfSize:22];
+    calendarIconLabel.font = FSTFontRegular(22);
     calendarIconLabel.textAlignment = NSTextAlignmentCenter;
 
     self.dateLabel = [UILabel new];

@@ -76,7 +76,7 @@ static const CGFloat kFSTFeedbackSubmitRadius  = 28;
     // Envelope emoji
     UILabel *envelopeLabel = [UILabel new];
     envelopeLabel.text = @"\U0001F4E9";
-    envelopeLabel.font = [UIFont systemFontOfSize:60];
+    envelopeLabel.font = FSTFontRegular(60);
     envelopeLabel.textAlignment = NSTextAlignmentCenter;
     [self.contentView addSubview:envelopeLabel];
     envelopeLabel.tag = 1001;

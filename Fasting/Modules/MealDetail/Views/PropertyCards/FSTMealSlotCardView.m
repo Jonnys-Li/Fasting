@@ -72,7 +72,7 @@
 
     UILabel *iconLabel = [UILabel new];
     iconLabel.text = emoji;
-    iconLabel.font = [UIFont systemFontOfSize:42];
+    iconLabel.font = FSTFontRegular(42);
     iconLabel.textAlignment = NSTextAlignmentCenter;
     [iconBox addSubview:iconLabel];
 
