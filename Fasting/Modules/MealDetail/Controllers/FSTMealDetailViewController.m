@@ -3,7 +3,7 @@
 //  Fasting
 //
 //  餐食详情页：5 张卡片（时间/正餐or零食/饮食类型/味道/详情）+ 底部保存按钮。
-//  状态分布在子卡片里，保存时统一向 SessionManager 写入 FSTMealRecord。
+//  状态分布在子卡片里，保存时统一向 FSTRecordsRepository 写入 FSTMealRecord。
 //
 
 #import "FSTMealDetailViewController.h"
@@ -14,7 +14,7 @@
 #import "FSTMealTasteCardView.h"
 #import "FSTMealDetailContentCardView.h"
 #import "FSTRootTabBarController.h"
-#import "FSTSessionManager.h"
+#import "FSTRecordsRepository.h"
 #import "FSTMealImageService.h"
 
 @interface FSTMealDetailViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
@@ -26,7 +26,7 @@
 
 - (instancetype)initWithMealRecord:(FSTMealRecord *)record {
     if ((self = [super init])) {
-        _record = record;
+        _record = [record copy] ?: [FSTMealRecord new];
         _imagePath = record.imagePath ?: @"";
         self.hidesBottomBarWhenPushed = YES;
     }
@@ -59,12 +59,9 @@
     root.timeCardView.date = self.record.date ?: [NSDate date];
     root.slotCardView.mealCategory = self.record.mealCategory ?: @"Meal";
     root.dietCardView.dietType = self.record.dietType ?: @"Not sure";
-    root.tasteCardView.tasteLevel = self.record ? self.record.tasteLevel : 1;
+    root.tasteCardView.tasteLevel = self.record.tasteLevel;
     root.detailCardView.imagePath = self.imagePath;
     root.detailCardView.detailDescription = self.record.detailDescription ?: @"";
-
-    __weak typeof(self) weakSelf = self;
-    root.timeCardView.onDateChanged = ^(NSDate *date) { weakSelf.record.date = date; };
 }
 
 #pragma mark - 图片选择
@@ -103,22 +100,25 @@
     record.tasteLevel = root.tasteCardView.tasteLevel;
     record.detailDescription = root.detailCardView.detailDescription ?: @"";
     record.imagePath = self.imagePath ?: @"";
-    [[FSTSessionManager sharedManager] addOrUpdateMealRecord:record];
-
     UINavigationController *currentNavigationController = self.navigationController;
-    UITabBarController *tabBarController = currentNavigationController.tabBarController;
-    if ([tabBarController isKindOfClass:[FSTRootTabBarController class]]) {
-        if (tabBarController.selectedIndex == FSTTabIndexTimeline) {
-            [currentNavigationController popViewControllerAnimated:YES];
-        } else {
-            [currentNavigationController popToRootViewControllerAnimated:NO];
-            UINavigationController *timelineNavigationController = (UINavigationController *)tabBarController.viewControllers[FSTTabIndexTimeline];
-            [timelineNavigationController popToRootViewControllerAnimated:NO];
-            tabBarController.selectedIndex = FSTTabIndexTimeline;
-        }
-    } else {
+    FSTRootTabBarController *tabBarController = (FSTRootTabBarController *)currentNavigationController.tabBarController;
+    if (![tabBarController isKindOfClass:[FSTRootTabBarController class]]) {
+        [[FSTRecordsRepository sharedRepository] addOrUpdateMealRecord:record];
         [currentNavigationController popViewControllerAnimated:YES];
+        return;
     }
+
+    if (tabBarController.selectedIndex == FSTTabIndexTimeline) {
+        [[FSTRecordsRepository sharedRepository] addOrUpdateMealRecord:record];
+        [currentNavigationController popViewControllerAnimated:YES];
+        return;
+    }
+
+    [tabBarController fst_finishFlowReturningToTimelineWithUpdates:^{
+        [[FSTRecordsRepository sharedRepository] addOrUpdateMealRecord:record];
+        UINavigationController *timelineNav = (UINavigationController *)tabBarController.viewControllers[FSTTabIndexTimeline];
+        [timelineNav popToRootViewControllerAnimated:NO];
+    }];
 }
 
 @end

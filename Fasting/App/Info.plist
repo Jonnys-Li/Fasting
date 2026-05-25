@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryAddOnlyUsageDescription</key>
+	<string>保存断食成果分享卡片到相册。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>选择食物图片用于饮食记录。</string>
 	<key>UIApplicationSceneManifest</key>

@@ -27,4 +27,17 @@ static const NSInteger kFSTDifficultyMediumThreshold = 18;
 @end
 
 @implementation FSTMealRecord
+
+- (id)copyWithZone:(NSZone *)zone {
+    FSTMealRecord *copy = [FSTMealRecord new];
+    copy.recordID          = self.recordID;
+    copy.date              = self.date;
+    copy.mealCategory      = self.mealCategory;
+    copy.dietType          = self.dietType;
+    copy.tasteLevel        = self.tasteLevel;
+    copy.detailDescription = self.detailDescription;
+    copy.imagePath         = self.imagePath;
+    return copy;
+}
+
 @end

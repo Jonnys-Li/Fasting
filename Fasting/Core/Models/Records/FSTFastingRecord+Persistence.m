@@ -19,8 +19,8 @@ static const NSInteger kFSTFastingRecordDefaultFeelingLevel  = 1;
     record.fastingHours = [dictionary[@"fastingHours"] integerValue];
     NSNumber *startTimeInterval = dictionary[@"startTimeInterval"];
     NSNumber *endTimeInterval   = dictionary[@"endTimeInterval"];
-    record.startDate = startTimeInterval ? [NSDate dateWithTimeIntervalSince1970:startTimeInterval.doubleValue] : nil;
-    record.endDate   = endTimeInterval   ? [NSDate dateWithTimeIntervalSince1970:endTimeInterval.doubleValue]   : nil;
+    record.startDate = startTimeInterval != nil ? [NSDate dateWithTimeIntervalSince1970:startTimeInterval.doubleValue] : nil;
+    record.endDate   = endTimeInterval   != nil ? [NSDate dateWithTimeIntervalSince1970:endTimeInterval.doubleValue]   : nil;
     record.weightKg           = dictionary[@"weightKg"]           ? [dictionary[@"weightKg"]           doubleValue]  : kFSTFastingRecordDefaultCurrentWeightKg;
     record.initialWeightKg    = dictionary[@"initialWeightKg"]    ? [dictionary[@"initialWeightKg"]    doubleValue]  : kFSTFastingRecordDefaultInitialWeightKg;
     record.targetWeightKg     = dictionary[@"targetWeightKg"]     ? [dictionary[@"targetWeightKg"]     doubleValue]  : kFSTFastingRecordDefaultTargetWeightKg;
@@ -31,19 +31,19 @@ static const NSInteger kFSTFastingRecordDefaultFeelingLevel  = 1;
 }
 
 - (NSDictionary *)fst_dictionaryRepresentation {
-    return @{
-        @"recordID":           self.recordID ?: [[NSUUID UUID] UUIDString],
-        @"planName":           self.planName ?: @"",
-        @"fastingHours":       @(self.fastingHours),
-        @"startTimeInterval":  @(self.startDate.timeIntervalSince1970),
-        @"endTimeInterval":    @(self.endDate.timeIntervalSince1970),
-        @"weightKg":           @(self.weightKg        > 0 ? self.weightKg        : kFSTFastingRecordDefaultCurrentWeightKg),
-        @"initialWeightKg":    @(self.initialWeightKg > 0 ? self.initialWeightKg : kFSTFastingRecordDefaultInitialWeightKg),
-        @"targetWeightKg":     @(self.targetWeightKg  > 0 ? self.targetWeightKg  : kFSTFastingRecordDefaultTargetWeightKg),
-        @"appleHealthEnabled": @(self.appleHealthEnabled),
-        @"feelingLevel":       @(self.feelingLevel),
-        @"note":               self.note ?: @"",
-    };
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    dictionary[@"recordID"]           = self.recordID ?: [[NSUUID UUID] UUIDString];
+    dictionary[@"planName"]           = self.planName ?: @"";
+    dictionary[@"fastingHours"]       = @(self.fastingHours);
+    if (self.startDate) dictionary[@"startTimeInterval"] = @(self.startDate.timeIntervalSince1970);
+    if (self.endDate)   dictionary[@"endTimeInterval"]   = @(self.endDate.timeIntervalSince1970);
+    dictionary[@"weightKg"]           = @(self.weightKg        > 0 ? self.weightKg        : kFSTFastingRecordDefaultCurrentWeightKg);
+    dictionary[@"initialWeightKg"]    = @(self.initialWeightKg > 0 ? self.initialWeightKg : kFSTFastingRecordDefaultInitialWeightKg);
+    dictionary[@"targetWeightKg"]     = @(self.targetWeightKg  > 0 ? self.targetWeightKg  : kFSTFastingRecordDefaultTargetWeightKg);
+    dictionary[@"appleHealthEnabled"] = @(self.appleHealthEnabled);
+    dictionary[@"feelingLevel"]       = @(self.feelingLevel);
+    dictionary[@"note"]               = self.note ?: @"";
+    return [dictionary copy];
 }
 
 @end
