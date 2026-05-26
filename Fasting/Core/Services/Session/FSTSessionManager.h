@@ -14,11 +14,10 @@
 //  历史记录（records / mealRecords）已搬到 [FSTRecordsRepository sharedRepository]，调用方直接用 repository。
 //  finishFastingWithRecord: 是跨域的：先写 record（转发到 repository）再清 active 状态，由本类编排。
 //
-//  写入约定：任何 mutation 都走 -persistAllStateAndNotifySession（统一持久化 + 通知）。
+//  写入约定：任何 mutation 都走 -persistAllState（统一持久化）。
 //
-//  通知名分工：
-//    - FSTSessionDidChangeNotification — session 字段变更；订阅方：DailyPlan / ActiveFasting VC。
-//    - FSTRecordsDidChangeNotification — records / mealRecords 增删；见 FSTRecordsRepository.h。
+//  通知：records / mealRecords 增删通过 FSTRecordsDidChangeNotification（见 FSTRecordsRepository.h）；
+//  session 字段变更目前不发通知，VC 通过 refreshTimer + viewWillAppear + UIApplicationWillEnterForegroundNotification 自驱动。
 //
 
 #import <Foundation/Foundation.h>
@@ -27,8 +26,6 @@
 #import "FSTWeightUnit.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-extern NSNotificationName const FSTSessionDidChangeNotification;
 
 /// 预约准备态来源标记 — 表示 Plan 页"已选未开始"但用户显式 Schedule 了一个未来开始时间。
 /// 写入方：[FSTSessionManager markScheduledReadyWithSource:anchorDate:]
@@ -99,9 +96,8 @@ typedef NS_ENUM(NSInteger, FSTScheduledReadySource) {
 /// 覆盖下一次断食开始时间。传 nil 清除覆盖，让 nextFastingStartDate 回到默认推导。
 - (void)setNextFastingStartDate:(NSDate * _Nullable)date;
 
-/// 编辑进行中断食的开始时刻。默认按当前计划重新对齐 end。持久化并发通知。
+/// 编辑进行中断食的开始时刻。alignWithPlan=YES 时按当前计划重新对齐 end。
 /// 无活跃断食时不生效。用于活跃断食页的 Start/Ends 铅笔编辑。
-- (void)editActiveStartDate:(NSDate *)date;
 - (void)editActiveStartDate:(NSDate *)date alignWithPlan:(BOOL)alignWithPlan;
 - (void)editActiveEndDate:(NSDate *)date alignWithPlan:(BOOL)alignWithPlan;
 

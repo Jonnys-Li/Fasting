@@ -85,16 +85,6 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     [self stopRefreshTimer];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    [self showInitialStartTimePromptIfNeeded];
-}
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self stopRefreshTimer];
-}
-
 #pragma mark - 顶栏
 
 /// share | segment | water：share 用裸图标，water 保留白底圆形；segment 仅作视觉装饰。

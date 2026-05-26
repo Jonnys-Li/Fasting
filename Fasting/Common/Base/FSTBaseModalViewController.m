@@ -20,13 +20,6 @@
     return self;
 }
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-        [self configureDefaults];
-    }
-    return self;
-}
-
 - (void)configureDefaults {
     _dismissOnBackdropTap = YES;
     _containerStyle = FSTBaseModalContainerStyleCenteredCard;

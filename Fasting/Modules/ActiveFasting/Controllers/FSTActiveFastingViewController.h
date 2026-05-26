@@ -5,7 +5,7 @@
 //  进行中断食的页面 — 显示圆环计时器、Start/End 编辑、Tips、阶段卡、End/Complete 按钮。
 //  - 来源：FSTPlanConfirmViewController.onFastingStarted 触发后 push 进入；
 //    或下次 App 启动时若 sessionManager.hasActiveFasting=YES，由 DailyPlan VC 自动 push 进入。
-//  - 输入：refreshTimer（每秒）+ FSTSessionDidChangeNotification（外部改了 start/end/plan）+
+//  - 输入：refreshTimer（每秒）+ UIApplicationWillEnterForegroundNotification（前后台切回时刷一次）+
 //          [FSTSessionManager consumeActiveStartDatePromptRequest]（首次进入弹 start 编辑器）。
 //  - 状态计算：靠 [FSTActiveFastingDisplayState currentStateWithDisplayMode:] 把 RingPanel/
 //    TimesRow/PhaseCard/Tips/StopButton 五块所需字段算好一次性推入。

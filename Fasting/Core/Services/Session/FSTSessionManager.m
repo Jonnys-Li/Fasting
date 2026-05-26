@@ -8,7 +8,7 @@
 //    - 下次起点 → FSTNextFastService（nextFastingStartDate 推导）
 //
 //  Property 私有 readwrite 暴露在 FSTSessionManager+Internal.h，只允许上述 service 引入。
-//  写入约定保持不变：mutation 走 -persistAllStateAndNotifySession，发 FSTSessionDidChangeNotification。
+//  写入约定保持不变：mutation 走 -persistAllState（统一持久化）。
 //
 
 #import "FSTSessionManager.h"
@@ -16,8 +16,6 @@
 #import "FSTSessionPersistenceService.h"
 #import "FSTSessionLifecycleService.h"
 #import "FSTNextFastService.h"
-
-NSNotificationName const FSTSessionDidChangeNotification = @"FSTSessionDidChangeNotification";
 
 @implementation FSTSessionManager
 
@@ -44,11 +42,6 @@ NSNotificationName const FSTSessionDidChangeNotification = @"FSTSessionDidChange
 
 - (void)persistAllState {
     [FSTSessionPersistenceService saveAllForSession:self];
-}
-
-- (void)persistAllStateAndNotifySession {
-    [self persistAllState];
-    [[NSNotificationCenter defaultCenter] postNotificationName:FSTSessionDidChangeNotification object:self];
 }
 
 #pragma mark - Active state (纯派生 getter，无副作用)
@@ -130,10 +123,6 @@ NSNotificationName const FSTSessionDidChangeNotification = @"FSTSessionDidChange
     [FSTSessionLifecycleService scheduleSession:self atFutureDate:futureDate source:source];
 }
 
-- (void)editActiveStartDate:(NSDate *)date {
-    [self editActiveStartDate:date alignWithPlan:YES];
-}
-
 - (void)editActiveStartDate:(NSDate *)date alignWithPlan:(BOOL)alignWithPlan {
     [FSTSessionLifecycleService editStartForSession:self date:date alignWithPlan:alignWithPlan];
 }
@@ -166,7 +155,6 @@ NSNotificationName const FSTSessionDidChangeNotification = @"FSTSessionDidChange
 
 - (void)setNextFastingStartDate:(NSDate *)date {
     [FSTSessionPersistenceService setNextStartOverrideDate:date];
-    [[NSNotificationCenter defaultCenter] postNotificationName:FSTSessionDidChangeNotification object:self];
 }
 
 @end

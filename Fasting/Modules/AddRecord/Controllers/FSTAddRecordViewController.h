@@ -7,7 +7,7 @@
 //    1) -initWithStartDate:endDate: — "新建"场景：用户在 Active Fasting 页点 END/COMPLETE 后 push 进来；
 //       保存时调 [sessionManager finishFastingWithRecord:]，让历史记录 + 1。
 //    2) -initWithRecord:           — "编辑"场景：用户在 FastingHistory 列表点已有记录的"编辑"后 push 进来；
-//       保存时调 [sessionManager updateFastingRecord:]，按 recordID 替换现有记录。
+//       保存时调 [[FSTRecordsRepository sharedRepository] updateFastingRecord:]，按 recordID 替换现有记录。
 //  - 持有：FSTAddRecordRootView，里面是 4 张卡 + Header；本 VC 把卡的 onChanged 回调聚合写回到本地 record 草稿。
 //
 

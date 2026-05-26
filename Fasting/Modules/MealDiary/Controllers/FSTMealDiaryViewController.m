@@ -52,10 +52,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleRecordsChanged) name:FSTRecordsDidChangeNotification object:nil];
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self reloadDayRecords];

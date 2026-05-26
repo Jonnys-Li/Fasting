@@ -4,7 +4,7 @@
 //
 //  集中 SessionManager 所有 mutation：start / cancel / finish / clear / switch / scheduleReady /
 //  beginEatingWindow / schedule / edit start / edit end。每个方法直接改 session 字段后调用
-//  -persistAllStateAndNotifySession。重点跨域逻辑（如 finish 写 record + 清字段）的注释保留。
+//  -persistAllState。重点跨域逻辑（如 finish 写 record + 清字段）的注释保留。
 //
 
 #import "FSTSessionLifecycleService.h"
@@ -31,25 +31,25 @@
     session.scheduledReadySource = FSTScheduledReadySourceNone;
     session.scheduledReadyAnchorDate = nil;
     [FSTSessionPersistenceService clearNextStartOverride];
-    [session persistAllStateAndNotifySession];
+    [session persistAllState];
 }
 
 + (void)cancelSession:(FSTSessionManager *)session {
     session.activeStartDate = nil;
     session.activeEndOverrideDate = nil;
     session.eatingWindowAnchorDate = [NSDate date];
-    [session persistAllStateAndNotifySession];
+    [session persistAllState];
 }
 
 /// 断食完成路径。调用方：AddRecord 页点保存。
 /// 顺序很关键：
-///   1) 先写 records 并单独发 FSTRecordsDidChangeNotification — History/Timeline/MealDiary 这些
-///      只关心列表的页面立即刷新，不需要等下面的 session 变更通知；
+///   1) 先写 records — Repository 内部发 FSTRecordsDidChangeNotification，
+///      History/Timeline/MealDiary 这些只关心列表的页面立即刷新；
 ///   2) 清空 active 字段；
 ///   3) eatingWindowAnchorDate = endDate（或 now 兜底）— 作为吃窗口"0 分钟"起点，
 ///      让 FSTEatingWindowService 的 elapsed 从结束时刻开始算；
 ///   4) 清 scheduledReady — 防止下一轮吃窗口继承上次的预约残留状态；
-///   5) 统一 persist + 发 session 通知，让 DailyPlan VC 切回 Eating Time 视图。
+///   5) 统一 persist — DailyPlan VC 通过 viewWillAppear / refreshTimer 在切回时自动切到 Eating Time 视图。
 + (void)finishSession:(FSTSessionManager *)session record:(FSTFastingRecord *)record {
     if (record) {
         if (!record.recordID.length) record.recordID = [[NSUUID UUID] UUIDString];
@@ -60,7 +60,7 @@
     session.eatingWindowAnchorDate = record.endDate ?: [NSDate date];
     session.scheduledReadySource = FSTScheduledReadySourceNone;
     session.scheduledReadyAnchorDate = nil;
-    [session persistAllStateAndNotifySession];
+    [session persistAllState];
 }
 
 + (void)clearPlanForSession:(FSTSessionManager *)session {
@@ -72,7 +72,7 @@
     session.scheduledReadySource = FSTScheduledReadySourceNone;
     session.scheduledReadyAnchorDate = nil;
     [FSTSessionPersistenceService clearNextStartOverride];
-    [session persistAllStateAndNotifySession];
+    [session persistAllState];
 }
 
 + (void)switchSession:(FSTSessionManager *)session toPlan:(FSTPlan *)plan {
@@ -80,7 +80,7 @@
     session.currentPlan = plan;
     session.activeEndOverrideDate = nil;
     session.hasCompletedOnboarding = YES;
-    [session persistAllStateAndNotifySession];
+    [session persistAllState];
 }
 
 + (void)markSession:(FSTSessionManager *)session
@@ -93,14 +93,14 @@ scheduledReadyWithSource:(FSTScheduledReadySource)source
     session.scheduledReadySource = source;
     session.scheduledReadyAnchorDate = anchorDate ?: [NSDate date];
     session.hasCompletedOnboarding = YES;
-    [session persistAllStateAndNotifySession];
+    [session persistAllState];
 }
 
 + (void)clearScheduledReadyForSession:(FSTSessionManager *)session {
     if (session.scheduledReadySource == FSTScheduledReadySourceNone && !session.scheduledReadyAnchorDate) return;
     session.scheduledReadySource = FSTScheduledReadySourceNone;
     session.scheduledReadyAnchorDate = nil;
-    [session persistAllStateAndNotifySession];
+    [session persistAllState];
 }
 
 + (void)beginEatingWindowForSession:(FSTSessionManager *)session fromDate:(NSDate *)date {
@@ -111,7 +111,7 @@ scheduledReadyWithSource:(FSTScheduledReadySource)source
     session.scheduledReadyAnchorDate = nil;
     session.hasCompletedOnboarding = YES;
     [FSTSessionPersistenceService clearNextStartOverride];
-    [session persistAllStateAndNotifySession];
+    [session persistAllState];
 }
 
 + (void)scheduleSession:(FSTSessionManager *)session
@@ -141,7 +141,7 @@ scheduledReadyWithSource:(FSTScheduledReadySource)source
         NSDate *minimumEndDate = [date dateByAddingTimeInterval:60.0];
         session.activeEndOverrideDate = [expectedEndDate compare:minimumEndDate] == NSOrderedAscending ? minimumEndDate : expectedEndDate;
     }
-    [session persistAllStateAndNotifySession];
+    [session persistAllState];
 }
 
 /// 编辑活跃断食的 End 时刻 — 双模式：
@@ -157,7 +157,7 @@ scheduledReadyWithSource:(FSTScheduledReadySource)source
         NSDate *minimumEndDate = [session.activeStartDate dateByAddingTimeInterval:60.0];
         session.activeEndOverrideDate = [date compare:minimumEndDate] == NSOrderedAscending ? minimumEndDate : date;
     }
-    [session persistAllStateAndNotifySession];
+    [session persistAllState];
 }
 
 @end

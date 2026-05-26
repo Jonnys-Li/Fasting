@@ -71,10 +71,6 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
     [self stopRefreshTimer];
 }
 
-- (void)dealloc {
-    [self stopRefreshTimer];
-}
-
 - (void)refreshTimerDidFire {
     [self refreshReadyState];
 }

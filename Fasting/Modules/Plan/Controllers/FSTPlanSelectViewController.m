@@ -24,7 +24,7 @@ static const CGFloat FSTPlanSelectHeaderHeight = 162;  // 8pt 顶部 + 48pt 按�
 @implementation FSTPlanSelectViewController
 
 - (instancetype)init {
-    if ((self = [super initWithNibName:nil bundle:nil])) {
+    if ((self = [super init])) {
         _showsCloseButton = YES;
         _dismissesOnPlanPicked = YES;
     }

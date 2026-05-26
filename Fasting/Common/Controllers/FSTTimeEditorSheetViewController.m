@@ -40,7 +40,7 @@ static const CGFloat kFSTTimeEditorSheetCornerRadius = 22.0;
                     alignMode:(FSTTimeEditorAlignMode)alignMode
            alignReferenceDate:(nullable NSDate *)alignReferenceDate
                      onCommit:(FSTTimeEditorCommitHandler)onCommit {
-    if ((self = [super initWithNibName:nil bundle:nil])) {
+    if ((self = [super init])) {
         _titleText = [title copy];
         _initialDate = initialDate ?: [NSDate date];
         _minimumDate = minimumDate;

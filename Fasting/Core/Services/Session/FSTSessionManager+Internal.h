@@ -23,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readwrite, nullable) NSDate *scheduledReadyAnchorDate;
 
 - (void)persistAllState;
-- (void)persistAllStateAndNotifySession;
 
 @end
 

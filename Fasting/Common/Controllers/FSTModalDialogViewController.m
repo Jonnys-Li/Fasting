@@ -64,7 +64,7 @@
                         secondaryTitle:(nullable NSString *)secondaryTitle
                         primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
                       secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler {
-    if ((self = [super initWithNibName:nil bundle:nil])) {
+    if ((self = [super init])) {
         _iconSystemName = [systemName copy];
         _iconImageName = [imageName copy];
         _dialogTitle = [title copy];

@@ -36,10 +36,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshHome) name:FSTRecordsDidChangeNotification object:nil];
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self refreshHome];
