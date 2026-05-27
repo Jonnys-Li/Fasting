@@ -10,11 +10,16 @@
 #import "FSTShareCardViewController.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTShareCardPadding        = 24;
-static const CGFloat kFSTShareBrandIconSize      = 28;
-static const CGFloat kFSTShareButtonHeight       = 48;
-static const CGFloat kFSTShareButtonCornerRadius = 24;
-static const CGFloat kFSTShareButtonSpacing      = 16;
+#pragma mark - Layout constants
+
+// Card
+static const CGFloat kCardPadding   = 24;
+static const CGFloat kBrandIconSize = 28;
+
+// Buttons
+static const CGFloat kButtonHeight       = 48;
+static const CGFloat kButtonCornerRadius = 24;
+static const CGFloat kButtonSpacing      = 16;
 
 @interface FSTShareCardViewController ()
 @property (nonatomic, strong) UIImage *ringSnapshot;
@@ -48,15 +53,15 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
     [self.cardContainer addSubview:brandRow];
 
     [ringImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.cardContainer).offset(kFSTShareCardPadding);
-        make.left.equalTo(self.cardContainer).offset(kFSTShareCardPadding);
-        make.right.equalTo(self.cardContainer).offset(-kFSTShareCardPadding);
+        make.top.equalTo(self.cardContainer).offset(kCardPadding);
+        make.left.equalTo(self.cardContainer).offset(kCardPadding);
+        make.right.equalTo(self.cardContainer).offset(-kCardPadding);
         make.height.equalTo(ringImageView.mas_width);
     }];
     [brandRow mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(ringImageView.mas_bottom).offset(16);
         make.centerX.equalTo(self.cardContainer);
-        make.bottom.equalTo(self.cardContainer).offset(-kFSTShareCardPadding);
+        make.bottom.equalTo(self.cardContainer).offset(-kCardPadding);
     }];
 }
 
@@ -65,7 +70,7 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
 
     UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"share_app_icon"]];
     iconView.contentMode = UIViewContentModeScaleAspectFit;
-    iconView.layer.cornerRadius = kFSTShareBrandIconSize / 2.0;
+    iconView.layer.cornerRadius = kBrandIconSize / 2.0;
     iconView.layer.masksToBounds = YES;
 
     UILabel *nameLabel = [UILabel fst_labelWithText:@"Fasting Tracker" font:FSTFontBold(16) color:[UIColor blackColor]];
@@ -74,7 +79,7 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
 
     [iconView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.top.bottom.equalTo(row);
-        make.size.mas_equalTo(CGSizeMake(kFSTShareBrandIconSize, kFSTShareBrandIconSize));
+        make.size.mas_equalTo(CGSizeMake(kBrandIconSize, kBrandIconSize));
     }];
     [nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(iconView.mas_right).offset(8);
@@ -94,21 +99,21 @@ static const CGFloat kFSTShareButtonSpacing      = 16;
     [saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.cardContainer.mas_bottom).offset(20);
         make.left.equalTo(self.cardContainer);
-        make.right.equalTo(self.cardContainer.mas_centerX).offset(-kFSTShareButtonSpacing / 2.0);
-        make.height.mas_equalTo(kFSTShareButtonHeight);
+        make.right.equalTo(self.cardContainer.mas_centerX).offset(-kButtonSpacing / 2.0);
+        make.height.mas_equalTo(kButtonHeight);
     }];
     [shareButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(saveButton);
-        make.left.equalTo(self.cardContainer.mas_centerX).offset(kFSTShareButtonSpacing / 2.0);
+        make.left.equalTo(self.cardContainer.mas_centerX).offset(kButtonSpacing / 2.0);
         make.right.equalTo(self.cardContainer);
-        make.height.mas_equalTo(kFSTShareButtonHeight);
+        make.height.mas_equalTo(kButtonHeight);
     }];
 }
 
 - (UIButton *)actionButtonWithTitle:(NSString *)title action:(SEL)action {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.backgroundColor = [UIColor fst_eatingTimeGreen];
-    button.layer.cornerRadius = kFSTShareButtonCornerRadius;
+    button.layer.cornerRadius = kButtonCornerRadius;
     [button setTitle:title forState:UIControlStateNormal];
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     button.titleLabel.font = FSTFontBold(16);

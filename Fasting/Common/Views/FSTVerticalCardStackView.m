@@ -6,19 +6,21 @@
 #import "FSTVerticalCardStackView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTVerticalCardStackDefaultSpacing      = 18;
-static const CGFloat kFSTVerticalCardStackDefaultSideInset    = 22;
-static const CGFloat kFSTVerticalCardStackDefaultBottomInset  = 28;
+#pragma mark - Defaults
+
+static const CGFloat kDefaultSpacing     = 18;
+static const CGFloat kDefaultSideInset   = 22;
+static const CGFloat kDefaultBottomInset = 28;
 
 @implementation FSTVerticalCardStackView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        _cardSpacing   = kFSTVerticalCardStackDefaultSpacing;
+        _cardSpacing   = kDefaultSpacing;
         _contentInsets = UIEdgeInsetsMake(0,
-                                          kFSTVerticalCardStackDefaultSideInset,
-                                          kFSTVerticalCardStackDefaultBottomInset,
-                                          kFSTVerticalCardStackDefaultSideInset);
+                                          kDefaultSideInset,
+                                          kDefaultBottomInset,
+                                          kDefaultSideInset);
     }
     return self;
 }

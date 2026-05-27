@@ -23,12 +23,19 @@
 #import "UIViewController+FSTTimeEditor.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTDailyPlanTopBarHeightPicker = 84;
-static const CGFloat kFSTDailyPlanTopBarHeightReady  = 72;
-static const CGFloat kFSTDailyPlanNavButtonDiameter  = 46;
-static const CGFloat kFSTDailyPlanResetButtonWidth   = 72;
-static const CGFloat kFSTDailyPlanResetButtonHeight  = 38;
-static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
+#pragma mark - Layout constants
+
+// TopBar
+static const CGFloat kTopBarHeightPicker = 84;
+static const CGFloat kTopBarHeightReady  = 72;
+
+// NavButton
+static const CGFloat kNavButtonDiameter = 46;
+
+// ResetButton
+static const CGFloat kResetButtonWidth  = 72;
+static const CGFloat kResetButtonHeight = 38;
+static const CGFloat kResetCornerRadius = 19;
 
 @interface FSTDailyPlanViewController ()
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -156,12 +163,12 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
     self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:nil
                                                   rightButtons:@[waterButton]
                                                  centerContent:nil
-                                                 contentHeight:kFSTDailyPlanTopBarHeightPicker];
+                                                 contentHeight:kTopBarHeightPicker];
     [self.topBar installInViewController:self];
     [self anchorScrollViewToTopBar];
 
     [waterButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kFSTDailyPlanNavButtonDiameter, kFSTDailyPlanNavButtonDiameter));
+        make.size.mas_equalTo(CGSizeMake(kNavButtonDiameter, kNavButtonDiameter));
     }];
 
     [self.topBar addSubview:titleLabel];
@@ -190,7 +197,7 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 - (void)installReadyTopBar {
     UIButton *resetButton = [UIButton buttonWithType:UIButtonTypeSystem];
     resetButton.backgroundColor    = [UIColor whiteColor];
-    resetButton.layer.cornerRadius = kFSTDailyPlanResetCornerRadius;
+    resetButton.layer.cornerRadius = kResetCornerRadius;
     resetButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
     resetButton.contentVerticalAlignment   = UIControlContentVerticalAlignmentCenter;
 
@@ -213,18 +220,18 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
     self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:resetButton
                                                   rightButtons:@[waterButton, bellButton]
                                                  centerContent:nil
-                                                 contentHeight:kFSTDailyPlanTopBarHeightReady];
+                                                 contentHeight:kTopBarHeightReady];
     [self.topBar installInViewController:self];
     [self anchorScrollViewToTopBar];
 
     [resetButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kFSTDailyPlanResetButtonWidth, kFSTDailyPlanResetButtonHeight));
+        make.size.mas_equalTo(CGSizeMake(kResetButtonWidth, kResetButtonHeight));
     }];
     [waterButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kFSTDailyPlanNavButtonDiameter, kFSTDailyPlanNavButtonDiameter));
+        make.size.mas_equalTo(CGSizeMake(kNavButtonDiameter, kNavButtonDiameter));
     }];
     [bellButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kFSTDailyPlanNavButtonDiameter, kFSTDailyPlanNavButtonDiameter));
+        make.size.mas_equalTo(CGSizeMake(kNavButtonDiameter, kNavButtonDiameter));
     }];
 }
 
@@ -244,12 +251,12 @@ static const CGFloat kFSTDailyPlanResetCornerRadius  = 19;
 
 - (UIButton *)makeWaterButton {
     return [UIButton fst_navCircleButtonWithImageNamed:@"nav_water"
-                                              diameter:kFSTDailyPlanNavButtonDiameter];
+                                              diameter:kNavButtonDiameter];
 }
 
 - (UIButton *)makeBellButton {
     UIButton *button = [UIButton fst_navCircleButtonWithImageNamed:@"nav_remind"
-                                                          diameter:kFSTDailyPlanNavButtonDiameter];
+                                                          diameter:kNavButtonDiameter];
     [button addTarget:self action:@selector(handleBellTapped) forControlEvents:UIControlEventTouchUpInside];
     return button;
 }

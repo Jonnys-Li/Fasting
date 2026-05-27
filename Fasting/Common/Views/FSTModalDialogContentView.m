@@ -6,9 +6,14 @@
 #import "FSTModalDialogContentView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTDialogIconSize     = 82.0;
-static const CGFloat kFSTDialogCloseSize    = 38.0;
-static const CGFloat kFSTDialogButtonHeight = 58.0;
+#pragma mark - Layout constants
+
+// 顶部图标 / 关闭
+static const CGFloat kIconSize  = 82.0;
+static const CGFloat kCloseSize = 38.0;
+
+// 底部按钮
+static const CGFloat kButtonHeight = 58.0;
 
 @implementation FSTModalDialogContentView
 
@@ -43,7 +48,7 @@ static const CGFloat kFSTDialogButtonHeight = 58.0;
     // — Icon background circle
     UIView *iconBackground = [UIView new];
     iconBackground.backgroundColor = [UIColor fst_dialogIconBackground];
-    iconBackground.layer.cornerRadius = kFSTDialogIconSize / 2.0;
+    iconBackground.layer.cornerRadius = kIconSize / 2.0;
     iconBackground.layer.masksToBounds = YES;
     [self addSubview:iconBackground];
 
@@ -63,7 +68,7 @@ static const CGFloat kFSTDialogButtonHeight = 58.0;
     // — Close button
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeSystem];
     closeButton.backgroundColor = [UIColor fst_dialogCloseBackground];
-    closeButton.layer.cornerRadius = kFSTDialogCloseSize / 2.0;
+    closeButton.layer.cornerRadius = kCloseSize / 2.0;
     UIImageSymbolConfiguration *closeConfiguration =
         [UIImageSymbolConfiguration configurationWithPointSize:19
                                                         weight:UIImageSymbolWeightBold];
@@ -113,8 +118,8 @@ static const CGFloat kFSTDialogButtonHeight = 58.0;
     // — Constraints
     [iconBackground mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self);
-        make.top.equalTo(self).offset(-kFSTDialogIconSize / 2.0);
-        make.size.mas_equalTo(CGSizeMake(kFSTDialogIconSize, kFSTDialogIconSize));
+        make.top.equalTo(self).offset(-kIconSize / 2.0);
+        make.size.mas_equalTo(CGSizeMake(kIconSize, kIconSize));
     }];
     [iconView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.center.equalTo(iconBackground);
@@ -123,7 +128,7 @@ static const CGFloat kFSTDialogButtonHeight = 58.0;
     [closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(20);
         make.right.equalTo(self).offset(-20);
-        make.size.mas_equalTo(CGSizeMake(kFSTDialogCloseSize, kFSTDialogCloseSize));
+        make.size.mas_equalTo(CGSizeMake(kCloseSize, kCloseSize));
     }];
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(72);
@@ -136,7 +141,7 @@ static const CGFloat kFSTDialogButtonHeight = 58.0;
     [buttonStack mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(messageLabel.mas_bottom).offset(34);
         make.left.right.equalTo(self).inset(32);
-        make.height.equalTo(@(kFSTDialogButtonHeight));
+        make.height.equalTo(@(kButtonHeight));
         make.bottom.equalTo(self).offset(-36);
     }];
 }
@@ -151,7 +156,7 @@ static const CGFloat kFSTDialogButtonHeight = 58.0;
                                      : [UIColor fst_dialogSecondaryButton];
     [button setTitleColor:primary ? [UIColor whiteColor] : [UIColor fst_dialogTitle]
                  forState:UIControlStateNormal];
-    button.layer.cornerRadius = kFSTDialogButtonHeight / 2.0;
+    button.layer.cornerRadius = kButtonHeight / 2.0;
     button.layer.masksToBounds = YES;
     return button;
 }

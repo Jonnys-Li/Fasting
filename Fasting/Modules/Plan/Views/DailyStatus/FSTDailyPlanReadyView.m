@@ -8,26 +8,40 @@
 #import "FSTFastingTimesRow.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTDailyPlanReadyAddRecordTopOffset = 20;
-static const CGFloat kFSTDailyPlanReadyAddRecordHeight    = 56;
-static const CGFloat kFSTDailyPlanReadyAddRecordRadius    = 22;
+#pragma mark - Layout constants
 
-static const CGFloat kFSTDailyPlanReadyTitleTop          = 12;
-static const CGFloat kFSTDailyPlanReadyTitleHeight       = 30;
-static const CGFloat kFSTDailyPlanReadyCardTopOffset     = 14;
-static const CGFloat kFSTDailyPlanReadyCardSideInset     = 28;
-static const CGFloat kFSTDailyPlanReadyCardHeight        = 56;
-static const CGFloat kFSTDailyPlanReadyRingDiameter      = 292;
-static const CGFloat kFSTDailyPlanReadyRingTopAfterCard  = 22;
-static const CGFloat kFSTDailyPlanReadyRingTopWhenReady  = 18;
-static const CGFloat kFSTDailyPlanReadyTimesRowVisualOffset = -12;
-static const CGFloat kFSTDailyPlanReadyTimesRowHeight    = 60;
-static const CGFloat kFSTDailyPlanReadyStartTopOffset    = 26;
-static const CGFloat kFSTDailyPlanReadyButtonSideInset   = 34;
-static const CGFloat kFSTDailyPlanReadyButtonHeight      = 60;
-static const CGFloat kFSTDailyPlanReadyButtonCornerRadius = 30;
-static const CGFloat kFSTDailyPlanReadyButtonGap         = 16;
-static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
+// Title
+static const CGFloat kTitleTop    = 12;
+static const CGFloat kTitleHeight = 30;
+
+// BreakingFast Card
+static const CGFloat kCardTopOffset = 14;
+static const CGFloat kCardSideInset = 28;
+static const CGFloat kCardHeight    = 56;
+
+// ReadyRing
+static const CGFloat kRingDiameter     = 292;
+static const CGFloat kRingTopAfterCard = 22;
+static const CGFloat kRingTopWhenReady = 18;
+
+// TimesRow
+static const CGFloat kTimesRowVisualOffset = -12;
+static const CGFloat kTimesRowHeight       = 60;
+
+// Primary buttons (Start / LogMeal)
+static const CGFloat kStartTopOffset     = 26;
+static const CGFloat kButtonSideInset    = 34;
+static const CGFloat kButtonHeight       = 60;
+static const CGFloat kButtonCornerRadius = 30;
+static const CGFloat kButtonGap          = 16;
+
+// AddRecord row
+static const CGFloat kAddRecordTopOffset = 20;
+static const CGFloat kAddRecordHeight    = 56;
+static const CGFloat kAddRecordRadius    = 22;
+
+// Bottom
+static const CGFloat kBottomPadding = 118;
 
 @interface FSTDailyPlanReadyView ()
 @property (nonatomic, strong) UILabel *eatingTitleLabel;
@@ -72,13 +86,13 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
     self.nextFastTimesRow.onEditEndTapped   = ^{ if (weakSelf.onEditNextFastEndTapped) weakSelf.onEditNextFastEndTapped(); };
 
     self.startFastingButton = [UIButton fst_greenPillButtonWithTitle:@"Start Fasting"];
-    self.startFastingButton.layer.cornerRadius = kFSTDailyPlanReadyButtonCornerRadius;
+    self.startFastingButton.layer.cornerRadius = kButtonCornerRadius;
     self.startFastingButton.titleLabel.font    = FSTFontSubhead();
     [self.startFastingButton addTarget:self action:@selector(handleStartFastingTapped) forControlEvents:UIControlEventTouchUpInside];
 
     self.logMealButton = [UIButton fst_yellowPillButtonWithTitle:@"LOG MEAL"];
     self.logMealButton.backgroundColor    = [UIColor fst_orangeCTA];
-    self.logMealButton.layer.cornerRadius = kFSTDailyPlanReadyButtonCornerRadius;
+    self.logMealButton.layer.cornerRadius = kButtonCornerRadius;
     self.logMealButton.titleLabel.font    = FSTFontSubhead();
     [self.logMealButton addTarget:self action:@selector(handleLogMealTapped) forControlEvents:UIControlEventTouchUpInside];
 
@@ -92,40 +106,40 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
 
 - (void)setupConstraints {
     [self.eatingTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(kFSTDailyPlanReadyTitleTop);
+        make.top.equalTo(self).offset(kTitleTop);
         make.centerX.equalTo(self);
-        make.height.equalTo(@(kFSTDailyPlanReadyTitleHeight));
+        make.height.equalTo(@(kTitleHeight));
     }];
     [self.breakingFastCardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.eatingTitleLabel.mas_bottom).offset(kFSTDailyPlanReadyCardTopOffset);
-        make.left.right.equalTo(self).inset(kFSTDailyPlanReadyCardSideInset);
-        make.height.equalTo(@(kFSTDailyPlanReadyCardHeight));
+        make.top.equalTo(self.eatingTitleLabel.mas_bottom).offset(kCardTopOffset);
+        make.left.right.equalTo(self).inset(kCardSideInset);
+        make.height.equalTo(@(kCardHeight));
     }];
     [self.readyRingView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.breakingFastCardView.mas_bottom).offset(kFSTDailyPlanReadyRingTopAfterCard);
+        make.top.equalTo(self.breakingFastCardView.mas_bottom).offset(kRingTopAfterCard);
         make.centerX.equalTo(self);
-        make.size.mas_equalTo(CGSizeMake(kFSTDailyPlanReadyRingDiameter, kFSTDailyPlanReadyRingDiameter));
+        make.size.mas_equalTo(CGSizeMake(kRingDiameter, kRingDiameter));
     }];
     [self.nextFastTimesRow mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.readyRingView.mas_bottom).offset(kFSTDailyPlanReadyTimesRowVisualOffset);
-        make.left.right.equalTo(self).inset(kFSTDailyPlanReadyCardSideInset);
-        make.height.equalTo(@(kFSTDailyPlanReadyTimesRowHeight));
+        make.top.equalTo(self.readyRingView.mas_bottom).offset(kTimesRowVisualOffset);
+        make.left.right.equalTo(self).inset(kCardSideInset);
+        make.height.equalTo(@(kTimesRowHeight));
     }];
     [self.startFastingButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.nextFastTimesRow.mas_bottom).offset(kFSTDailyPlanReadyStartTopOffset);
-        make.left.right.equalTo(self).inset(kFSTDailyPlanReadyButtonSideInset);
-        make.height.equalTo(@(kFSTDailyPlanReadyButtonHeight));
+        make.top.equalTo(self.nextFastTimesRow.mas_bottom).offset(kStartTopOffset);
+        make.left.right.equalTo(self).inset(kButtonSideInset);
+        make.height.equalTo(@(kButtonHeight));
     }];
     [self.logMealButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.startFastingButton.mas_bottom).offset(kFSTDailyPlanReadyButtonGap);
+        make.top.equalTo(self.startFastingButton.mas_bottom).offset(kButtonGap);
         make.left.right.equalTo(self.startFastingButton);
-        make.height.equalTo(@(kFSTDailyPlanReadyButtonHeight));
+        make.height.equalTo(@(kButtonHeight));
     }];
     [self.addRecordRow mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.logMealButton.mas_bottom).offset(kFSTDailyPlanReadyAddRecordTopOffset);
-        make.left.right.equalTo(self).inset(kFSTDailyPlanReadyCardSideInset);
-        make.height.mas_equalTo(kFSTDailyPlanReadyAddRecordHeight);
-        make.bottom.equalTo(self).offset(-kFSTDailyPlanReadyBottomPadding);
+        make.top.equalTo(self.logMealButton.mas_bottom).offset(kAddRecordTopOffset);
+        make.left.right.equalTo(self).inset(kCardSideInset);
+        make.height.mas_equalTo(kAddRecordHeight);
+        make.bottom.equalTo(self).offset(-kBottomPadding);
     }];
 }
 
@@ -214,10 +228,10 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
     self.breakingFastCardView.userInteractionEnabled = !readyToStart;
     [self.readyRingView mas_remakeConstraints:^(MASConstraintMaker *make) {
         UIView *anchor = readyToStart ? self.eatingTitleLabel : self.breakingFastCardView;
-        CGFloat offset = readyToStart ? kFSTDailyPlanReadyRingTopWhenReady : kFSTDailyPlanReadyRingTopAfterCard;
+        CGFloat offset = readyToStart ? kRingTopWhenReady : kRingTopAfterCard;
         make.top.equalTo(anchor.mas_bottom).offset(offset);
         make.centerX.equalTo(self);
-        make.size.mas_equalTo(CGSizeMake(kFSTDailyPlanReadyRingDiameter, kFSTDailyPlanReadyRingDiameter));
+        make.size.mas_equalTo(CGSizeMake(kRingDiameter, kRingDiameter));
     }];
     [self setNeedsLayout];
 }
@@ -243,7 +257,7 @@ static const CGFloat kFSTDailyPlanReadyBottomPadding     = 118;
 #pragma mark - Add Record Row
 
 - (UIView *)buildAddRecordRow {
-    UIView *row = [UIView fst_whiteCardWithRadius:kFSTDailyPlanReadyAddRecordRadius];
+    UIView *row = [UIView fst_whiteCardWithRadius:kAddRecordRadius];
 
     UIImageView *plusIcon = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"add_record_plus"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
     plusIcon.contentMode = UIViewContentModeScaleAspectFit;

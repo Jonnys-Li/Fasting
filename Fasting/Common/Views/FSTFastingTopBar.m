@@ -7,9 +7,11 @@
 #import "UIColor+FST.h"
 #import <Masonry/Masonry.h>
 
-static const CGFloat kFSTFastingTopBarDefaultContentHeight = 56;
-static const CGFloat kFSTFastingTopBarHorizontalInset      = 20;
-static const CGFloat kFSTFastingTopBarButtonSpacing        = 12;
+#pragma mark - Layout constants
+
+static const CGFloat kDefaultContentHeight = 56;
+static const CGFloat kHorizontalInset      = 20;
+static const CGFloat kButtonSpacing        = 12;
 
 @interface FSTFastingTopBar ()
 @property (nonatomic, strong) UIView *contentContainer;
@@ -29,7 +31,7 @@ static const CGFloat kFSTFastingTopBarButtonSpacing        = 12;
         _leftButton    = leftButton;
         _rightButtons  = [rightButtons copy];
         _centerContent = centerContent;
-        _contentHeight = contentHeight > 0 ? contentHeight : kFSTFastingTopBarDefaultContentHeight;
+        _contentHeight = contentHeight > 0 ? contentHeight : kDefaultContentHeight;
         self.backgroundColor = [UIColor fst_pageBackground];
     }
     return self;
@@ -61,7 +63,7 @@ static const CGFloat kFSTFastingTopBarButtonSpacing        = 12;
     if (self.leftButton) {
         [self.contentContainer addSubview:self.leftButton];
         [self.leftButton mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.contentContainer).offset(kFSTFastingTopBarHorizontalInset);
+            make.left.equalTo(self.contentContainer).offset(kHorizontalInset);
             make.centerY.equalTo(self.contentContainer);
         }];
     }
@@ -72,9 +74,9 @@ static const CGFloat kFSTFastingTopBarButtonSpacing        = 12;
         UIView *anchor = previousRightButton;
         [rightButton mas_makeConstraints:^(MASConstraintMaker *make) {
             if (anchor) {
-                make.right.equalTo(anchor.mas_left).offset(-kFSTFastingTopBarButtonSpacing);
+                make.right.equalTo(anchor.mas_left).offset(-kButtonSpacing);
             } else {
-                make.right.equalTo(self.contentContainer).offset(-kFSTFastingTopBarHorizontalInset);
+                make.right.equalTo(self.contentContainer).offset(-kHorizontalInset);
             }
             make.centerY.equalTo(self.contentContainer);
         }];

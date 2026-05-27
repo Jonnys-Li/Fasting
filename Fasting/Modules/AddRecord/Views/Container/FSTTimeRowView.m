@@ -6,10 +6,15 @@
 #import "FSTTimeRowView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kDotSize        = 8;
-static const CGFloat kPencilSize     = 18;
-static const CGFloat kHeaderHeight   = 32;
-static const CGFloat kPickerRadius   = 16;
+#pragma mark - Layout constants
+
+// Header row
+static const CGFloat kHeaderHeight = 32;
+static const CGFloat kDotSize      = 8;
+static const CGFloat kPencilSize   = 18;
+
+// Picker
+static const CGFloat kPickerRadius = 16;
 
 @interface FSTTimeRowView ()
 @property (nonatomic, strong) UIView *dot;

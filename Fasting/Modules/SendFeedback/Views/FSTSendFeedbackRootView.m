@@ -6,16 +6,27 @@
 #import "FSTSendFeedbackRootView.h"
 #import "FSTTheme.h"
 
-static NSString * const kFSTFeedbackPlaceholder = @"Anything you share helps us make fasting better for you.";
+#pragma mark - Strings
 
-static const CGFloat kFSTFeedbackSideInset      = 24;
-static const CGFloat kFSTFeedbackChipHeight     = 44;
-static const CGFloat kFSTFeedbackChipSpacingH   = 12;
-static const CGFloat kFSTFeedbackChipSpacingV   = 12;
-static const CGFloat kFSTFeedbackChipRadius     = 22;
-static const CGFloat kFSTFeedbackTextViewHeight = 140;
-static const CGFloat kFSTFeedbackSubmitHeight   = 56;
-static const CGFloat kFSTFeedbackSubmitRadius   = 28;
+static NSString * const kPlaceholder = @"Anything you share helps us make fasting better for you.";
+
+#pragma mark - Layout constants
+
+// 通用
+static const CGFloat kSideInset = 24;
+
+// Chips
+static const CGFloat kChipHeight     = 44;
+static const CGFloat kChipSpacingH   = 12;
+static const CGFloat kChipSpacingV   = 12;
+static const CGFloat kChipRadius     = 22;
+
+// TextView
+static const CGFloat kTextViewHeight = 140;
+
+// Submit
+static const CGFloat kSubmitHeight = 56;
+static const CGFloat kSubmitRadius = 28;
 
 @interface FSTSendFeedbackRootView ()
 @property (nonatomic, strong, readwrite) UITextView *textView;
@@ -88,7 +99,7 @@ static const CGFloat kFSTFeedbackSubmitRadius   = 28;
     self.textView.textColor = [UIColor blackColor];
     self.textView.textContainerInset = UIEdgeInsetsMake(16, 12, 16, 12);
 
-    self.placeholderLabel = [UILabel fst_labelWithText:kFSTFeedbackPlaceholder
+    self.placeholderLabel = [UILabel fst_labelWithText:kPlaceholder
                                                   font:FSTFontRegular(16)
                                                  color:[UIColor fst_textSecondary]
                                              alignment:NSTextAlignmentLeft
@@ -110,7 +121,7 @@ static const CGFloat kFSTFeedbackSubmitRadius   = 28;
 
     self.submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.submitButton.backgroundColor = [UIColor fst_eatingTimeGreen];
-    self.submitButton.layer.cornerRadius = kFSTFeedbackSubmitRadius;
+    self.submitButton.layer.cornerRadius = kSubmitRadius;
     [self.submitButton setTitle:@"Submit" forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.submitButton.titleLabel.font = FSTFontBold(18);
@@ -135,18 +146,18 @@ static const CGFloat kFSTFeedbackSubmitRadius   = 28;
         [rowView fst_addSubviews:@[leftChip, rightChip]];
 
         [rowView mas_makeConstraints:^(MASConstraintMaker *make) {
-            if (previousRow) make.top.equalTo(previousRow.mas_bottom).offset(kFSTFeedbackChipSpacingV);
+            if (previousRow) make.top.equalTo(previousRow.mas_bottom).offset(kChipSpacingV);
             else             make.top.equalTo(container);
             make.left.right.equalTo(container);
-            make.height.mas_equalTo(kFSTFeedbackChipHeight);
+            make.height.mas_equalTo(kChipHeight);
             if (row == 2) make.bottom.equalTo(container);
         }];
         [leftChip mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.top.bottom.equalTo(rowView);
-            make.right.equalTo(rowView.mas_centerX).offset(-kFSTFeedbackChipSpacingH / 2.0);
+            make.right.equalTo(rowView.mas_centerX).offset(-kChipSpacingH / 2.0);
         }];
         [rightChip mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(rowView.mas_centerX).offset(kFSTFeedbackChipSpacingH / 2.0);
+            make.left.equalTo(rowView.mas_centerX).offset(kChipSpacingH / 2.0);
             make.right.top.bottom.equalTo(rowView);
         }];
         previousRow = rowView;
@@ -156,7 +167,7 @@ static const CGFloat kFSTFeedbackSubmitRadius   = 28;
 - (UIView *)buildChipWithTitle:(NSString *)title index:(NSInteger)index {
     UIControl *chip = [UIControl new];
     chip.backgroundColor = [UIColor fst_chipBackground];
-    chip.layer.cornerRadius = kFSTFeedbackChipRadius;
+    chip.layer.cornerRadius = kChipRadius;
     chip.layer.borderWidth = 1.5;
     chip.layer.borderColor = [UIColor clearColor].CGColor;
     chip.tag = index;
@@ -218,8 +229,8 @@ static const CGFloat kFSTFeedbackSubmitRadius   = 28;
     [self pinViewToContentBelow:self.chipContainer anchor:self.moreLabel offset:32];
     [self.textViewContainer mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.moreLabel.mas_bottom).offset(14);
-        make.left.right.equalTo(self.contentView).inset(kFSTFeedbackSideInset);
-        make.height.mas_equalTo(kFSTFeedbackTextViewHeight);
+        make.left.right.equalTo(self.contentView).inset(kSideInset);
+        make.height.mas_equalTo(kTextViewHeight);
     }];
     [self.textView fst_pinEdgesToSuperview];
     [self.placeholderLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -229,7 +240,7 @@ static const CGFloat kFSTFeedbackSubmitRadius   = 28;
     }];
     [self.addPictureButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.textViewContainer.mas_bottom).offset(16);
-        make.left.equalTo(self.contentView).offset(kFSTFeedbackSideInset);
+        make.left.equalTo(self.contentView).offset(kSideInset);
         make.size.mas_equalTo(CGSizeMake(48, 48));
     }];
     [self.pickedImageView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -239,8 +250,8 @@ static const CGFloat kFSTFeedbackSubmitRadius   = 28;
     }];
     [self.submitButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.addPictureButton.mas_bottom).offset(32);
-        make.left.right.equalTo(self.contentView).inset(kFSTFeedbackSideInset);
-        make.height.mas_equalTo(kFSTFeedbackSubmitHeight);
+        make.left.right.equalTo(self.contentView).inset(kSideInset);
+        make.height.mas_equalTo(kSubmitHeight);
         make.bottom.equalTo(self.contentView).offset(-40);
     }];
 }
@@ -249,7 +260,7 @@ static const CGFloat kFSTFeedbackSubmitRadius   = 28;
 - (void)pinViewToContentBelow:(UIView *)above anchor:(UIView *)below offset:(CGFloat)offset {
     [below mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(above.mas_bottom).offset(offset);
-        make.left.right.equalTo(self.contentView).inset(kFSTFeedbackSideInset);
+        make.left.right.equalTo(self.contentView).inset(kSideInset);
     }];
 }
 

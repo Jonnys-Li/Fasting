@@ -10,8 +10,11 @@
 #import <CoreImage/CoreImage.h>
 #import <Masonry/Masonry.h>
 
-static const CGFloat kFSTFastingFlameProgressAnchor = 0.75;
-static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 原生尺寸一致
+#pragma mark - Layout constants
+
+// 火焰图标
+static const CGFloat kFlameProgressAnchor = 0.75;
+static const CGFloat kFlameSize           = 52;  // 与 @3x 源图 1x 原生尺寸一致
 
 @interface FSTFastingRingPanelView ()
 @property (nonatomic, strong, readwrite) FSTRingProgressView *ring;
@@ -153,10 +156,10 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
     if (ringBounds.size.width <= 0) return;
     CGPoint center = CGPointMake(CGRectGetMidX(ringBounds), CGRectGetMidY(ringBounds));
     CGFloat radius = MIN(ringBounds.size.width, ringBounds.size.height) / 2.0 - self.ring.lineWidth / 2.0;
-    CGFloat angle  = [self.ring angleAtProgress:kFSTFastingFlameProgressAnchor];
+    CGFloat angle  = [self.ring angleAtProgress:kFlameProgressAnchor];
     CGPoint position = CGPointMake(center.x + radius * (CGFloat)cos(angle),
                                    center.y + radius * (CGFloat)sin(angle));
-    self.flameMarkerView.bounds = CGRectMake(0, 0, kFSTFastingFlameSize, kFSTFastingFlameSize);
+    self.flameMarkerView.bounds = CGRectMake(0, 0, kFlameSize, kFlameSize);
     self.flameMarkerView.center = position;
 }
 
@@ -166,7 +169,7 @@ static const CGFloat kFSTFastingFlameSize           = 52;  // 与 @3x 源图 1x 
     self.flameMarkerView.hidden = !shouldShowFlame;
     if (!shouldShowFlame) return;
 
-    BOOL crossed = self.flameProgress >= kFSTFastingFlameProgressAnchor;
+    BOOL crossed = self.flameProgress >= kFlameProgressAnchor;
     self.flameMarkerView.image = crossed ? [FSTFastingRingPanelView flameActiveImage]
                                          : [FSTFastingRingPanelView flameInactiveImage];
 }

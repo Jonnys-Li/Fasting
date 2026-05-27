@@ -7,11 +7,16 @@
 #import "FSTTheme.h"
 #import <Masonry/Masonry.h>
 
-static const CGFloat kFSTFastingTimesRowPencilSize = 24;
-static const CGFloat kFSTFastingTimesRowTimeWidth = 127;
-static const CGFloat kFSTFastingTimesRowTimeHeight = 20;
-static const CGFloat kFSTFastingTimesRowCaptionTimeGap = 10;
-static const CGFloat kFSTFastingTimesRowPencilGap = 6;
+#pragma mark - Layout constants
+
+// Time label
+static const CGFloat kTimeWidth       = 127;
+static const CGFloat kTimeHeight      = 20;
+static const CGFloat kCaptionTimeGap  = 10;
+
+// 编辑按钮（铅笔）
+static const CGFloat kPencilSize = 24;
+static const CGFloat kPencilGap  = 6;
 
 @interface FSTFastingTimesRow ()
 @property (nonatomic, copy) NSString *startCaption;
@@ -113,15 +118,15 @@ static const CGFloat kFSTFastingTimesRowPencilGap = 6;
     if (alignLeft) {
         [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(column);
-            make.top.equalTo(captionLabel.mas_bottom).offset(kFSTFastingTimesRowCaptionTimeGap);
-            make.height.equalTo(@(kFSTFastingTimesRowTimeHeight));
-            make.width.lessThanOrEqualTo(@(kFSTFastingTimesRowTimeWidth));
+            make.top.equalTo(captionLabel.mas_bottom).offset(kCaptionTimeGap);
+            make.height.equalTo(@(kTimeHeight));
+            make.width.lessThanOrEqualTo(@(kTimeWidth));
         }];
         if (editButton) {
             [editButton mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.equalTo(timeLabel.mas_right).offset(kFSTFastingTimesRowPencilGap);
+                make.left.equalTo(timeLabel.mas_right).offset(kPencilGap);
                 make.centerY.equalTo(timeLabel);
-                make.size.mas_equalTo(CGSizeMake(kFSTFastingTimesRowPencilSize, kFSTFastingTimesRowPencilSize));
+                make.size.mas_equalTo(CGSizeMake(kPencilSize, kPencilSize));
                 make.right.lessThanOrEqualTo(column);
             }];
         }
@@ -130,21 +135,21 @@ static const CGFloat kFSTFastingTimesRowPencilGap = 6;
             [editButton mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.right.equalTo(column);
                 make.centerY.equalTo(timeLabel);
-                make.size.mas_equalTo(CGSizeMake(kFSTFastingTimesRowPencilSize, kFSTFastingTimesRowPencilSize));
+                make.size.mas_equalTo(CGSizeMake(kPencilSize, kPencilSize));
             }];
             [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.right.equalTo(editButton.mas_left).offset(-kFSTFastingTimesRowPencilGap);
-                make.top.equalTo(captionLabel.mas_bottom).offset(kFSTFastingTimesRowCaptionTimeGap);
-                make.height.equalTo(@(kFSTFastingTimesRowTimeHeight));
-                make.width.lessThanOrEqualTo(@(kFSTFastingTimesRowTimeWidth));
+                make.right.equalTo(editButton.mas_left).offset(-kPencilGap);
+                make.top.equalTo(captionLabel.mas_bottom).offset(kCaptionTimeGap);
+                make.height.equalTo(@(kTimeHeight));
+                make.width.lessThanOrEqualTo(@(kTimeWidth));
                 make.left.greaterThanOrEqualTo(column);
             }];
         } else {
             [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.right.equalTo(column);
-                make.top.equalTo(captionLabel.mas_bottom).offset(kFSTFastingTimesRowCaptionTimeGap);
-                make.height.equalTo(@(kFSTFastingTimesRowTimeHeight));
-                make.width.lessThanOrEqualTo(@(kFSTFastingTimesRowTimeWidth));
+                make.top.equalTo(captionLabel.mas_bottom).offset(kCaptionTimeGap);
+                make.height.equalTo(@(kTimeHeight));
+                make.width.lessThanOrEqualTo(@(kTimeWidth));
                 make.left.greaterThanOrEqualTo(column);
             }];
         }

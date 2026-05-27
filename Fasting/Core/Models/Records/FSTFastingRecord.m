@@ -8,8 +8,10 @@
 
 #import "FSTFastingRecord.h"
 
-static const NSInteger kFSTDifficultyHardThreshold   = 20;
-static const NSInteger kFSTDifficultyMediumThreshold = 18;
+#pragma mark - Difficulty thresholds
+
+static const NSInteger kDifficultyHardThreshold   = 20;
+static const NSInteger kDifficultyMediumThreshold = 18;
 
 @implementation FSTFastingRecord
 
@@ -19,8 +21,8 @@ static const NSInteger kFSTDifficultyMediumThreshold = 18;
 }
 
 - (NSInteger)difficultyLevel {
-    if (self.fastingHours >= kFSTDifficultyHardThreshold)   return 3;
-    if (self.fastingHours >= kFSTDifficultyMediumThreshold) return 2;
+    if (self.fastingHours >= kDifficultyHardThreshold)   return 3;
+    if (self.fastingHours >= kDifficultyMediumThreshold) return 2;
     return 1;
 }
 

@@ -8,12 +8,19 @@
 #import "FSTTimelineModuleView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTTimelineTitleTopInset       = 26;
-static const CGFloat kFSTTimelineCardTopOffset       = 34;
-static const CGFloat kFSTTimelineCardSideInset       = 24;
-static const CGFloat kFSTTimelineFastingCardHeight   = 244;
-static const CGFloat kFSTTimelineModuleSpacing       = 20;
-static const CGFloat kFSTTimelineBottomPadding       = 120;
+#pragma mark - Layout constants
+
+// Title
+static const CGFloat kTitleTopInset = 26;
+
+// Fasting card
+static const CGFloat kCardTopOffset     = 34;
+static const CGFloat kCardSideInset     = 24;
+static const CGFloat kFastingCardHeight = 244;
+
+// 模块间 & 底部
+static const CGFloat kModuleSpacing = 20;
+static const CGFloat kBottomPadding = 120;
 
 @interface FSTTimelineRootView ()
 @property (nonatomic, strong, readwrite) FSTFastingTimelineCardView *fastingModuleView;
@@ -74,18 +81,18 @@ static const CGFloat kFSTTimelineBottomPadding       = 120;
         make.width.equalTo(self.scrollView);
     }];
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(kFSTTimelineTitleTopInset);
+        make.top.equalTo(self.contentView).offset(kTitleTopInset);
         make.centerX.equalTo(self.contentView);
     }];
     [self.fastingModuleView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.titleLabel.mas_bottom).offset(kFSTTimelineCardTopOffset);
-        make.left.right.equalTo(self.contentView).inset(kFSTTimelineCardSideInset);
-        make.height.equalTo(@(kFSTTimelineFastingCardHeight));
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(kCardTopOffset);
+        make.left.right.equalTo(self.contentView).inset(kCardSideInset);
+        make.height.equalTo(@(kFastingCardHeight));
     }];
     [self.mealModuleView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.fastingModuleView.mas_bottom).offset(kFSTTimelineModuleSpacing);
+        make.top.equalTo(self.fastingModuleView.mas_bottom).offset(kModuleSpacing);
         make.left.right.equalTo(self.fastingModuleView);
-        make.bottom.equalTo(self.contentView).offset(-kFSTTimelineBottomPadding);
+        make.bottom.equalTo(self.contentView).offset(-kBottomPadding);
     }];
 }
 

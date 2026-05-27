@@ -8,15 +8,22 @@
 #import "FSTTimelineModuleView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kHeaderHeight      = 44;
-static const CGFloat kHeaderTopInset    = 20;
-static const CGFloat kSideInset         = 22;
-static const CGFloat kDotSize           = 12;
-static const CGFloat kCardHeight        = 96;
-static const CGFloat kFoodIconSize      = 68;
-static const CGFloat kFeelingSize       = 36;
-static const CGFloat kChipHeight        = 34;
-static const CGFloat kAddButtonHeight   = 48;
+#pragma mark - Layout constants
+
+// Header / 容器
+static const CGFloat kHeaderHeight   = 44;
+static const CGFloat kHeaderTopInset = 20;
+static const CGFloat kSideInset      = 22;
+
+// 时间轴行（dot + 圆点 + 食物卡）
+static const CGFloat kDotSize      = 12;
+static const CGFloat kCardHeight   = 96;
+static const CGFloat kFoodIconSize = 68;
+static const CGFloat kFeelingSize  = 36;
+static const CGFloat kChipHeight   = 34;
+
+// Footer
+static const CGFloat kAddButtonHeight = 48;
 
 @interface FSTTimelineModuleView ()
 // 头部

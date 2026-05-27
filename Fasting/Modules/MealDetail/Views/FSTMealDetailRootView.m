@@ -12,18 +12,27 @@
 #import "FSTVerticalCardStackView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTMealDetailCardSpacing       = 18;
-static const CGFloat kFSTMealDetailCardSideInset     = 24;
-static const CGFloat kFSTMealDetailCardBottomPadding = 28;
-static const CGFloat kFSTMealDetailBottomBarHeight   = 112;
-static const CGFloat kFSTMealDetailSaveButtonHeight  = 60;
-static const CGFloat kFSTMealDetailSaveButtonInset   = 50;
-static const CGFloat kFSTMealDetailSaveButtonTop     = 14;
-static const CGFloat kFSTMealDetailSaveButtonRadius  = 30;
-static const CGFloat kFSTMealDetailBackButtonSize    = 48;
-static const CGFloat kFSTMealDetailBackButtonTop     = 18;
-static const CGFloat kFSTMealDetailBackButtonLeft    = 22;
-static const CGFloat kFSTMealDetailScrollTopOffset   = 54;
+#pragma mark - Layout constants
+
+// BackButton
+static const CGFloat kBackButtonSize = 48;
+static const CGFloat kBackButtonTop  = 18;
+static const CGFloat kBackButtonLeft = 22;
+
+// Scroll
+static const CGFloat kScrollTopOffset = 54;
+
+// Card stack
+static const CGFloat kCardSpacing       = 18;
+static const CGFloat kCardSideInset     = 24;
+static const CGFloat kCardBottomPadding = 28;
+
+// BottomBar / SaveButton
+static const CGFloat kBottomBarHeight   = 112;
+static const CGFloat kSaveButtonHeight  = 60;
+static const CGFloat kSaveButtonInset   = 50;
+static const CGFloat kSaveButtonTop     = 14;
+static const CGFloat kSaveButtonRadius  = 30;
 
 @interface FSTMealDetailRootView ()
 @property (nonatomic, strong, readwrite) FSTMealTimeCardView *timeCardView;
@@ -88,11 +97,11 @@ static const CGFloat kFSTMealDetailScrollTopOffset   = 54;
     self.detailCardView = [FSTMealDetailContentCardView new];
 
     self.cardStack = [FSTVerticalCardStackView new];
-    self.cardStack.cardSpacing   = kFSTMealDetailCardSpacing;
+    self.cardStack.cardSpacing   = kCardSpacing;
     self.cardStack.contentInsets = UIEdgeInsetsMake(0,
-                                                    kFSTMealDetailCardSideInset,
-                                                    kFSTMealDetailCardBottomPadding,
-                                                    kFSTMealDetailCardSideInset);
+                                                    kCardSideInset,
+                                                    kCardBottomPadding,
+                                                    kCardSideInset);
     self.cardStack.cards = @[self.timeCardView, self.slotCardView, self.dietCardView, self.tasteCardView, self.detailCardView];
     [self.contentView addSubview:self.cardStack];
 }
@@ -104,7 +113,7 @@ static const CGFloat kFSTMealDetailScrollTopOffset   = 54;
 
     self.saveButton = [UIButton buttonWithType:UIButtonTypeSystem];
     self.saveButton.backgroundColor = [UIColor fst_mealSaveButton];
-    self.saveButton.layer.cornerRadius = kFSTMealDetailSaveButtonRadius;
+    self.saveButton.layer.cornerRadius = kSaveButtonRadius;
     [self.saveButton setTitle:@"Save" forState:UIControlStateNormal];
     [self.saveButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.saveButton.titleLabel.font = FSTFontSubhead();
@@ -127,9 +136,9 @@ static const CGFloat kFSTMealDetailScrollTopOffset   = 54;
 
 - (void)setupConstraints {
     [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.mas_safeAreaLayoutGuideTop).offset(kFSTMealDetailBackButtonTop);
-        make.left.equalTo(self).offset(kFSTMealDetailBackButtonLeft);
-        make.size.mas_equalTo(CGSizeMake(kFSTMealDetailBackButtonSize, kFSTMealDetailBackButtonSize));
+        make.top.equalTo(self.mas_safeAreaLayoutGuideTop).offset(kBackButtonTop);
+        make.left.equalTo(self).offset(kBackButtonLeft);
+        make.size.mas_equalTo(CGSizeMake(kBackButtonSize, kBackButtonSize));
     }];
 
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -139,17 +148,17 @@ static const CGFloat kFSTMealDetailScrollTopOffset   = 54;
 
     [self.bottomBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.equalTo(self);
-        make.height.equalTo(@(kFSTMealDetailBottomBarHeight));
+        make.height.equalTo(@(kBottomBarHeight));
     }];
 
     [self.saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(self.bottomBar).inset(kFSTMealDetailSaveButtonInset);
-        make.top.equalTo(self.bottomBar).offset(kFSTMealDetailSaveButtonTop);
-        make.height.equalTo(@(kFSTMealDetailSaveButtonHeight));
+        make.left.right.equalTo(self.bottomBar).inset(kSaveButtonInset);
+        make.top.equalTo(self.bottomBar).offset(kSaveButtonTop);
+        make.height.equalTo(@(kSaveButtonHeight));
     }];
 
     [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.backButton.mas_bottom).offset(kFSTMealDetailScrollTopOffset);
+        make.top.equalTo(self.backButton.mas_bottom).offset(kScrollTopOffset);
         make.left.right.equalTo(self);
         make.bottom.equalTo(self.bottomBar.mas_top);
     }];

@@ -7,7 +7,7 @@
 #import "FSTTimeEditorSheetContentView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTTimeEditorSheetCornerRadius = 22.0;
+static const CGFloat kCornerRadius = 22.0;
 
 @interface FSTTimeEditorSheetViewController ()
 @property (nonatomic, copy) NSString *titleText;
@@ -54,7 +54,7 @@ static const CGFloat kFSTTimeEditorSheetCornerRadius = 22.0;
         _pickerWasChanged = NO;
         self.containerStyle = FSTBaseModalContainerStyleBottomSheet;
         self.backdropAlpha = 0.42;
-        self.containerCornerRadius = kFSTTimeEditorSheetCornerRadius;
+        self.containerCornerRadius = kCornerRadius;
     }
     return self;
 }

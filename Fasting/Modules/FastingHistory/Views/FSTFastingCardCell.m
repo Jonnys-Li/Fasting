@@ -7,8 +7,10 @@
 #import "FSTFastingTimelineCardView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTFastingCardCellVerticalInset = 10;
-static const CGFloat kFSTFastingCardCellSideInset     = 24;
+#pragma mark - Layout constants
+
+static const CGFloat kVerticalInset = 10;
+static const CGFloat kSideInset     = 24;
 
 @interface FSTFastingCardCell ()
 @property (nonatomic, strong, readwrite) FSTFastingTimelineCardView *cardView;
@@ -26,8 +28,8 @@ static const CGFloat kFSTFastingCardCellSideInset     = 24;
         _cardView.userInteractionEnabled = NO;
         [self.contentView addSubview:_cardView];
         [_cardView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.bottom.equalTo(self.contentView).inset(kFSTFastingCardCellVerticalInset);
-            make.left.right.equalTo(self.contentView).inset(kFSTFastingCardCellSideInset);
+            make.top.bottom.equalTo(self.contentView).inset(kVerticalInset);
+            make.left.right.equalTo(self.contentView).inset(kSideInset);
         }];
     }
     return self;

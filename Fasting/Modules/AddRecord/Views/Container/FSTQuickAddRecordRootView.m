@@ -8,9 +8,14 @@
 #import "FSTTheme.h"
 #import "UILabel+FSTStyle.h"
 
-static const CGFloat kQuickAddSideInset    = 24;
-static const CGFloat kQuickAddSubmitHeight = 56;
-static const CGFloat kQuickAddSubmitRadius = 28;
+#pragma mark - Layout constants
+
+// 通用
+static const CGFloat kSideInset = 24;
+
+// Submit
+static const CGFloat kSubmitHeight = 56;
+static const CGFloat kSubmitRadius = 28;
 
 @interface FSTQuickAddRecordRootView ()
 @property (nonatomic, strong, readwrite) UILabel *durationValueLabel;
@@ -114,7 +119,7 @@ static const CGFloat kQuickAddSubmitRadius = 28;
 - (void)buildSaveButton {
     self.saveButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.saveButton.backgroundColor = [UIColor fst_eatingTimeGreen];
-    self.saveButton.layer.cornerRadius = kQuickAddSubmitRadius;
+    self.saveButton.layer.cornerRadius = kSubmitRadius;
     [self.saveButton setTitle:@"Save" forState:UIControlStateNormal];
     [self.saveButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.saveButton.titleLabel.font = FSTFontBold(18);
@@ -144,26 +149,26 @@ static const CGFloat kQuickAddSubmitRadius = 28;
     }];
     [self.durationRow mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView).offset(16);
-        make.left.right.equalTo(self.contentView).inset(kQuickAddSideInset);
+        make.left.right.equalTo(self.contentView).inset(kSideInset);
         make.height.mas_equalTo(44);
     }];
     [self.separator mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.durationRow.mas_bottom);
-        make.left.right.equalTo(self.contentView).inset(kQuickAddSideInset);
+        make.left.right.equalTo(self.contentView).inset(kSideInset);
         make.height.mas_equalTo(1);
     }];
     [self.startRow mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.separator.mas_bottom).offset(24);
-        make.left.right.equalTo(self.contentView).inset(kQuickAddSideInset);
+        make.left.right.equalTo(self.contentView).inset(kSideInset);
     }];
     [self.endRow mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.startRow.mas_bottom).offset(24);
-        make.left.right.equalTo(self.contentView).inset(kQuickAddSideInset);
+        make.left.right.equalTo(self.contentView).inset(kSideInset);
     }];
     [self.saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.endRow.mas_bottom).offset(40);
-        make.left.right.equalTo(self.contentView).inset(kQuickAddSideInset);
-        make.height.mas_equalTo(kQuickAddSubmitHeight);
+        make.left.right.equalTo(self.contentView).inset(kSideInset);
+        make.height.mas_equalTo(kSubmitHeight);
         make.bottom.equalTo(self.contentView).offset(-40);
     }];
 }

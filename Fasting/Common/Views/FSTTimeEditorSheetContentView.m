@@ -6,10 +6,17 @@
 #import "FSTTimeEditorSheetContentView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTTimeEditorCloseSize          = 34.0;
-static const CGFloat kFSTTimeEditorPickerHeightSimple  = 245.0;
-static const CGFloat kFSTTimeEditorPickerHeightAligned = 305.0;
-static const CGFloat kFSTTimeEditorSaveHeight          = 48.0;
+#pragma mark - Layout constants
+
+// Close button
+static const CGFloat kCloseSize = 34.0;
+
+// DatePicker（两种高度：纯日期 vs 带 align chip）
+static const CGFloat kPickerHeightSimple  = 245.0;
+static const CGFloat kPickerHeightAligned = 305.0;
+
+// Save button
+static const CGFloat kSaveHeight = 48.0;
 
 @interface FSTTimeEditorSheetContentView ()
 @property (nonatomic, strong, readwrite) UIDatePicker *datePicker;
@@ -68,8 +75,8 @@ static const CGFloat kFSTTimeEditorSaveHeight          = 48.0;
     BOOL hasAlignChip = alignChipText.length > 0;
     UIView *pickerTopAnchor = titleLabel;
     CGFloat pickerTopOffset = hasAlignChip ? 22.0 : 28.0;
-    CGFloat pickerHeight = hasAlignChip ? kFSTTimeEditorPickerHeightAligned
-                                        : kFSTTimeEditorPickerHeightSimple;
+    CGFloat pickerHeight = hasAlignChip ? kPickerHeightAligned
+                                        : kPickerHeightSimple;
     if (hasAlignChip) {
         self.alignControl = [self buildAlignControlWithText:alignChipText];
         [self addSubview:self.alignControl];
@@ -79,7 +86,7 @@ static const CGFloat kFSTTimeEditorSaveHeight          = 48.0;
     // — Save button
     UIButton *saveButton = [UIButton buttonWithType:UIButtonTypeCustom];
     saveButton.backgroundColor = [UIColor fst_eatingTimeGreen];
-    saveButton.layer.cornerRadius = kFSTTimeEditorSaveHeight / 2.0;
+    saveButton.layer.cornerRadius = kSaveHeight / 2.0;
     saveButton.titleLabel.font = FSTFontAvenirDemiBold(20);
     [saveButton setTitle:@"Save" forState:UIControlStateNormal];
     [saveButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -91,7 +98,7 @@ static const CGFloat kFSTTimeEditorSaveHeight          = 48.0;
     [closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(34);
         make.right.equalTo(self).offset(-30);
-        make.size.mas_equalTo(CGSizeMake(kFSTTimeEditorCloseSize, kFSTTimeEditorCloseSize));
+        make.size.mas_equalTo(CGSizeMake(kCloseSize, kCloseSize));
     }];
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(82);
@@ -113,7 +120,7 @@ static const CGFloat kFSTTimeEditorSaveHeight          = 48.0;
     [saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.datePicker.mas_bottom).offset(36);
         make.left.right.equalTo(self).inset(32);
-        make.height.equalTo(@(kFSTTimeEditorSaveHeight));
+        make.height.equalTo(@(kSaveHeight));
         make.bottom.equalTo(self.mas_safeAreaLayoutGuideBottom).offset(-34);
     }];
 }

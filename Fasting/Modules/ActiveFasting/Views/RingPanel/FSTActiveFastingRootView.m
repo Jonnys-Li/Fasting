@@ -10,22 +10,33 @@
 #import "FSTFastingTipsSectionView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTActiveFastingHeadlineTopOffset      = 8;
-static const CGFloat kFSTActiveFastingHeadlineWidth          = 155;
-static const CGFloat kFSTActiveFastingHeadlineHeight         = 30;
-static const CGFloat kFSTActiveFastingPhaseCardTopOffset     = 24;
-static const CGFloat kFSTActiveFastingPhaseCardSideInset     = 28;
-static const CGFloat kFSTActiveFastingPhaseCardHeight        = 56;
-static const CGFloat kFSTActiveFastingRingPanelTopOffset     = 38;
-static const CGFloat kFSTActiveFastingTimesRowVisualOffset   = -12;
-static const CGFloat kFSTActiveFastingBottomContentWidth     = 318;
-static const CGFloat kFSTActiveFastingTimesRowHeight         = 51;
-static const CGFloat kFSTActiveFastingStopTopOffset          = 24;
-static const CGFloat kFSTActiveFastingStopHeight             = 48;
-static const CGFloat kFSTActiveFastingStopCornerRadius       = 24;
-static const CGFloat kFSTActiveFastingTipsTopOffset          = 28;
-static const CGFloat kFSTActiveFastingTipsSideInset          = 20;
-static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给浮动 tab bar
+#pragma mark - Layout constants
+
+// Headline
+static const CGFloat kHeadlineTopOffset = 8;
+static const CGFloat kHeadlineWidth     = 155;
+static const CGFloat kHeadlineHeight    = 30;
+
+// PhaseCard
+static const CGFloat kPhaseCardTopOffset = 24;
+static const CGFloat kPhaseCardSideInset = 28;
+static const CGFloat kPhaseCardHeight    = 56;
+
+// RingPanel
+static const CGFloat kRingPanelTopOffset = 38;
+
+// TimesRow / StopButton（共享底部内容宽度）
+static const CGFloat kBottomContentWidth   = 318;
+static const CGFloat kTimesRowVisualOffset = -12;
+static const CGFloat kTimesRowHeight       = 51;
+static const CGFloat kStopTopOffset        = 24;
+static const CGFloat kStopHeight           = 48;
+static const CGFloat kStopCornerRadius     = 24;
+
+// Tips / Feedback
+static const CGFloat kTipsTopOffset     = 28;
+static const CGFloat kTipsSideInset     = 20;
+static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
 
 @interface FSTActiveFastingRootView ()
 @property (nonatomic, strong, readwrite) UIScrollView *scrollView;
@@ -88,14 +99,14 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
     [self.contentView addSubview:self.phaseCard];
 
     [self.headlineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(kFSTActiveFastingHeadlineTopOffset);
+        make.top.equalTo(self.contentView).offset(kHeadlineTopOffset);
         make.centerX.equalTo(self.contentView);
-        make.size.mas_equalTo(CGSizeMake(kFSTActiveFastingHeadlineWidth, kFSTActiveFastingHeadlineHeight));
+        make.size.mas_equalTo(CGSizeMake(kHeadlineWidth, kHeadlineHeight));
     }];
     [self.phaseCard mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.headlineLabel.mas_bottom).offset(kFSTActiveFastingPhaseCardTopOffset);
-        make.left.right.equalTo(self.contentView).inset(kFSTActiveFastingPhaseCardSideInset);
-        make.height.equalTo(@(kFSTActiveFastingPhaseCardHeight));
+        make.top.equalTo(self.headlineLabel.mas_bottom).offset(kPhaseCardTopOffset);
+        make.left.right.equalTo(self.contentView).inset(kPhaseCardSideInset);
+        make.height.equalTo(@(kPhaseCardHeight));
     }];
 
     (void)weakSelf;
@@ -114,7 +125,7 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
     [self.contentView addSubview:self.ringPanel];
 
     [self.ringPanel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.phaseCard.mas_bottom).offset(kFSTActiveFastingRingPanelTopOffset);
+        make.top.equalTo(self.phaseCard.mas_bottom).offset(kRingPanelTopOffset);
         make.left.right.equalTo(self.contentView);
     }];
 }
@@ -136,7 +147,7 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
 
     self.stopButton = [UIButton buttonWithType:UIButtonTypeSystem];
     self.stopButton.backgroundColor    = [UIColor fst_buttonInactive];
-    self.stopButton.layer.cornerRadius = kFSTActiveFastingStopCornerRadius;
+    self.stopButton.layer.cornerRadius = kStopCornerRadius;
     [self.stopButton setTitle:@"END FASTING" forState:UIControlStateNormal];
     [self.stopButton setTitleColor:[UIColor fst_textHeading] forState:UIControlStateNormal];
     self.stopButton.titleLabel.font = FSTFontAvenirDemiBold(16);
@@ -144,16 +155,16 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
     [self.contentView addSubview:self.stopButton];
 
     [self.timesRow mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.ringPanel.mas_bottom).offset(kFSTActiveFastingTimesRowVisualOffset);
+        make.top.equalTo(self.ringPanel.mas_bottom).offset(kTimesRowVisualOffset);
         make.centerX.equalTo(self.contentView);
-        make.width.equalTo(@(kFSTActiveFastingBottomContentWidth));
-        make.height.equalTo(@(kFSTActiveFastingTimesRowHeight));
+        make.width.equalTo(@(kBottomContentWidth));
+        make.height.equalTo(@(kTimesRowHeight));
     }];
     [self.stopButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.timesRow.mas_bottom).offset(kFSTActiveFastingStopTopOffset);
+        make.top.equalTo(self.timesRow.mas_bottom).offset(kStopTopOffset);
         make.centerX.equalTo(self.contentView);
-        make.width.equalTo(@(kFSTActiveFastingBottomContentWidth));
-        make.height.equalTo(@(kFSTActiveFastingStopHeight));
+        make.width.equalTo(@(kBottomContentWidth));
+        make.height.equalTo(@(kStopHeight));
     }];
 }
 
@@ -166,9 +177,9 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
     };
     [self.contentView addSubview:self.tipsSection];
     [self.tipsSection mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stopButton.mas_bottom).offset(kFSTActiveFastingTipsTopOffset);
-        make.left.equalTo(self.contentView).offset(kFSTActiveFastingTipsSideInset);
-        make.right.equalTo(self.contentView).offset(-kFSTActiveFastingTipsSideInset);
+        make.top.equalTo(self.stopButton.mas_bottom).offset(kTipsTopOffset);
+        make.left.equalTo(self.contentView).offset(kTipsSideInset);
+        make.right.equalTo(self.contentView).offset(-kTipsSideInset);
     }];
 
     // Send feedback 行 — 独立于 Tips 白色卡片之外
@@ -176,10 +187,10 @@ static const CGFloat kFSTActiveFastingTipsBottomPadding      = 124;  // 留给�
     [self.contentView addSubview:feedbackRow];
     [feedbackRow mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.tipsSection.mas_bottom).offset(20);
-        make.left.equalTo(self.contentView).offset(kFSTActiveFastingTipsSideInset);
-        make.right.equalTo(self.contentView).offset(-kFSTActiveFastingTipsSideInset);
+        make.left.equalTo(self.contentView).offset(kTipsSideInset);
+        make.right.equalTo(self.contentView).offset(-kTipsSideInset);
         make.height.mas_equalTo(56);
-        make.bottom.equalTo(self.contentView).offset(-kFSTActiveFastingTipsBottomPadding);
+        make.bottom.equalTo(self.contentView).offset(-kTipsBottomPadding);
     }];
 }
 

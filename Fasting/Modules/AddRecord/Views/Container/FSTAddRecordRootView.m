@@ -12,16 +12,23 @@
 #import "FSTVerticalCardStackView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kFSTAddRecordHeaderHeight       = 310;
-static const CGFloat kFSTAddRecordHeaderOverlap      = -34;  // 卡片区上拉与 header 视觉重叠的距离
-static const CGFloat kFSTAddRecordCardSpacing        = 18;
-static const CGFloat kFSTAddRecordCardSideInset      = 22;
-static const CGFloat kFSTAddRecordCardBottomPadding  = 28;
-static const CGFloat kFSTAddRecordBottomBarHeight    = 112;
-static const CGFloat kFSTAddRecordButtonHeight       = 58;
-static const CGFloat kFSTAddRecordButtonGap          = 14;
-static const CGFloat kFSTAddRecordButtonTopInset     = 16;
-static const CGFloat kFSTAddRecordButtonCornerRadius = 29;
+#pragma mark - Layout constants
+
+// Header
+static const CGFloat kHeaderHeight  = 310;
+static const CGFloat kHeaderOverlap = -34;  // 卡片区上拉与 header 视觉重叠的距离
+
+// Card stack
+static const CGFloat kCardSpacing       = 18;
+static const CGFloat kCardSideInset     = 22;
+static const CGFloat kCardBottomPadding = 28;
+
+// BottomBar (Cancel / Save)
+static const CGFloat kBottomBarHeight    = 112;
+static const CGFloat kButtonHeight       = 58;
+static const CGFloat kButtonGap          = 14;
+static const CGFloat kButtonTopInset     = 16;
+static const CGFloat kButtonCornerRadius = 29;
 
 @interface FSTAddRecordRootView ()
 @property (nonatomic, strong, readwrite) FSTAddRecordHeaderView *headerView;
@@ -75,11 +82,11 @@ static const CGFloat kFSTAddRecordButtonCornerRadius = 29;
     self.noteCardView    = [FSTAddRecordNoteCardView new];
 
     self.cardStack = [FSTVerticalCardStackView new];
-    self.cardStack.cardSpacing   = kFSTAddRecordCardSpacing;
+    self.cardStack.cardSpacing   = kCardSpacing;
     self.cardStack.contentInsets = UIEdgeInsetsMake(0,
-                                                    kFSTAddRecordCardSideInset,
-                                                    kFSTAddRecordCardBottomPadding,
-                                                    kFSTAddRecordCardSideInset);
+                                                    kCardSideInset,
+                                                    kCardBottomPadding,
+                                                    kCardSideInset);
     self.cardStack.cards = @[self.timeCardView, self.weightCardView, self.feelingCardView, self.noteCardView];
     [self.contentView addSubview:self.cardStack];
 }
@@ -93,11 +100,11 @@ static const CGFloat kFSTAddRecordButtonCornerRadius = 29;
     self.cancelButton.backgroundColor = [UIColor fst_addRecordCancelButton];
     [self.cancelButton setTitleColor:[UIColor fst_textPrimary] forState:UIControlStateNormal];
     self.cancelButton.titleLabel.font = FSTFontSubhead();
-    self.cancelButton.layer.cornerRadius = kFSTAddRecordButtonCornerRadius;
+    self.cancelButton.layer.cornerRadius = kButtonCornerRadius;
     [self.cancelButton addTarget:self action:@selector(handleCancelTapped) forControlEvents:UIControlEventTouchUpInside];
 
     self.saveButton = [UIButton fst_greenPillButtonWithTitle:@"Save"];
-    self.saveButton.layer.cornerRadius = kFSTAddRecordButtonCornerRadius;
+    self.saveButton.layer.cornerRadius = kButtonCornerRadius;
     self.saveButton.titleLabel.font = FSTFontSubhead();
     [self.saveButton addTarget:self action:@selector(handleSaveTapped) forControlEvents:UIControlEventTouchUpInside];
 
@@ -110,16 +117,16 @@ static const CGFloat kFSTAddRecordButtonCornerRadius = 29;
 - (void)setupConstraints {
     [self.headerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.left.right.equalTo(self);
-        make.height.equalTo(@(kFSTAddRecordHeaderHeight));
+        make.height.equalTo(@(kHeaderHeight));
     }];
 
     [self.bottomBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.equalTo(self);
-        make.height.equalTo(@(kFSTAddRecordBottomBarHeight));
+        make.height.equalTo(@(kBottomBarHeight));
     }];
 
     [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.headerView.mas_bottom).offset(kFSTAddRecordHeaderOverlap);
+        make.top.equalTo(self.headerView.mas_bottom).offset(kHeaderOverlap);
         make.left.right.equalTo(self);
         make.bottom.equalTo(self.bottomBar.mas_top);
     }];
@@ -134,13 +141,13 @@ static const CGFloat kFSTAddRecordButtonCornerRadius = 29;
     }];
 
     [self.cancelButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.bottomBar).offset(kFSTAddRecordCardSideInset);
-        make.top.equalTo(self.bottomBar).offset(kFSTAddRecordButtonTopInset);
-        make.height.equalTo(@(kFSTAddRecordButtonHeight));
+        make.left.equalTo(self.bottomBar).offset(kCardSideInset);
+        make.top.equalTo(self.bottomBar).offset(kButtonTopInset);
+        make.height.equalTo(@(kButtonHeight));
     }];
     [self.saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.cancelButton.mas_right).offset(kFSTAddRecordButtonGap);
-        make.right.equalTo(self.bottomBar).offset(-kFSTAddRecordCardSideInset);
+        make.left.equalTo(self.cancelButton.mas_right).offset(kButtonGap);
+        make.right.equalTo(self.bottomBar).offset(-kCardSideInset);
         make.top.equalTo(self.cancelButton);
         make.width.height.equalTo(self.cancelButton);
     }];
