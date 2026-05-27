@@ -19,10 +19,10 @@
 #import "FSTTheme.h"
 
 @interface FSTAddRecordViewController ()
-@property (nonatomic, strong) FSTFastingRecord *editingRecord;
+@property (nonatomic, strong, readwrite, nullable) FSTFastingRecord *editingRecord;
 @property (nonatomic, assign) BOOL editingExistingRecord;
-@property (nonatomic, strong) NSDate *startDate;
-@property (nonatomic, strong) NSDate *endDate;
+@property (nonatomic, strong, readwrite) NSDate *startDate;
+@property (nonatomic, strong, readwrite) NSDate *endDate;
 @property (nonatomic, assign) CGFloat weightKg;
 @property (nonatomic, assign) CGFloat initialWeightKg;
 @property (nonatomic, assign) CGFloat targetWeightKg;

@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param plan 不可为 nil；通常来自 FSTPlan.defaultDailyPlans 的一项。
 - (instancetype)initWithPlan:(FSTPlan *)plan;
 
+/// 当前选定的 plan。仅供 state restoration 读取 plan.name 用于持久化。
+@property (nonatomic, strong, readonly) FSTPlan *plan;
+
 /// 用户点 START 并成功开始断食后回调。
 /// 上游 VC（FSTDailyPlanViewController）约定：在此回调里 popToViewController:self animated:NO，
 /// 再 push FSTActiveFastingViewController，让用户看到平滑的过渡而非两层栈。

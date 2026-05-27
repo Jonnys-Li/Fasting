@@ -13,7 +13,7 @@
 #import "UINavigationController+FSTHelpers.h"
 
 @interface FSTPlanConfirmViewController ()
-@property (nonatomic, strong) FSTPlan *plan;
+@property (nonatomic, strong, readwrite) FSTPlan *plan;
 @property (nonatomic, strong) NSDate *selectedStartDate;
 @end
 

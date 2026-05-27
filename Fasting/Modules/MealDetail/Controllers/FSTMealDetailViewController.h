@@ -28,6 +28,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMealRecord:(nullable FSTMealRecord *)record
               returnsToTimelineTab:(BOOL)returnsToTimelineTab;
 
+/// 当前编辑的 meal 记录（编辑态来自 init 入参，新建态为空 recordID 的占位 record）。
+/// 仅供 state restoration 使用——据 recordID 是否非空判断是编辑/新建。
+@property (nonatomic, strong, readonly) FSTMealRecord *mealRecord;
+
+/// 保存后是否切回 Timeline tab。state restoration 需要原样还原这条标志。
+@property (nonatomic, assign, readonly) BOOL returnsToTimelineTab;
+
 @end
 
 NS_ASSUME_NONNULL_END

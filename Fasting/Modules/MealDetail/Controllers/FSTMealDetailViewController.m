@@ -28,9 +28,9 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 }
 
 @interface FSTMealDetailViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
-@property (nonatomic, strong) FSTMealRecord *record;
+@property (nonatomic, strong, readwrite) FSTMealRecord *mealRecord;
 @property (nonatomic, copy) NSString *imagePath;
-@property (nonatomic, assign) BOOL returnsToTimelineTab;
+@property (nonatomic, assign, readwrite) BOOL returnsToTimelineTab;
 @end
 
 @implementation FSTMealDetailViewController
@@ -41,7 +41,7 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 
 - (instancetype)initWithMealRecord:(FSTMealRecord *)record returnsToTimelineTab:(BOOL)returnsToTimelineTab {
     if ((self = [super init])) {
-        _record = [record copy] ?: [FSTMealRecord new];
+        _mealRecord = [record copy] ?: [FSTMealRecord new];
         _imagePath = record.imagePath ?: @"";
         _returnsToTimelineTab = returnsToTimelineTab;
         self.hidesBottomBarWhenPushed = YES;
@@ -72,12 +72,12 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 
 - (void)pushStateIntoCards {
     FSTMealDetailRootView *root = self.rootView;
-    root.timeCardView.date = self.record.date ?: [NSDate date];
-    root.slotCardView.mealCategory = self.record.mealCategory ?: @"Meal";
-    root.dietCardView.dietType = self.record.dietType ?: @"Not sure";
-    root.tasteCardView.tasteLevel = self.record.tasteLevel;
+    root.timeCardView.date = self.mealRecord.date ?: [NSDate date];
+    root.slotCardView.mealCategory = self.mealRecord.mealCategory ?: @"Meal";
+    root.dietCardView.dietType = self.mealRecord.dietType ?: @"Not sure";
+    root.tasteCardView.tasteLevel = self.mealRecord.tasteLevel;
     root.detailCardView.imagePath = self.imagePath;
-    root.detailCardView.detailDescription = self.record.detailDescription ?: @"";
+    root.detailCardView.detailDescription = self.mealRecord.detailDescription ?: @"";
 }
 
 #pragma mark - 图片选择
@@ -108,7 +108,7 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 
 - (void)handleMealSaveTapped {
     FSTMealDetailRootView *root = self.rootView;
-    FSTMealRecord *record = self.record ?: [FSTMealRecord new];
+    FSTMealRecord *record = self.mealRecord ?: [FSTMealRecord new];
     record.recordID = record.recordID.length ? record.recordID : [[NSUUID UUID] UUIDString];
     record.date = root.timeCardView.date;
     record.mealCategory = root.slotCardView.mealCategory;

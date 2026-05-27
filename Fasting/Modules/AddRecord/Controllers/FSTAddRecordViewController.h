@@ -24,6 +24,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// 编辑场景。基于已有 record 构造草稿（recordID 保留）；保存时调 updateFastingRecord:。
 - (instancetype)initWithRecord:(FSTFastingRecord *)record;
 
+/// 当前显示的断食时间窗。仅供 state restoration 读取草稿状态用。
+@property (nonatomic, strong, readonly) NSDate *startDate;
+@property (nonatomic, strong, readonly) NSDate *endDate;
+
+/// 编辑态持有的原始 record；新建态为 nil。state restoration 据此判定 mode。
+@property (nonatomic, strong, readonly, nullable) FSTFastingRecord *editingRecord;
+
 @end
 
 NS_ASSUME_NONNULL_END
