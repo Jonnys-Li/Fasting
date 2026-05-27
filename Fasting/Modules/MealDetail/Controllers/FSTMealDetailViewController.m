@@ -13,7 +13,7 @@
 #import "FSTMealDietCardView.h"
 #import "FSTMealTasteCardView.h"
 #import "FSTMealDetailContentCardView.h"
-#import "FSTRootTabBarController.h"
+#import "FSTAppRouter.h"
 #import "FSTRecordsRepository.h"
 /// 把 UIImage 压缩到 0.82 质量并写入 Documents/meal-images/{UUID}.jpg；返回完整路径或 nil。
 /// 0.82 = 食物照片体积/画质的最优拐点（再高肉眼难分辨但文件大幅增长）。
@@ -118,27 +118,20 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
     record.imagePath = self.imagePath ?: @"";
 
     FSTRecordsRepository *repository = [FSTRecordsRepository sharedRepository];
-    UINavigationController *currentNavigationController = self.navigationController;
 
     // 默认：保存后只 pop 一层，留在当前 tab。涵盖 MealDiary 编辑、Timeline 自身新建/编辑两类入口。
     if (!self.returnsToTimelineTab) {
         [repository addOrUpdateMealRecord:record];
-        [currentNavigationController popViewControllerAnimated:YES];
+        [self.navigationController popViewControllerAnimated:YES];
         return;
     }
 
     // returnsToTimelineTab=YES：从 Plan tab 等非 Timeline tab 进入，保存后切到 Timeline 让新记录立刻可见。
-    FSTRootTabBarController *tabBarController = (FSTRootTabBarController *)currentNavigationController.tabBarController;
-    if (![tabBarController isKindOfClass:[FSTRootTabBarController class]]) {
-        // 防御兜底：tabBar 不在预期类，仍要保存，退化为 pop。
+    [FSTAppRouter finishFlowFrom:self updates:^{
         [repository addOrUpdateMealRecord:record];
-        [currentNavigationController popViewControllerAnimated:YES];
-        return;
-    }
-    [tabBarController fst_finishFlowReturningToTimelineWithUpdates:^{
+    } fallback:^{
         [repository addOrUpdateMealRecord:record];
-        UINavigationController *timelineNav = (UINavigationController *)tabBarController.viewControllers[FSTTabIndexTimeline];
-        [timelineNav popToRootViewControllerAnimated:NO];
+        [self.navigationController popViewControllerAnimated:YES];
     }];
 }
 

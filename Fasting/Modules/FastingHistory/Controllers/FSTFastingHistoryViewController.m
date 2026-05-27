@@ -8,7 +8,7 @@
 
 #import "FSTFastingHistoryViewController.h"
 #import "FSTFastingHistoryRootView.h"
-#import "FSTAddRecordViewController.h"
+#import "FSTAppRouter.h"
 #import "FSTFastingCardCell.h"
 #import "FSTFastingTimelineCardView.h"
 #import "FSTRecordsRepository.h"
@@ -87,9 +87,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    FSTAddRecordViewController *editViewController = [[FSTAddRecordViewController alloc] initWithRecord:self.records[indexPath.row]];
-    editViewController.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:editViewController animated:YES];
+    [FSTAppRouter pushAddRecordFrom:self record:self.records[indexPath.row]];
 }
 
 @end

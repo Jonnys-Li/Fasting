@@ -53,6 +53,9 @@ extern const CGFloat FSTRadiusCard;  ///< 18 — 标准卡片
 extern const CGFloat FSTRadiusL;     ///< 22 — 大面板/区块
 extern const CGFloat FSTRadiusXL;    ///< 24 — 输入卡片/大按钮
 
+// MARK: - 单位换算常量
+extern const CGFloat FSTPoundsPerKilogram; ///< 2.20462262 — lbs/kg 换算系数
+
 // MARK: - 时间格式化
 // App 内所有时间显示走这 5 个函数；保证全局一致并便于 localization。
 

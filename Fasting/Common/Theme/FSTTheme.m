@@ -17,6 +17,8 @@ const CGFloat FSTRadiusCard = 18;
 const CGFloat FSTRadiusL    = 22;
 const CGFloat FSTRadiusXL   = 24;
 
+const CGFloat FSTPoundsPerKilogram = 2.20462262;
+
 UIFont *FSTFontRegular(CGFloat size)  { return [UIFont systemFontOfSize:size weight:UIFontWeightRegular]; }
 UIFont *FSTFontMedium(CGFloat size)   { return [UIFont systemFontOfSize:size weight:UIFontWeightMedium]; }
 UIFont *FSTFontSemibold(CGFloat size) { return [UIFont systemFontOfSize:size weight:UIFontWeightSemibold]; }

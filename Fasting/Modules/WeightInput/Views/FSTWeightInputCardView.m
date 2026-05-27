@@ -7,8 +7,6 @@
 #import "FSTWeightUnitToggleView.h"
 #import "FSTTheme.h"
 
-static const CGFloat FSTPoundsPerKilogram = 2.20462262;
-
 @interface FSTWeightInputCardView () <UITextFieldDelegate>
 @property (nonatomic, strong) UILabel *valueLabel;
 @property (nonatomic, strong) UILabel *unitSuffixLabel;

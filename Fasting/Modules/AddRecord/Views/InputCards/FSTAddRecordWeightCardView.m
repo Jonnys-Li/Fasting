@@ -6,8 +6,6 @@
 #import "FSTAddRecordWeightCardView.h"
 #import "FSTTheme.h"
 
-static const CGFloat kLbPerKg = 2.20462262;
-
 @interface FSTAddRecordWeightCardView ()
 @property (nonatomic, strong) UILabel *weightValueLabel;
 @property (nonatomic, strong) UILabel *initialLabel;
@@ -141,7 +139,7 @@ static const CGFloat kLbPerKg = 2.20462262;
 - (void)refreshValues {
     BOOL useLb = self.usePounds;
     NSString *unit = useLb ? @"lb" : @"kg";
-    CGFloat factor = useLb ? kLbPerKg : 1.0;
+    CGFloat factor = useLb ? FSTPoundsPerKilogram : 1.0;
     self.weightValueLabel.text = [NSString stringWithFormat:@"%.1f %@", self.weightKg * factor, unit];
     self.initialLabel.text = [NSString stringWithFormat:@"Initial: %.1f %@", self.initialWeightKg * factor, unit];
     self.targetLabel.text = [NSString stringWithFormat:@"Target: %.1f %@", self.targetWeightKg * factor, unit];

@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class FSTPlan, FSTMealRecord;
+@class FSTPlan, FSTMealRecord, FSTFastingRecord;
 
 @interface FSTAppRouter : NSObject
 
@@ -31,6 +31,11 @@ NS_ASSUME_NONNULL_BEGIN
                      animated:(BOOL)animated;
 
 + (void)pushQuickAddRecordFrom:(UIViewController *)vc;
++ (void)pushAddRecordFrom:(UIViewController *)vc
+                startDate:(NSDate *)startDate
+                  endDate:(NSDate *)endDate;
++ (void)pushAddRecordFrom:(UIViewController *)vc
+                   record:(FSTFastingRecord *)record;
 + (void)pushFastingHistoryFrom:(UIViewController *)vc;
 + (void)pushMealDiaryFrom:(UIViewController *)vc;
 + (void)pushMealDetailFrom:(UIViewController *)vc

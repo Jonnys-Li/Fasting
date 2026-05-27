@@ -5,6 +5,7 @@
 
 #import "FSTAppRouter.h"
 #import "FSTActiveFastingViewController.h"
+#import "FSTAddRecordViewController.h"
 #import "FSTQuickAddRecordViewController.h"
 #import "FSTFastingHistoryViewController.h"
 #import "FSTMealDiaryViewController.h"
@@ -15,6 +16,7 @@
 #import "FSTWeightInputViewController.h"
 #import "FSTRootTabBarController.h"
 #import "FSTPlan.h"
+#import "FSTFastingRecord.h"
 
 @implementation FSTAppRouter
 
@@ -55,6 +57,21 @@
     FSTQuickAddRecordViewController *record = [FSTQuickAddRecordViewController new];
     record.hidesBottomBarWhenPushed = YES;
     [vc.navigationController pushViewController:record animated:YES];
+}
+
++ (void)pushAddRecordFrom:(UIViewController *)vc
+                startDate:(NSDate *)startDate
+                  endDate:(NSDate *)endDate {
+    FSTAddRecordViewController *addRecord = [[FSTAddRecordViewController alloc] initWithStartDate:startDate endDate:endDate];
+    addRecord.hidesBottomBarWhenPushed = YES;
+    [vc.navigationController pushViewController:addRecord animated:YES];
+}
+
++ (void)pushAddRecordFrom:(UIViewController *)vc
+                   record:(FSTFastingRecord *)record {
+    FSTAddRecordViewController *addRecord = [[FSTAddRecordViewController alloc] initWithRecord:record];
+    addRecord.hidesBottomBarWhenPushed = YES;
+    [vc.navigationController pushViewController:addRecord animated:YES];
 }
 
 + (void)pushFastingHistoryFrom:(UIViewController *)vc {

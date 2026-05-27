@@ -11,7 +11,6 @@
 
 #import "FSTActiveFastingViewController.h"
 #import "FSTActiveFastingRootView.h"
-#import "FSTAddRecordViewController.h"
 #import "FSTDailyPlanViewController.h"
 #import "FSTModalDialogViewController.h"
 #import "FSTAppRouter.h"
@@ -30,11 +29,18 @@
 #import "FSTTheme.h"
 #import <math.h>
 
-static const CGFloat kFSTActiveFastingNavButtonDiameter = 46;
-static const CGFloat kFSTActiveFastingPlainIconSize     = 34;
-static const CGFloat kFSTActiveFastingSegmentWidth      = 140;
-static const CGFloat kFSTActiveFastingSegmentHeight     = 34;
-static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
+#pragma mark - Layout constants
+
+// TopBar buttons
+static const CGFloat kNavButtonDiameter = 46;
+static const CGFloat kPlainIconSize     = 34;
+
+// Segment
+static const CGFloat kSegmentWidth  = 140;
+static const CGFloat kSegmentHeight = 34;
+
+// TopBar
+static const CGFloat kTopBarHeight = 80;
 
 @interface FSTActiveFastingViewController ()
 @property (nonatomic, strong) FSTFastingTopBar *topBar;
@@ -91,10 +97,10 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
 /// topBar 必须 install 到 VC.view 顶层（safeArea 锚），因此不放在 RootView 内部。
 - (void)installTopBar {
     UIButton *shareButton = [UIButton fst_navPlainButtonWithImageNamed:@"nav_share"
-                                                                  size:CGSizeMake(kFSTActiveFastingPlainIconSize, kFSTActiveFastingPlainIconSize)];
+                                                                  size:CGSizeMake(kPlainIconSize, kPlainIconSize)];
     [shareButton addTarget:self action:@selector(handleShareTapped) forControlEvents:UIControlEventTouchUpInside];
     UIButton *waterButton = [UIButton fst_navCircleButtonWithImageNamed:@"nav_water"
-                                                               diameter:kFSTActiveFastingNavButtonDiameter];
+                                                               diameter:kNavButtonDiameter];
 
     self.segment = [FSTFastingSegmentControl new];
     self.segment.userInteractionEnabled = NO;
@@ -102,7 +108,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:shareButton
                                                   rightButtons:@[waterButton]
                                                  centerContent:self.segment
-                                                 contentHeight:kFSTActiveFastingTopBarHeight];
+                                                 contentHeight:kTopBarHeight];
     [self.topBar installInViewController:self];
 
     // topBar 装好后补齐 rootView.scrollView 的顶部约束（RootView 内部仅约束了 left/right/bottom）
@@ -111,13 +117,13 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     }];
 
     [shareButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kFSTActiveFastingPlainIconSize, kFSTActiveFastingPlainIconSize));
+        make.size.mas_equalTo(CGSizeMake(kPlainIconSize, kPlainIconSize));
     }];
     [waterButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kFSTActiveFastingNavButtonDiameter, kFSTActiveFastingNavButtonDiameter));
+        make.size.mas_equalTo(CGSizeMake(kNavButtonDiameter, kNavButtonDiameter));
     }];
     [self.segment mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kFSTActiveFastingSegmentWidth, kFSTActiveFastingSegmentHeight));
+        make.size.mas_equalTo(CGSizeMake(kSegmentWidth, kSegmentHeight));
     }];
 }
 
@@ -269,9 +275,7 @@ static const CGFloat kFSTActiveFastingTopBarHeight      = 80;
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
     NSDate *startDate = sessionManager.activeStartDate ?: [NSDate date];
     NSDate *endDate   = [NSDate date];
-    FSTAddRecordViewController *addRecordViewController = [[FSTAddRecordViewController alloc] initWithStartDate:startDate endDate:endDate];
-    addRecordViewController.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:addRecordViewController animated:YES];
+    [FSTAppRouter pushAddRecordFrom:self startDate:startDate endDate:endDate];
 }
 
 - (void)enterScheduledReadyFromFutureStartDate:(NSDate *)futureStartDate source:(FSTScheduledReadySource)source {
