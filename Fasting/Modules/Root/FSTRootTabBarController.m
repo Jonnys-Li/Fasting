@@ -9,7 +9,7 @@
 #import "FSTAppRouter.h"
 #import "FSTTheme.h"
 
-static const NSTimeInterval kFSTTabChromeSuppressionDelay = 0.12;
+static const NSTimeInterval kTabChromeSuppressionDelay = 0.12;
 
 @interface FSTRootTabBarController ()
 - (void)fst_removeAnimationsInView:(UIView *)view;
@@ -118,6 +118,13 @@ shouldSelectViewController:(UIViewController *)viewController {
         UIViewController *vc = self.viewControllers[FSTTabIndexFasting];
         if ([vc isKindOfClass:[UINavigationController class]]) fastingNav = (UINavigationController *)vc;
     }
+    // Timeline tab 自身可能有 push 上去的 detail 页（如从 Timeline 进入的 MealDetail 编辑态）。
+    // finish flow 的语义是"保存后落到 Timeline 根视图看新记录"，因此切换前先把 Timeline 也 popToRoot。
+    UINavigationController *timelineNav = nil;
+    if (self.viewControllers.count > FSTTabIndexTimeline) {
+        UIViewController *vc = self.viewControllers[FSTTabIndexTimeline];
+        if ([vc isKindOfClass:[UINavigationController class]]) timelineNav = (UINavigationController *)vc;
+    }
 
     UIView *transitionCover = [self.view snapshotViewAfterScreenUpdates:NO];
     transitionCover.frame = self.view.bounds;
@@ -130,6 +137,7 @@ shouldSelectViewController:(UIViewController *)viewController {
         [CATransaction setDisableActions:YES];
         self.selectedIndex = FSTTabIndexTimeline;
         [fastingNav popToRootViewControllerAnimated:NO];
+        [timelineNav popToRootViewControllerAnimated:NO];
         if (updates) updates();
         [self.view setNeedsLayout];
         [self.view layoutIfNeeded];
@@ -137,7 +145,7 @@ shouldSelectViewController:(UIViewController *)viewController {
         [CATransaction commit];
     }];
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kFSTTabChromeSuppressionDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kTabChromeSuppressionDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [UIView performWithoutAnimation:^{
             [transitionCover removeFromSuperview];
         }];

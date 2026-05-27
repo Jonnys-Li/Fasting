@@ -68,7 +68,7 @@
 }
 
 + (void)pushAddRecordFrom:(UIViewController *)vc
-                   record:(FSTFastingRecord *)record {
+            editingRecord:(FSTFastingRecord *)record {
     FSTAddRecordViewController *addRecord = [[FSTAddRecordViewController alloc] initWithRecord:record];
     addRecord.hidesBottomBarWhenPushed = YES;
     [vc.navigationController pushViewController:addRecord animated:YES];

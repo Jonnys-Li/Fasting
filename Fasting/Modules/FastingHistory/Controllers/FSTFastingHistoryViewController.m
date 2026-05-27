@@ -87,7 +87,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [FSTAppRouter pushAddRecordFrom:self record:self.records[indexPath.row]];
+    [FSTAppRouter pushAddRecordFrom:self editingRecord:self.records[indexPath.row]];
 }
 
 @end

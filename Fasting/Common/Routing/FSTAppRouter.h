@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
                 startDate:(NSDate *)startDate
                   endDate:(NSDate *)endDate;
 + (void)pushAddRecordFrom:(UIViewController *)vc
-                   record:(FSTFastingRecord *)record;
+            editingRecord:(FSTFastingRecord *)record;
 + (void)pushFastingHistoryFrom:(UIViewController *)vc;
 + (void)pushMealDiaryFrom:(UIViewController *)vc;
 + (void)pushMealDetailFrom:(UIViewController *)vc
