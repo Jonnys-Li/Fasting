@@ -23,7 +23,6 @@ static const CGFloat kFeelingSize  = 36;
 static const CGFloat kChipHeight   = 34;
 
 // Footer
-static const CGFloat kAddButtonHeight = 48;
 
 @interface FSTTimelineModuleView ()
 // 头部
@@ -121,10 +120,10 @@ static const CGFloat kAddButtonHeight = 48;
     [self addSubview:self.entryContainer];
 
     // 时间轴圆点（边框 + 透明填充）
-    self.dotView = [UIView new];
-    self.dotView.layer.borderColor = [UIColor fst_mealDiaryCardBorder].CGColor;
-    self.dotView.layer.borderWidth = 3;
-    self.dotView.layer.cornerRadius = kDotSize / 2.0;
+    self.dotView = [UIView fst_circularDotWithSize:kDotSize
+                                       borderColor:[UIColor fst_mealDiaryCardBorder]
+                                       borderWidth:3
+                                           bgColor:nil];
 
     self.lineView = [UIView new];
     self.lineView.backgroundColor = [UIColor fst_mealDiaryCardBorder];
@@ -215,8 +214,7 @@ static const CGFloat kAddButtonHeight = 48;
 #pragma mark - 底部：分割线 + 增加
 
 - (void)buildFooter {
-    self.separatorLine = [UIView new];
-    self.separatorLine.backgroundColor = [UIColor fst_mealDiaryCardBorder];
+    self.separatorLine = [UIView fst_separatorLineWithColor:[UIColor fst_mealDiaryCardBorder]];
     [self addSubview:self.separatorLine];
 
     self.addButton = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -240,7 +238,7 @@ static const CGFloat kAddButtonHeight = 48;
     [self.addButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.separatorLine.mas_bottom);
         make.left.right.equalTo(self);
-        make.height.equalTo(@(kAddButtonHeight));
+        make.height.equalTo(@(FSTControlHeightStandard));
         make.bottom.equalTo(self);
     }];
 }
@@ -281,13 +279,7 @@ static const CGFloat kAddButtonHeight = 48;
     self.categoryChipLabel.text = [NSString stringWithFormat:@"  %@  ", category ?: @"Meal"];
     self.dietChipLabel.text = [NSString stringWithFormat:@"  %@  ", dietType ?: @"Not sure"];
 
-    NSString *imageName;
-    switch (tasteLevel) {
-        case 0: imageName = @"tl_rating_hard"; break;
-        case 2: imageName = @"tl_rating_easy"; break;
-        default: imageName = @"tl_rating_ok"; break;
-    }
-    self.feelingImageView.image = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    self.feelingImageView.image = [UIImage fst_ratingImageForLevel:tasteLevel];
 }
 
 #pragma mark - 事件

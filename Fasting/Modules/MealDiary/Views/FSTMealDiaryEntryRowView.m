@@ -6,6 +6,8 @@
 #import "FSTMealDiaryEntryRowView.h"
 #import "FSTTheme.h"
 
+static const CGFloat kDotSize = 12;
+
 @interface FSTMealDiaryEntryRowView ()
 @property (nonatomic, copy) NSString *category;
 @property (nonatomic, copy) NSString *dietType;
@@ -38,7 +40,10 @@
     self.topLineView = [self buildTimelineLine];
     self.bottomLineView = [self buildTimelineLine];
     UILabel *timeLabel = [UILabel fst_labelWithText:self.dateText font:FSTFontBody() color:[UIColor fst_textSecondary]];
-    UIButton *editButton = [self buildEditButton];
+    UIButton *editButton = [UIButton fst_plainImageButtonWithImageNamed:@"edit_pencil"
+                                                                   size:CGSizeMake(24, 24)
+                                                              tintColor:[UIColor fst_editPencilGray]];
+    [editButton addTarget:self action:@selector(emitEditTapped) forControlEvents:UIControlEventTouchUpInside];
     UIControl *cardView = [self buildCard];
     UILabel *foodIconLabel = [self buildFoodIcon];
     UILabel *categoryChipLabel = [self pillLabelWithText:self.category ?: @"Meal"];
@@ -51,7 +56,7 @@
     [dotView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self);
         make.top.equalTo(self).offset(22);
-        make.size.mas_equalTo(CGSizeMake(12, 12));
+        make.size.mas_equalTo(CGSizeMake(kDotSize, kDotSize));
     }];
     [self.topLineView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self);
@@ -104,28 +109,16 @@
 }
 
 - (UIView *)buildTimelineDot {
-    UIView *dotView = [UIView new];
-    dotView.layer.borderColor = [UIColor fst_mealDiaryCardBorder].CGColor;
-    dotView.layer.borderWidth = 3;
-    dotView.layer.cornerRadius = 6;
-    return dotView;
+    return [UIView fst_circularDotWithSize:kDotSize
+                               borderColor:[UIColor fst_mealDiaryCardBorder]
+                               borderWidth:3
+                                   bgColor:nil];
 }
 
 - (UIView *)buildTimelineLine {
     UIView *lineView = [UIView new];
     lineView.backgroundColor = [UIColor fst_mealDiaryCardBorder];
     return lineView;
-}
-
-- (UIButton *)buildEditButton {
-    UIButton *editButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage *pencilImage = [[UIImage imageNamed:@"edit_pencil"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    [editButton setImage:pencilImage forState:UIControlStateNormal];
-    editButton.tintColor = [UIColor fst_editPencilGray];
-    editButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
-    editButton.adjustsImageWhenHighlighted = NO;
-    [editButton addTarget:self action:@selector(emitEditTapped) forControlEvents:UIControlEventTouchUpInside];
-    return editButton;
 }
 
 - (UIControl *)buildCard {
@@ -150,13 +143,7 @@
 }
 
 - (UIImageView *)buildFeelingImageView {
-    NSString *imageName;
-    switch (self.tasteLevel) {
-        case 0: imageName = @"tl_rating_hard"; break;
-        case 2: imageName = @"tl_rating_easy"; break;
-        default: imageName = @"tl_rating_ok"; break;
-    }
-    UIImageView *feelingImageView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+    UIImageView *feelingImageView = [[UIImageView alloc] initWithImage:[UIImage fst_ratingImageForLevel:self.tasteLevel]];
     feelingImageView.contentMode = UIViewContentModeScaleAspectFit;
     return feelingImageView;
 }

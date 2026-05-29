@@ -101,8 +101,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 
     self.chevronImageView = [self originalImageViewNamed:@"tl_chevron" fit:YES];
 
-    self.dividerView = [UIView new];
-    self.dividerView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.2];
+    self.dividerView = [UIView fst_separatorLineWithColor:[[UIColor whiteColor] colorWithAlphaComponent:0.2]];
     self.dividerView.userInteractionEnabled = NO;
 
     self.hoursValueLabel   = [self durationValueLabel];
@@ -297,13 +296,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 
 - (void)setRating:(FSTFastingRating)rating {
     _rating = rating;
-    NSString *imageName = @"tl_rating_easy";
-    if (rating == FSTFastingRatingOk) {
-        imageName = @"tl_rating_ok";
-    } else if (rating == FSTFastingRatingHard) {
-        imageName = @"tl_rating_hard";
-    }
-    self.ratingImageView.image = [UIImage fst_originalImageNamed:imageName];
+    self.ratingImageView.image = [UIImage fst_ratingImageForLevel:rating];
 }
 
 - (void)configureWithRecord:(FSTFastingRecord *)record {
