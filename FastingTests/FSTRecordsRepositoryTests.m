@@ -10,7 +10,7 @@
 #import "../Fasting/Core/Services/Session/FSTNextFastService.m"
 
 // Note: FSTFastingTimingService / FSTEatingWindowService 已在 MVC 重构中 inline 进
-// FSTActiveFastingViewController / FSTDailyPlanViewController（单一调用点）。
+// FSTActiveFastingViewController / FSTFastingIdleViewController（单一调用点）。
 // 这里只保留对 FSTRecordsRepository 排序 / upsert / delete 的回归测试。
 
 @interface FSTRecordsRepositoryTests : XCTestCase

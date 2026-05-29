@@ -14,8 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 在 viewControllers 数组里查找第一个 isKindOfClass:cls 的 VC（按栈底→栈顶顺序）。
 /// 调用方：
-///   - FSTActiveFastingViewController：完成断食后回找 FSTDailyPlanViewController 做 popTo；
-///   - FSTPlanConfirmViewController：开始断食后回找 FSTDailyPlanViewController 同理。
+///   - FSTActiveFastingViewController：完成断食后回找 FSTFastingIdleViewController 做 popTo；
+///   - FSTPlanConfirmViewController：开始断食后回找 FSTFastingIdleViewController 同理。
 /// 找不到时返回 nil（调用方需要兜底 pop 到 root 或 dismiss）。
 - (nullable __kindof UIViewController *)fst_firstViewControllerOfClass:(Class)cls;
 

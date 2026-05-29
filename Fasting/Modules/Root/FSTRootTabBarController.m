@@ -4,7 +4,7 @@
 //
 
 #import "FSTRootTabBarController.h"
-#import "FSTDailyPlanViewController.h"
+#import "FSTFastingIdleViewController.h"
 #import "FSTTimelineViewController.h"
 #import "FSTAppRouter.h"
 #import "FSTTheme.h"
@@ -21,12 +21,12 @@ static const NSTimeInterval kTabChromeSuppressionDelay = 0.12;
     [super viewDidLoad];
 
     // 设计：每个 tab 两套图 —— 未选中=描边，选中=实心填充。两态都 AlwaysOriginal 防止系统再 tint。
-    UIImage *dailyUnselected   = [[UIImage imageNamed:@"tab_daily"]              imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    UIImage *dailySelected     = [[UIImage imageNamed:@"tab_daily_selected"]     imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    UIImage *fastingUnselected = [[UIImage imageNamed:@"tab_fasting_unselected"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    UIImage *fastingSelected   = [[UIImage imageNamed:@"tab_fasting"]            imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    UIImage *exploreUnselected = [[UIImage imageNamed:@"tab_explore"]            imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    UIImage *exploreSelected   = [[UIImage imageNamed:@"tab_explore_selected"]   imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    UIImage *dailyUnselected   = [UIImage fst_originalImageNamed:@"tab_daily"];
+    UIImage *dailySelected     = [UIImage fst_originalImageNamed:@"tab_daily_selected"];
+    UIImage *fastingUnselected = [UIImage fst_originalImageNamed:@"tab_fasting_unselected"];
+    UIImage *fastingSelected   = [UIImage fst_originalImageNamed:@"tab_fasting"];
+    UIImage *exploreUnselected = [UIImage fst_originalImageNamed:@"tab_explore"];
+    UIImage *exploreSelected   = [UIImage fst_originalImageNamed:@"tab_explore_selected"];
 
     FSTTimelineViewController *timelineViewController = [FSTTimelineViewController new];
     UINavigationController *timelineNavigationController = [[UINavigationController alloc] initWithRootViewController:timelineViewController];
@@ -35,7 +35,7 @@ static const NSTimeInterval kTabChromeSuppressionDelay = 0.12;
                                                                     selectedImage:dailySelected];
     timelineNavigationController.tabBarItem.imageInsets = UIEdgeInsetsMake(-8, 0, 4, 0);
 
-    FSTDailyPlanViewController *dailyPlanViewController = [FSTDailyPlanViewController new];
+    FSTFastingIdleViewController *dailyPlanViewController = [FSTFastingIdleViewController new];
     UINavigationController *fastingNavigationController = [[UINavigationController alloc] initWithRootViewController:dailyPlanViewController];
     fastingNavigationController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Fasting"
                                                                            image:fastingUnselected
