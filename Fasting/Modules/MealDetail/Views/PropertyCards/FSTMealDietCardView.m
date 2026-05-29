@@ -27,10 +27,7 @@
 - (void)setDietType:(NSString *)dietType { _dietType = [dietType copy]; [self refresh]; }
 
 - (void)buildSubviews {
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"Diet Type";
-    titleLabel.font = FSTFontTitle();
-    titleLabel.textColor = [UIColor fst_textPrimary];
+    UILabel *titleLabel = [UILabel fst_labelWithText:@"Diet Type" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 
     UIStackView *rowsStack = [UIStackView new];
@@ -74,22 +71,10 @@
     [row addTarget:self action:@selector(handleRowTapped:) forControlEvents:UIControlEventTouchUpInside];
     [row mas_makeConstraints:^(MASConstraintMaker *make) { make.height.equalTo(@74); }];
 
-    UILabel *iconLabel = [UILabel new];
-    iconLabel.text = icon;
-    iconLabel.font = FSTFontRegular(32);
-    [row addSubview:iconLabel];
-
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.text = title;
-    titleLabel.font = FSTFontBold(17);
-    titleLabel.textColor = [UIColor fst_textPrimary];
-    [row addSubview:titleLabel];
-
-    UILabel *subtitleLabel = [UILabel new];
-    subtitleLabel.text = subtitle;
-    subtitleLabel.font = FSTFontRegular(14);
-    subtitleLabel.textColor = [UIColor fst_textSecondary];
-    [row addSubview:subtitleLabel];
+    UILabel *iconLabel = [UILabel fst_labelWithText:icon font:FSTFontRegular(32) color:[UIColor blackColor]];
+    UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(17) color:[UIColor fst_textPrimary]];
+    UILabel *subtitleLabel = [UILabel fst_labelWithText:subtitle font:FSTFontRegular(14) color:[UIColor fst_textSecondary]];
+    [row fst_addSubviews:@[iconLabel, titleLabel, subtitleLabel]];
 
     [iconLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(row).offset(18);

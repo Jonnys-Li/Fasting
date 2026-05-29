@@ -11,6 +11,19 @@
 NS_ASSUME_NONNULL_BEGIN
 
 // ───────────────────────────────────────────────
+// MARK: - 体重默认值（kg）
+// ───────────────────────────────────────────────
+
+extern const CGFloat FSTDefaultCurrentWeightKg;  ///< 当前体重默认值
+extern const CGFloat FSTDefaultInitialWeightKg;  ///< 初始体重默认值
+extern const CGFloat FSTDefaultTargetWeightKg;   ///< 目标体重默认值
+
+/// 体重取值守卫：value > 0 取 value，否则取 fallback（避免未设置的 0 值参与展示/计算）。
+static inline CGFloat FSTWeightOrDefault(CGFloat value, CGFloat fallback) {
+    return value > 0 ? value : fallback;
+}
+
+// ───────────────────────────────────────────────
 // MARK: - FSTFastingRecord
 // ───────────────────────────────────────────────
 

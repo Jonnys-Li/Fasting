@@ -88,18 +88,16 @@ static const CGFloat kPencilGap  = 6;
                    editAction:(SEL)editAction {
     UIView *column = [UIView new];
 
-    UILabel *captionLabel = [UILabel new];
-    captionLabel.text      = caption;
-    captionLabel.font      = FSTFontRegular(14);
-    captionLabel.textColor = [UIColor fst_textSecondary];
+    UILabel *captionLabel = [UILabel fst_labelWithText:caption font:FSTFontRegular(14) color:[UIColor fst_textSecondary]];
     captionLabel.adjustsFontSizeToFitWidth = YES;
     captionLabel.minimumScaleFactor = 0.82;
-    [column addSubview:captionLabel];
-    [column addSubview:timeLabel];
+    [column fst_addSubviews:@[captionLabel, timeLabel]];
 
     UIButton *editButton = nil;
     if (self.editable) {
-        editButton = [self editButton];
+        editButton = [UIButton fst_plainImageButtonWithImageNamed:@"edit_pencil"
+                                                             size:CGSizeMake(kPencilSize, kPencilSize)
+                                                        tintColor:nil];
         [editButton addTarget:self action:editAction forControlEvents:UIControlEventTouchUpInside];
         [column addSubview:editButton];
     }
@@ -159,23 +157,10 @@ static const CGFloat kPencilGap  = 6;
 }
 
 - (UILabel *)timeLabelWithColor:(UIColor *)color {
-    UILabel *label = [UILabel new];
-    label.font      = FSTFontAvenirDemiBold(15);
-    label.textColor = color;
-    label.text      = @"--";
-    label.textAlignment = NSTextAlignmentLeft;
-    label.adjustsFontSizeToFitWidth = NO;
-    label.lineBreakMode             = NSLineBreakByClipping;
+    UILabel *label = [UILabel fst_labelWithText:@"--" font:FSTFontAvenirDemiBold(15) color:color alignment:NSTextAlignmentLeft];
+    label.lineBreakMode = NSLineBreakByClipping;
     [label setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
     return label;
-}
-
-- (UIButton *)editButton {
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage *pencilImage = [[UIImage imageNamed:@"edit_pencil"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    [button setImage:pencilImage forState:UIControlStateNormal];
-    button.imageView.contentMode      = UIViewContentModeScaleAspectFit;
-    return button;
 }
 
 #pragma mark - 事件

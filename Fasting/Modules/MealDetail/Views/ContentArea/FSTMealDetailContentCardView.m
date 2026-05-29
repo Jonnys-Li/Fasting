@@ -34,9 +34,7 @@
     imageButton.tintColor = [UIColor fst_mealImageTint];
     [imageButton addTarget:self action:@selector(emitImageTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    self.imageStatusLabel = [UILabel new];
-    self.imageStatusLabel.font = FSTFontRegular(16);
-    self.imageStatusLabel.textColor = [UIColor fst_textSecondary];
+    self.imageStatusLabel = [UILabel fst_labelWithText:nil font:FSTFontRegular(16) color:[UIColor fst_textSecondary]];
 
     self.detailTextView = [UITextView new];
     self.detailTextView.backgroundColor = [UIColor fst_inputBackground];
@@ -45,7 +43,7 @@
     self.detailTextView.textColor = [UIColor fst_textPrimary];
     self.detailTextView.textContainerInset = UIEdgeInsetsMake(15, 15, 15, 15);
 
-    for (UIView *subview in @[imageButton, self.imageStatusLabel, self.detailTextView]) [self addSubview:subview];
+    [self fst_addSubviews:@[imageButton, self.imageStatusLabel, self.detailTextView]];
 
     [imageButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(24);

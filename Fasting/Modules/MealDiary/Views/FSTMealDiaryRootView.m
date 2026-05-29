@@ -56,8 +56,7 @@
 
 /// 底部黄色"确认"按钮。
 - (void)buildConfirmButton {
-    self.confirmButton = [UIButton fst_yellowPillButtonWithTitle:@"Confirm"];
-    [self.confirmButton setTitleColor:[UIColor fst_textPrimary] forState:UIControlStateNormal];
+    self.confirmButton = [UIButton fst_pillButtonWithTitle:@"Confirm" style:FSTPillButtonStyleYellow];
     [self.confirmButton addTarget:self action:@selector(handleConfirmTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.confirmButton];
 }

@@ -17,8 +17,6 @@ static const CGFloat kCardPadding   = 24;
 static const CGFloat kBrandIconSize = 28;
 
 // Buttons
-static const CGFloat kButtonHeight       = 48;
-static const CGFloat kButtonCornerRadius = 24;
 static const CGFloat kButtonSpacing      = 16;
 
 @interface FSTShareCardViewController ()
@@ -92,33 +90,24 @@ static const CGFloat kButtonSpacing      = 16;
 #pragma mark - Buttons
 
 - (void)buildButtons {
-    UIButton *saveButton  = [self actionButtonWithTitle:@"Save"  action:@selector(handleDismiss)];
-    UIButton *shareButton = [self actionButtonWithTitle:@"Share" action:@selector(handleDismiss)];
+    UIButton *saveButton  = [UIButton fst_pillButtonWithTitle:@"Save"  style:FSTPillButtonStyleShareCard];
+    UIButton *shareButton = [UIButton fst_pillButtonWithTitle:@"Share" style:FSTPillButtonStyleShareCard];
+    [saveButton  addTarget:self action:@selector(handleDismiss) forControlEvents:UIControlEventTouchUpInside];
+    [shareButton addTarget:self action:@selector(handleDismiss) forControlEvents:UIControlEventTouchUpInside];
     [self.view fst_addSubviews:@[saveButton, shareButton]];
 
     [saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.cardContainer.mas_bottom).offset(20);
         make.left.equalTo(self.cardContainer);
         make.right.equalTo(self.cardContainer.mas_centerX).offset(-kButtonSpacing / 2.0);
-        make.height.mas_equalTo(kButtonHeight);
+        make.height.mas_equalTo(FSTControlHeightStandard);
     }];
     [shareButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(saveButton);
         make.left.equalTo(self.cardContainer.mas_centerX).offset(kButtonSpacing / 2.0);
         make.right.equalTo(self.cardContainer);
-        make.height.mas_equalTo(kButtonHeight);
+        make.height.mas_equalTo(FSTControlHeightStandard);
     }];
-}
-
-- (UIButton *)actionButtonWithTitle:(NSString *)title action:(SEL)action {
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.backgroundColor = [UIColor fst_eatingTimeGreen];
-    button.layer.cornerRadius = kButtonCornerRadius;
-    [button setTitle:title forState:UIControlStateNormal];
-    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    button.titleLabel.font = FSTFontBold(16);
-    [button addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
-    return button;
 }
 
 #pragma mark - Actions

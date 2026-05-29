@@ -13,6 +13,7 @@
 #import "UIButton+FST.h"
 #import "UILabel+FSTStyle.h"
 #import "UIView+FSTLayout.h"
+#import "UIImage+FSTHelpers.h"
 #import "FSTBaseViewController.h"
 #import "FSTBaseModalViewController.h"
 
@@ -43,6 +44,10 @@ extern const CGFloat FSTSpacingS;   ///< 8  — 紧凑（chip 内边距、密集
 extern const CGFloat FSTSpacingM;   ///< 12 — 标准（默认间距）
 extern const CGFloat FSTSpacingL;   ///< 16 — 段落（卡片内边距、按钮高度）
 extern const CGFloat FSTSpacingXL;  ///< 24 — 大段（区块之间、安全区边距）
+
+// MARK: - 控件尺寸
+extern const CGFloat FSTSpacingCardHorizontal;  ///< 28 — 卡片水平内边距加强版（phase card / daily plan card 等宽容器，区别于 FSTSpacingXL 的 24）。
+extern const CGFloat FSTControlHeightStandard;  ///< 48 — 标准控件高度（END FASTING / Sheet Save / Share / Timeline Add 等大按钮统一高度）。
 
 // MARK: - 圆角常量
 // 高频圆角值；小圆点（diameter/2）和药丸按钮（height/2）保持计算式，不走常量。

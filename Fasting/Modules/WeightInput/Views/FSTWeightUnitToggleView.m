@@ -71,11 +71,7 @@
 }
 
 - (UILabel *)chipLabelWithText:(NSString *)text {
-    UILabel *chipLabel = [UILabel new];
-    chipLabel.text = text;
-    chipLabel.font = FSTFontBold(16);
-    chipLabel.textAlignment = NSTextAlignmentCenter;
-    return chipLabel;
+    return [UILabel fst_labelWithText:text font:FSTFontBold(16) color:[UIColor fst_textPrimary] alignment:NSTextAlignmentCenter];
 }
 
 /// 同步显示状态：滑块位置 + 字色。

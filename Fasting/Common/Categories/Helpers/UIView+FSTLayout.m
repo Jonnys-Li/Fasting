@@ -34,32 +34,26 @@
     return view;
 }
 
-#pragma mark - Masonry 速记
-
-- (void)fst_pinEdgesToSuperview {
-    [self mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.superview);
-    }];
++ (instancetype)fst_circularDotWithSize:(CGFloat)size
+                            borderColor:(nullable UIColor *)borderColor
+                            borderWidth:(CGFloat)borderWidth
+                                bgColor:(nullable UIColor *)bgColor {
+    UIView *dot = [self new];
+    dot.layer.cornerRadius = size / 2.0;
+    dot.layer.borderWidth = borderWidth;
+    if (borderColor) dot.layer.borderColor = borderColor.CGColor;
+    if (bgColor) dot.backgroundColor = bgColor;
+    dot.clipsToBounds = YES;
+    return dot;
 }
 
-- (void)fst_pinEdgesToSuperviewWithInsets:(UIEdgeInsets)insets {
-    [self mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.superview).insets(insets);
-    }];
++ (instancetype)fst_separatorLineWithColor:(UIColor *)color {
+    UIView *line = [self new];
+    line.backgroundColor = color;
+    return line;
 }
 
-- (void)fst_pinSize:(CGSize)size {
-    [self mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(size);
-    }];
-}
-
-- (void)fst_pinHorizontalEdgesToSuperviewWithInset:(CGFloat)inset {
-    [self mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.superview).offset(inset);
-        make.right.equalTo(self.superview).offset(-inset);
-    }];
-}
+#pragma mark - 批量添加
 
 - (void)fst_addSubviews:(NSArray<UIView *> *)subviews {
     for (UIView *view in subviews) [self addSubview:view];

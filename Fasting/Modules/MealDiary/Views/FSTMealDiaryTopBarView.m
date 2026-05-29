@@ -35,23 +35,16 @@
     UIControl *dateChip = [UIControl new];
     [dateChip addTarget:self action:@selector(emitDateChipTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    UILabel *calendarIconLabel = [UILabel new];
-    calendarIconLabel.text = @"📅";
-    calendarIconLabel.font = FSTFontRegular(22);
-    calendarIconLabel.textAlignment = NSTextAlignmentCenter;
+    UILabel *calendarIconLabel = [UILabel fst_labelWithText:@"📅" font:FSTFontRegular(22) color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
 
-    self.dateLabel = [UILabel new];
-    self.dateLabel.font = FSTFontTitle();
-    self.dateLabel.textColor = [UIColor fst_textPrimary];
+    self.dateLabel = [UILabel fst_labelWithText:nil font:FSTFontTitle() color:[UIColor fst_textPrimary]];
 
     UIImageSymbolConfiguration *symbolConfiguration = [UIImageSymbolConfiguration configurationWithPointSize:14 weight:UIImageSymbolWeightSemibold];
     UIImageView *chevronIconView = [[UIImageView alloc] initWithImage:[[UIImage systemImageNamed:@"chevron.down"] imageWithConfiguration:symbolConfiguration]];
     chevronIconView.tintColor = [UIColor fst_textPrimary];
     chevronIconView.contentMode = UIViewContentModeScaleAspectFit;
 
-    [dateChip addSubview:calendarIconLabel];
-    [dateChip addSubview:self.dateLabel];
-    [dateChip addSubview:chevronIconView];
+    [dateChip fst_addSubviews:@[calendarIconLabel, self.dateLabel, chevronIconView]];
 
     UIButton *filterButton = [UIButton fst_iconButtonWithSystemName:@"line.3.horizontal.decrease" size:44];
     [filterButton addTarget:self action:@selector(emitFilterTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -62,7 +55,7 @@
     redDotView.userInteractionEnabled = NO;
     [filterButton addSubview:redDotView];
 
-    for (UIView *subview in @[backButton, dateChip, filterButton]) [self addSubview:subview];
+    [self fst_addSubviews:@[backButton, dateChip, filterButton]];
 
     [backButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self).offset(22);

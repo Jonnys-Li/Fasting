@@ -49,8 +49,7 @@
     UIView *valueBoxView = [self buildValueBox];
     UIView *topLeftDotView = [self decoratorDot];
     UIView *bottomRightDotView = [self decoratorDot];
-    UIView *underlineView = [UIView new];
-    underlineView.backgroundColor = [UIColor fst_separator];
+    UIView *underlineView = [UIView fst_separatorLineWithColor:[UIColor fst_separator]];
     UIControl *valueTapControl = [self buildValueTapZone];
 
     self.unitToggleView = [FSTWeightUnitToggleView new];
@@ -60,14 +59,12 @@
         [weakSelf refreshValue];
     };
 
-    UIButton *saveButton = [UIButton fst_greenPillButtonWithTitle:@"Save"];
+    UIButton *saveButton = [UIButton fst_pillButtonWithTitle:@"Save" style:FSTPillButtonStylePrimaryGreen];
     [saveButton addTarget:self action:@selector(handleSaveTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    for (UIView *subview in @[closeButton, titleLabel, subtitleLabel, valueBoxView, topLeftDotView, bottomRightDotView, self.valueLabel,
-                              self.unitSuffixLabel, underlineView, valueTapControl, self.hiddenTextField,
-                              self.unitToggleView, saveButton]) {
-        [self addSubview:subview];
-    }
+    [self fst_addSubviews:@[closeButton, titleLabel, subtitleLabel, valueBoxView, topLeftDotView, bottomRightDotView, self.valueLabel,
+                            self.unitSuffixLabel, underlineView, valueTapControl, self.hiddenTextField,
+                            self.unitToggleView, saveButton]];
 
     [closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.right.equalTo(self).inset(18);
@@ -145,13 +142,11 @@
 - (UIView *)buildValueBox {
     UIView *valueBoxView = [UIView new];
     [valueBoxView fst_applyTintedBoxWithColor:[UIColor fst_primaryGreen] alpha:0.22 radius:8];
-    self.valueLabel = [UILabel new];
-    self.valueLabel.font = [UIFont monospacedDigitSystemFontOfSize:54 weight:UIFontWeightBold];
-    self.valueLabel.textColor = [UIColor fst_textPrimary];
-    self.valueLabel.textAlignment = NSTextAlignmentCenter;
-    self.unitSuffixLabel = [UILabel new];
-    self.unitSuffixLabel.font = FSTFontSubhead();
-    self.unitSuffixLabel.textColor = [UIColor fst_textSecondary];
+    self.valueLabel = [UILabel fst_labelWithText:nil
+                                            font:[UIFont monospacedDigitSystemFontOfSize:54 weight:UIFontWeightBold]
+                                           color:[UIColor fst_textPrimary]
+                                       alignment:NSTextAlignmentCenter];
+    self.unitSuffixLabel = [UILabel fst_labelWithText:nil font:FSTFontSubhead() color:[UIColor fst_textSecondary]];
     return valueBoxView;
 }
 

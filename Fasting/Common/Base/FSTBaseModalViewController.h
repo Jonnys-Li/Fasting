@@ -22,6 +22,11 @@ typedef NS_ENUM(NSInteger, FSTBaseModalContainerStyle) {
 
 @interface FSTBaseModalViewController : UIViewController
 
+/// 指定初始化器（funnel UIViewController 的两个指定初始化器）。一切构造最终都经此跑 configureDefaults。
+/// 子类若声明自己的指定初始化器，须 [super initWithNibName:bundle:] 链至此。
+- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
+
 /// 半透明遮罩，点击会自动 dismiss
 @property (nonatomic, strong, readonly) UIView *backdropView;
 

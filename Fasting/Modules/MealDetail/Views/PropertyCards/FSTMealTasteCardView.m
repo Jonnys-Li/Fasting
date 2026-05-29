@@ -26,10 +26,7 @@
 - (void)setTasteLevel:(NSInteger)tasteLevel { _tasteLevel = tasteLevel; [self refresh]; }
 
 - (void)buildSubviews {
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"How was the food?";
-    titleLabel.font = FSTFontTitle();
-    titleLabel.textColor = [UIColor fst_textPrimary];
+    UILabel *titleLabel = [UILabel fst_labelWithText:@"How was the food?" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 
     UIStackView *buttonsStack = [UIStackView new];
@@ -66,15 +63,11 @@
     button.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.28].CGColor;
     [button addTarget:self action:@selector(handleTasteTapped:) forControlEvents:UIControlEventTouchUpInside];
 
-    UIImageView *faceImageView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+    UIImageView *faceImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:imageName]];
     faceImageView.contentMode = UIViewContentModeScaleAspectFit;
     [button addSubview:faceImageView];
 
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.text = title;
-    titleLabel.font = FSTFontBold(17);
-    titleLabel.textColor = [UIColor fst_textSecondary];
-    titleLabel.textAlignment = NSTextAlignmentCenter;
+    UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(17) color:[UIColor fst_textSecondary] alignment:NSTextAlignmentCenter];
     [button addSubview:titleLabel];
 
     [faceImageView mas_makeConstraints:^(MASConstraintMaker *make) {

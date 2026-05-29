@@ -29,17 +29,11 @@
 
 
 - (void)buildSubviews {
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"Time";
-    titleLabel.font = FSTFontTitle();
-    titleLabel.textColor = [UIColor fst_textPrimary];
+    UILabel *titleLabel = [UILabel fst_labelWithText:@"Time" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
 
-    self.dateLabel = [UILabel new];
-    self.dateLabel.font = FSTFontBold(17);
-    self.dateLabel.textColor = [UIColor fst_mealDateText];
-    self.dateLabel.textAlignment = NSTextAlignmentRight;
+    self.dateLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(17) color:[UIColor fst_mealDateText] alignment:NSTextAlignmentRight];
 
-    UIImageView *editIconView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"edit_pencil"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+    UIImageView *editIconView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"edit_pencil"]];
     editIconView.contentMode = UIViewContentModeScaleAspectFit;
 
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleToggleTapped)];
@@ -53,7 +47,7 @@
     if (@available(iOS 13.4, *)) self.datePicker.preferredDatePickerStyle = UIDatePickerStyleWheels;
     [self.datePicker addTarget:self action:@selector(handleDatePickerChanged:) forControlEvents:UIControlEventValueChanged];
 
-    for (UIView *subview in @[titleLabel, self.dateLabel, editIconView, self.datePicker]) [self addSubview:subview];
+    [self fst_addSubviews:@[titleLabel, self.dateLabel, editIconView, self.datePicker]];
 
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(28);

@@ -25,10 +25,7 @@
 - (void)setMealCategory:(NSString *)mealCategory { _mealCategory = [mealCategory copy]; [self refresh]; }
 
 - (void)buildSubviews {
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.text = @"Meal/Snack";
-    titleLabel.font = FSTFontTitle();
-    titleLabel.textColor = [UIColor fst_textPrimary];
+    UILabel *titleLabel = [UILabel fst_labelWithText:@"Meal/Snack" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 
     UIStackView *tilesStack = [UIStackView new];
@@ -70,17 +67,10 @@
     iconBox.userInteractionEnabled = NO;
     [tile addSubview:iconBox];
 
-    UILabel *iconLabel = [UILabel new];
-    iconLabel.text = emoji;
-    iconLabel.font = FSTFontRegular(42);
-    iconLabel.textAlignment = NSTextAlignmentCenter;
+    UILabel *iconLabel = [UILabel fst_labelWithText:emoji font:FSTFontRegular(42) color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
     [iconBox addSubview:iconLabel];
 
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.text = title;
-    titleLabel.font = FSTFontBold(19);
-    titleLabel.textColor = [UIColor fst_textPrimary];
-    titleLabel.textAlignment = NSTextAlignmentCenter;
+    UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(19) color:[UIColor fst_textPrimary] alignment:NSTextAlignmentCenter];
     [tile addSubview:titleLabel];
 
     [iconBox mas_makeConstraints:^(MASConstraintMaker *make) {

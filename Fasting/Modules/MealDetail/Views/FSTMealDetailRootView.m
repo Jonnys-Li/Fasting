@@ -72,11 +72,7 @@ static const CGFloat kSaveButtonRadius  = 30;
     [self.backButton addTarget:self action:@selector(handleBackTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.backButton];
 
-    self.titleLabel = [UILabel new];
-    self.titleLabel.text = @"Meal Details";
-    self.titleLabel.font = FSTFontTitle();
-    self.titleLabel.textColor = [UIColor fst_textPrimary];
-    self.titleLabel.textAlignment = NSTextAlignmentCenter;
+    self.titleLabel = [UILabel fst_labelWithText:@"Meal Details" font:FSTFontTitle() color:[UIColor fst_textPrimary] alignment:NSTextAlignmentCenter];
     [self addSubview:self.titleLabel];
 }
 

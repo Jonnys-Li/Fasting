@@ -10,6 +10,9 @@ const CGFloat FSTSpacingM  = 12;
 const CGFloat FSTSpacingL  = 16;
 const CGFloat FSTSpacingXL = 24;
 
+const CGFloat FSTSpacingCardHorizontal = 28;
+const CGFloat FSTControlHeightStandard = 48;
+
 const CGFloat FSTRadiusS    = 12;
 const CGFloat FSTRadiusM    = 14;
 const CGFloat FSTRadiusChip = 17;

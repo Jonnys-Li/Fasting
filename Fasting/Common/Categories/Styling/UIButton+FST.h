@@ -2,29 +2,75 @@
 //  UIButton+FST.h
 //  Fasting
 //
-//  UIButton 样式扩展：胶囊按钮 + 图标按钮 + 导航圆形按钮的工厂方法。
+//  UIButton 样式扩展：胶囊按钮（统一 style enum + spec 表）+ 图标按钮 + 导航圆形按钮。
+//
+//  设计：所有胶囊按钮（pill）走单一入口 +fst_pillButtonWithTitle:style:，
+//  样式差异通过 FSTPillButtonStyle 枚举区分；新增款式只需扩 enum + 在 .m 的 spec 表中补一行，
+//  不再像以前那样每加一种风格就加一个工厂方法。
 //
 
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 胶囊按钮风格。每个 style 对应一组完整 spec：背景色 / 文字色 / 字体 / 圆角 / 内边距 / 阴影 等。
+/// 具体值见 UIButton+FST.m 的 fst_pillSpecs 表。
+typedef NS_ENUM(NSInteger, FSTPillButtonStyle) {
+    // — 核心款（高复用）—
+
+    /// 大号实心绿：primaryGreen 底 + 白色 Bold 18 + 圆角 26。用于一般主 CTA。
+    FSTPillButtonStylePrimaryGreen,
+
+    /// 白底绿字：白底 + primaryGreen Semibold 15 + 圆角 18（FSTRadiusCard）+ 左右 16 内边距。
+    FSTPillButtonStyleOutlineGreen,
+
+    /// 大号黄：startButtonYellow 底 + textPrimary 文字（黄底白字不可读，已修正） Bold 18 + 圆角 32。
+    FSTPillButtonStyleYellow,
+
+    /// 日常应用 CTA：primaryGreen 底 + 白色 Subhead(Bold 20) + 圆角 29。用于 Start Fasting / Save 等。
+    FSTPillButtonStyleAppCTA,
+
+    /// 橙色 CTA：orangeCTA 底 + 白色 Subhead(Bold 20) + 圆角 30。用于 LOG MEAL。
+    FSTPillButtonStyleOrangeCTA,
+
+    /// 中性灰底：addRecordCancelButton 底 + textPrimary + Subhead(Bold 20) + 圆角 29。用于 Cancel。
+    FSTPillButtonStyleNeutral,
+
+    // — 特定语境款（单点使用，但样式独立性强）—
+
+    /// PlanConfirm 强调款：primaryGreen 底 + 白色 Bold 19 + 圆角 30 + 阴影。仅 Plan 确认页主按钮。
+    FSTPillButtonStylePlanCTA,
+
+    /// 分享卡片按钮：eatingTimeGreen 底 + 白色 Bold 16 + 圆角 24。用于 Share 弹窗 Save/Share。
+    FSTPillButtonStyleShareCard,
+
+    /// Tips 卡内提示按钮：eatingTimeGreen 底 + 白色 Bold 14 + FSTRadiusL(22)。用于 Drink Now 等。
+    FSTPillButtonStyleTipPrompt,
+
+    /// Sheet 保存按钮：eatingTimeGreen 底 + 白色 AvenirDemiBold 20 + 圆角 24。用于 TimeEditor Save。
+    FSTPillButtonStyleSheetSave,
+
+    /// Modal 主按钮：eatingTimeGreen 底 + 白色 Bold 24 + 圆角 29 + 自适应字号。用于 ModalDialog Primary。
+    FSTPillButtonStyleModalPrimary,
+
+    /// Modal 辅按钮：dialogSecondaryButton 底 + dialogTitle 文字 + Bold 24 + 圆角 29 + 自适应字号。
+    FSTPillButtonStyleModalSecondary,
+
+    /// 灰底停止款：buttonInactive 底 + textHeading 文字 + AvenirDemiBold 16 + FSTRadiusXL。用于 END FASTING。
+    FSTPillButtonStyleInactive,
+};
+
 @interface UIButton (FST)
 
-// MARK: - 胶囊按钮
+// MARK: - 胶囊按钮（统一入口）
 
-/// 实心绿色胶囊按钮：fst_primaryGreen 底色 + 白色加粗文字
-+ (instancetype)fst_greenPillButtonWithTitle:(NSString *)title;
-
-/// 白底绿字胶囊按钮：白色背景 + 绿色加粗文字
-+ (instancetype)fst_outlineGreenPillButtonWithTitle:(NSString *)title;
-
-/// 黄色胶囊按钮：startButtonYellow 底色 + 白色加粗文字
-+ (instancetype)fst_yellowPillButtonWithTitle:(NSString *)title;
+/// 创建胶囊按钮。所有视觉参数由 style 决定，调用方不再单独设 bg / font / radius。
+/// 如有特殊覆盖需求（如 PlanConfirm 的阴影），优先考虑新增一个 style 而不是在调用点 setter。
++ (instancetype)fst_pillButtonWithTitle:(NSString *)title style:(FSTPillButtonStyle)style;
 
 // MARK: - 图标按钮
 
-/// 圆形图标按钮：浅灰底色 + SF Symbol 图标
+/// 圆形图标按钮：浅灰底色 + SF Symbol 图标。
 + (instancetype)fst_iconButtonWithSystemName:(NSString *)name size:(CGFloat)size;
 
 // MARK: - 导航圆形按钮
@@ -38,7 +84,18 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)fst_navCircleButtonWithImageNamed:(NSString *)imageName
                                          diameter:(CGFloat)diameter;
 
-/// 用 Asset Catalog 中的图片构建裸图标按钮（无背景、无阴影）。
+// MARK: - 裸图标按钮（通用）
+
+/// 通用裸图标按钮：透明背景 + 无阴影 + ScaleAspectFit + adjustsImageWhenHighlighted=NO。
+/// 适用于编辑铅笔、导航返回/分享等所有"贴一张图就能点"的场景。
+/// - tintColor == nil：图片用 AlwaysOriginal，保留资源自带色（nav_back / nav_share 这类原色 icon）。
+/// - tintColor != nil：图片用 AlwaysTemplate + tintColor 染色（MealDiary 的 edit_pencil 染灰这类需求）。
++ (instancetype)fst_plainImageButtonWithImageNamed:(NSString *)imageName
+                                              size:(CGSize)size
+                                         tintColor:(nullable UIColor *)tintColor;
+
+/// 历史命名（带 nav 前缀）。新代码请用 fst_plainImageButtonWithImageNamed:size:tintColor: —
+/// 本方法等价 tintColor:nil 的调用，仅保留 nav_back / nav_share 等现有调用方兼容。
 + (instancetype)fst_navPlainButtonWithImageNamed:(NSString *)imageName
                                             size:(CGSize)size;
 

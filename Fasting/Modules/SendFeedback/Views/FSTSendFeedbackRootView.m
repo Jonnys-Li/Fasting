@@ -70,7 +70,7 @@ static const CGFloat kSubmitRadius = 28;
 
 - (void)buildBackButton {
     self.backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.backButton setImage:[[UIImage imageNamed:@"feedback_back"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    [self.backButton setImage:[UIImage fst_originalImageNamed:@"feedback_back"] forState:UIControlStateNormal];
     [self.backButton addTarget:self action:@selector(handleBackTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.backButton];
 }
@@ -110,7 +110,7 @@ static const CGFloat kSubmitRadius = 28;
     self.addPictureButton.backgroundColor = [UIColor fst_chipBackground];
     self.addPictureButton.layer.cornerRadius = FSTRadiusS;
     self.addPictureButton.layer.masksToBounds = YES;
-    [self.addPictureButton setImage:[[UIImage imageNamed:@"feedback_add_picture"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    [self.addPictureButton setImage:[UIImage fst_originalImageNamed:@"feedback_add_picture"] forState:UIControlStateNormal];
     [self.addPictureButton addTarget:self action:@selector(handleAddPictureTapped) forControlEvents:UIControlEventTouchUpInside];
 
     self.pickedImageView = [UIImageView new];
@@ -232,7 +232,9 @@ static const CGFloat kSubmitRadius = 28;
         make.left.right.equalTo(self.contentView).inset(kSideInset);
         make.height.mas_equalTo(kTextViewHeight);
     }];
-    [self.textView fst_pinEdgesToSuperview];
+    [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.textViewContainer);
+    }];
     [self.placeholderLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.textViewContainer).offset(16);
         make.left.equalTo(self.textViewContainer).offset(17);

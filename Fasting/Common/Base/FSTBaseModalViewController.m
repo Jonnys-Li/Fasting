@@ -13,8 +13,15 @@
 
 @implementation FSTBaseModalViewController
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
+        [self configureDefaults];
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    if ((self = [super initWithCoder:coder])) {
         [self configureDefaults];
     }
     return self;

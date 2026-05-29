@@ -8,6 +8,12 @@
 
 #import "FSTFastingRecord.h"
 
+#pragma mark - Weight defaults
+
+const CGFloat FSTDefaultCurrentWeightKg = 81.2;
+const CGFloat FSTDefaultInitialWeightKg = 81.2;
+const CGFloat FSTDefaultTargetWeightKg  = 70.0;
+
 #pragma mark - Difficulty thresholds
 
 static const NSInteger kDifficultyHardThreshold   = 20;
