@@ -8,37 +8,13 @@
 #import "FSTTheme.h"
 
 @interface FSTModalDialogViewController ()
-@property (nonatomic, assign) FSTModalDialogIconKind iconKind;
-@property (nonatomic, copy, nullable) NSString *iconName;
-@property (nonatomic, copy) NSString *dialogTitle;
-@property (nonatomic, copy) NSString *message;
-@property (nonatomic, copy) NSString *primaryTitle;
-@property (nonatomic, copy, nullable) NSString *secondaryTitle;
-@property (nonatomic, copy, nullable) FSTModalDialogActionHandler primaryHandler;
-@property (nonatomic, copy, nullable) FSTModalDialogActionHandler secondaryHandler;
-
 @property (nonatomic, strong) FSTModalDialogContentView *contentView;
 @end
 
 @implementation FSTModalDialogViewController
 
-- (instancetype)initWithIconKind:(FSTModalDialogIconKind)iconKind
-                        iconName:(nullable NSString *)iconName
-                           title:(NSString *)title
-                         message:(NSString *)message
-                    primaryTitle:(NSString *)primaryTitle
-                  secondaryTitle:(nullable NSString *)secondaryTitle
-                  primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
-                secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler {
+- (instancetype)init {
     if ((self = [super init])) {
-        _iconKind = iconKind;
-        _iconName = [iconName copy];
-        _dialogTitle = [title copy];
-        _message = [message copy];
-        _primaryTitle = [primaryTitle copy];
-        _secondaryTitle = [secondaryTitle copy];
-        _primaryHandler = [primaryHandler copy];
-        _secondaryHandler = [secondaryHandler copy];
         self.containerStyle = FSTBaseModalContainerStyleCenteredCard;
         self.containerHorizontalInset = 36.0;
         self.containerCornerRadius = 24.0;
@@ -59,7 +35,7 @@
     self.contentView = [FSTModalDialogContentView new];
     self.contentView.iconSystemName = (self.iconKind == FSTModalDialogIconKindSystemSymbol) ? self.iconName : nil;
     self.contentView.iconImageName  = (self.iconKind == FSTModalDialogIconKindAssetImage)   ? self.iconName : nil;
-    self.contentView.titleText      = self.dialogTitle;
+    self.contentView.titleText      = self.titleText;
     self.contentView.message        = self.message;
     self.contentView.primaryTitle   = self.primaryTitle;
     self.contentView.secondaryTitle = self.secondaryTitle;

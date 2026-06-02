@@ -127,11 +127,13 @@ RootView 的职责是**摆放自己直接持有的子视图**；子视图内部�
 
 **判定 smell 的最简标准：出现 `self.rootView.xxxView.yyyProperty = …` 就是错的。**
 
-### R3. UIView 子类一律用 `initWithFrame:` + `setupSubviews` + `setupConstraints` 标准模板
+### R3. UIView / UIViewController 一律用「最小 init + 配置 property」，不要长参 init
 
-不要自己造带一堆参数的 designated init（`initWithLeftButton:rightButtons:centerContent:contentHeight:`）。配置参数通过 property setter 在 init 之后再设。
+适用范围：**UIView 子类 + UIViewController 子类**。原则：**init 只接「对象身份必需的参数」（model / record / plan / snapshot 等"没有就无法识别这个对象"的东西）；其余「配置 / 展示 / 回调」类参数全部走 property setter，在 init 之后再设。**
 
-**✅ 标准模板：**
+判定 smell：如果你想给 init 加第 3 个参数、或者参数是 title / message / handlers / callbacks / colors / 显示开关之类「这个对象长成什么样」的描述，就属于配置，不该塞 init。
+
+#### UIView 子类的标准模板
 
 ```objc
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -146,7 +148,72 @@ RootView 的职责是**摆放自己直接持有的子视图**；子视图内部�
 - (void)setupConstraints { /* Masonry */ }
 ```
 
-**附加：不要保留注释掉的旧代码。** 要删就彻底删,不要留 `//- (instancetype)initWithXxx:...` 这种几十行注释残留来"留个底"——git 已经存了。
+caller 端用 `[Foo new]` + 一串 `.xxx = ...` 设配置。**不要自造 `initWithLeftButton:rightButtons:centerContent:contentHeight:` 这种带一堆参数的 designated init。**
+
+#### UIViewController 子类的对应做法
+
+```objc
+// .h
+@interface FSTXxxViewController : UIViewController
+// 身份参数（如有）通过 init 传：
+- (instancetype)initWithRecord:(FSTFastingRecord *)record;
+// 配置走 property：
+@property (nonatomic, copy, nullable) NSString *titleText;
+@property (nonatomic, copy, nullable) NSString *message;
+@property (nonatomic, copy, nullable) FSTActionHandler primaryHandler;
+// ...
+@end
+
+// .m：viewDidLoad 里读 property 推到子视图
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self buildContentView];
+}
+```
+
+caller 端：
+
+```objc
+FSTXxxViewController *vc = [FSTXxxViewController new];     // 或 [[... alloc] initWithRecord:r]
+vc.titleText = @"Hello";
+vc.message   = @"...";
+vc.primaryHandler = ^{ ... };
+[self presentViewController:vc animated:YES completion:nil];
+```
+
+**❌ 反例**（FSTModalDialogViewController R6 阶段还残留的形态——8 参 init，绝大多数是配置）：
+
+```objc
+- (instancetype)initWithIconKind:(FSTModalDialogIconKind)iconKind
+                        iconName:(nullable NSString *)iconName
+                           title:(NSString *)title
+                         message:(NSString *)message
+                    primaryTitle:(NSString *)primaryTitle
+                  secondaryTitle:(nullable NSString *)secondaryTitle
+                  primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
+                secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler;
+```
+
+**✅ 正例**（同一个类的当前形态）：
+
+```objc
+@property (nonatomic, assign) FSTModalDialogIconKind iconKind;
+@property (nonatomic, copy, nullable) NSString *iconName;
+@property (nonatomic, copy, nullable) NSString *titleText;
+@property (nonatomic, copy, nullable) NSString *message;
+@property (nonatomic, copy, nullable) NSString *primaryTitle;
+@property (nonatomic, copy, nullable) NSString *secondaryTitle;
+@property (nonatomic, copy, nullable) FSTModalDialogActionHandler primaryHandler;
+@property (nonatomic, copy, nullable) FSTModalDialogActionHandler secondaryHandler;
+```
+
+#### 附加规则
+
+**不要保留注释掉的旧代码。** 要删就彻底删，不要留 `//- (instancetype)initWithXxx:...` 这种几十行注释残留来"留个底"——git 已经存了。
+
+#### R3 与 R6 的关系
+
+R6 处理的是「两份并列长 init 仅首参数前缀不同」的细分 smell（用 enum 合并）。R3 是上位原则——即便 R6 合并完，单 init 仍 ≥3 参且大多是配置，就该按 R3 继续 property 化。本规则覆盖 R6 残留的"合并后仍过长"情况。
 
 ### R4. block 回调不要写成单行花括号
 

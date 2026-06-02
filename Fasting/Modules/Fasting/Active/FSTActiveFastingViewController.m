@@ -262,15 +262,12 @@ static const CGFloat kTopBarHeight = 80;
 
 - (void)showPhaseDialog {
     if (!self.cachedPhaseDialogIcon) return;  // refresh 尚未发生过的边缘场景
-    FSTModalDialogViewController *dialog =
-        [[FSTModalDialogViewController alloc] initWithIconKind:FSTModalDialogIconKindAssetImage
-                                                      iconName:self.cachedPhaseDialogIcon
-                                                         title:self.cachedPhaseDialogTitle
-                                                       message:self.cachedPhaseDialogMessage
-                                                  primaryTitle:@"Got it"
-                                                secondaryTitle:nil
-                                                primaryHandler:nil
-                                              secondaryHandler:nil];
+    FSTModalDialogViewController *dialog = [FSTModalDialogViewController new];
+    dialog.iconKind     = FSTModalDialogIconKindAssetImage;
+    dialog.iconName     = self.cachedPhaseDialogIcon;
+    dialog.titleText    = self.cachedPhaseDialogTitle;
+    dialog.message      = self.cachedPhaseDialogMessage;
+    dialog.primaryTitle = @"Got it";
     [self presentViewController:dialog animated:YES completion:nil];
 }
 
@@ -285,17 +282,16 @@ static const CGFloat kTopBarHeight = 80;
     }
 
     __weak typeof(self) weakSelf = self;
-    FSTModalDialogViewController *dialog =
-        [[FSTModalDialogViewController alloc] initWithIconKind:FSTModalDialogIconKindSystemSymbol
-                                                      iconName:@"flag.fill"
-                                                         title:@"Stop fasting?"
-                                                       message:@"Goal not yet reached. End early?"
-                                                  primaryTitle:@"No"
-                                                secondaryTitle:@"Yes"
-                                                primaryHandler:nil
-                                              secondaryHandler:^{
+    FSTModalDialogViewController *dialog = [FSTModalDialogViewController new];
+    dialog.iconKind         = FSTModalDialogIconKindSystemSymbol;
+    dialog.iconName         = @"flag.fill";
+    dialog.titleText        = @"Stop fasting?";
+    dialog.message          = @"Goal not yet reached. End early?";
+    dialog.primaryTitle     = @"No";
+    dialog.secondaryTitle   = @"Yes";
+    dialog.secondaryHandler = ^{
         [weakSelf proceedToFinishFasting];
-    }];
+    };
     [self presentViewController:dialog animated:YES completion:nil];
 }
 
@@ -397,23 +393,18 @@ static const CGFloat kTopBarHeight = 80;
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
     NSDate *initialDate = sessionManager.activeStartDate ?: [NSDate date];
     __weak typeof(self) weakSelf = self;
-    FSTTimeEditorSheetViewController *sheet =
-        [[FSTTimeEditorSheetViewController alloc] initWithTitle:@"When to start fasting?"
-                                                    initialDate:initialDate
-                                                    minimumDate:nil
-                                                    maximumDate:nil
-                                                  alignChipText:nil
-                                           alignDurationSeconds:0
-                                                      alignMode:FSTTimeEditorAlignModeStartFast
-                                             alignReferenceDate:nil
-                                                       onCommit:^(NSDate *pickedDate, BOOL aligned) {
+    FSTTimeEditorSheetViewController *sheet = [FSTTimeEditorSheetViewController new];
+    sheet.titleText   = @"When to start fasting?";
+    sheet.initialDate = initialDate;
+    sheet.alignMode   = FSTTimeEditorAlignModeStartFast;
+    sheet.onCommit = ^(NSDate *pickedDate, BOOL aligned) {
         if ([pickedDate compare:[NSDate date]] == NSOrderedDescending) {
             [weakSelf enterScheduledReadyFromFutureStartDate:pickedDate source:FSTScheduledReadySourcePreStart];
         } else {
             [[FSTSessionManager sharedManager] editActiveStartDate:pickedDate alignWithPlan:YES];
             [weakSelf refreshUI];
         }
-    }];
+    };
     UIViewController *hostViewController = self.tabBarController ?: self.navigationController ?: self;
     [hostViewController addChildViewController:sheet];
     [hostViewController.view addSubview:sheet.view];

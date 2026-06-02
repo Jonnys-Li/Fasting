@@ -8,16 +8,25 @@
 //  - 触发：业务 VC 用 [self presentViewController:dialog animated:YES] 弹出，
 //    用户点按钮触发回调，弹窗会自动 dismiss。
 //
+//  使用方式（按 R3：UIVC 配置走 property setter）：
+//     dialog = [FSTModalDialogViewController new];
+//     dialog.iconKind     = FSTModalDialogIconKindAssetImage;
+//     dialog.iconName     = @"breaking_fast_food";
+//     dialog.titleText    = @"Breaking fast";
+//     dialog.message      = @"...";
+//     dialog.primaryTitle = @"Got it";
+//     [self presentViewController:dialog animated:YES completion:nil];
+//
 
 #import "FSTBaseModalViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// 顶部图标来源种类。
-/// 写入方：caller 在 -initWithIconKind: 时指定。
-/// 读取方：本 VC 内部 → FSTModalDialogContentView 的 iconSystemName / iconImageName。
+/// 写入方：caller 在构造时设置 iconKind property。
+/// 读取方：本 VC viewDidLoad 内部 → FSTModalDialogContentView 的 iconSystemName / iconImageName。
 typedef NS_ENUM(NSInteger, FSTModalDialogIconKind) {
-    /// 不显示图标，iconName 传 nil 即可。
+    /// 不显示图标，iconName 可不设。
     FSTModalDialogIconKindNone = 0,
     /// SF Symbol，iconName 形如 "flag.fill" / "checkmark.circle"。
     FSTModalDialogIconKindSystemSymbol,
@@ -30,23 +39,29 @@ typedef void (^FSTModalDialogActionHandler)(void);
 
 @interface FSTModalDialogViewController : FSTBaseModalViewController
 
-/// 唯一指定初始化。
-/// @param iconKind         图标来源种类；None 时 iconName 可传 nil。
-/// @param iconName         图标名（按 iconKind 解释为 SF Symbol 名或 Asset 名）。
-/// @param title            主标题。
-/// @param message          多行说明文字。
-/// @param primaryTitle     主按钮标题（如 "OK" / "Delete" / "Discard"）。
-/// @param secondaryTitle   次按钮标题（如 "Cancel"）。nil 时只显示一个主按钮。
-/// @param primaryHandler   主按钮点击回调，nil 时仅 dismiss。
-/// @param secondaryHandler 次按钮点击回调，nil 时仅 dismiss。
-- (instancetype)initWithIconKind:(FSTModalDialogIconKind)iconKind
-                        iconName:(nullable NSString *)iconName
-                           title:(NSString *)title
-                         message:(NSString *)message
-                    primaryTitle:(NSString *)primaryTitle
-                  secondaryTitle:(nullable NSString *)secondaryTitle
-                  primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
-                secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler;
+/// 图标来源种类。默认 None。
+@property (nonatomic, assign) FSTModalDialogIconKind iconKind;
+
+/// 图标名（按 iconKind 解释为 SF Symbol 名或 Asset 名）。iconKind=None 时忽略。
+@property (nonatomic, copy, nullable) NSString *iconName;
+
+/// 主标题。
+@property (nonatomic, copy, nullable) NSString *titleText;
+
+/// 多行说明文字。
+@property (nonatomic, copy, nullable) NSString *message;
+
+/// 主按钮标题（如 "OK" / "Delete" / "Discard"）。
+@property (nonatomic, copy, nullable) NSString *primaryTitle;
+
+/// 次按钮标题（如 "Cancel"）。nil 时只显示一个主按钮。
+@property (nonatomic, copy, nullable) NSString *secondaryTitle;
+
+/// 主按钮点击回调，nil 时仅 dismiss。
+@property (nonatomic, copy, nullable) FSTModalDialogActionHandler primaryHandler;
+
+/// 次按钮点击回调，nil 时仅 dismiss。
+@property (nonatomic, copy, nullable) FSTModalDialogActionHandler secondaryHandler;
 
 @end
 
