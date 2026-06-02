@@ -8,8 +8,8 @@
 #import "FSTTheme.h"
 
 @interface FSTModalDialogViewController ()
-@property (nonatomic, copy, nullable) NSString *iconSystemName;
-@property (nonatomic, copy, nullable) NSString *iconImageName;
+@property (nonatomic, assign) FSTModalDialogIconKind iconKind;
+@property (nonatomic, copy, nullable) NSString *iconName;
 @property (nonatomic, copy) NSString *dialogTitle;
 @property (nonatomic, copy) NSString *message;
 @property (nonatomic, copy) NSString *primaryTitle;
@@ -22,51 +22,17 @@
 
 @implementation FSTModalDialogViewController
 
-- (instancetype)initWithIconSystemName:(nullable NSString *)systemName
-                                  title:(NSString *)title
-                                message:(NSString *)message
-                           primaryTitle:(NSString *)primaryTitle
-                         secondaryTitle:(nullable NSString *)secondaryTitle
-                         primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
-                       secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler {
-    return [self initWithIconSystemName:systemName
-                          iconImageName:nil
-                                  title:title
-                                message:message
-                           primaryTitle:primaryTitle
-                         secondaryTitle:secondaryTitle
-                         primaryHandler:primaryHandler
-                       secondaryHandler:secondaryHandler];
-}
-
-- (instancetype)initWithIconImageName:(nullable NSString *)imageName
-                                 title:(NSString *)title
-                               message:(NSString *)message
-                          primaryTitle:(NSString *)primaryTitle
-                        secondaryTitle:(nullable NSString *)secondaryTitle
-                        primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
-                      secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler {
-    return [self initWithIconSystemName:nil
-                          iconImageName:imageName
-                                  title:title
-                                message:message
-                           primaryTitle:primaryTitle
-                         secondaryTitle:secondaryTitle
-                         primaryHandler:primaryHandler
-                       secondaryHandler:secondaryHandler];
-}
-
-- (instancetype)initWithIconSystemName:(nullable NSString *)systemName
-                         iconImageName:(nullable NSString *)imageName
-                                 title:(NSString *)title
-                               message:(NSString *)message
-                          primaryTitle:(NSString *)primaryTitle
-                        secondaryTitle:(nullable NSString *)secondaryTitle
-                        primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
-                      secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler {
+- (instancetype)initWithIconKind:(FSTModalDialogIconKind)iconKind
+                        iconName:(nullable NSString *)iconName
+                           title:(NSString *)title
+                         message:(NSString *)message
+                    primaryTitle:(NSString *)primaryTitle
+                  secondaryTitle:(nullable NSString *)secondaryTitle
+                  primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
+                secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler {
     if ((self = [super init])) {
-        _iconSystemName = [systemName copy];
-        _iconImageName = [imageName copy];
+        _iconKind = iconKind;
+        _iconName = [iconName copy];
         _dialogTitle = [title copy];
         _message = [message copy];
         _primaryTitle = [primaryTitle copy];
@@ -91,8 +57,8 @@
 
 - (void)buildContentView {
     self.contentView = [FSTModalDialogContentView new];
-    self.contentView.iconSystemName = self.iconSystemName;
-    self.contentView.iconImageName  = self.iconImageName;
+    self.contentView.iconSystemName = (self.iconKind == FSTModalDialogIconKindSystemSymbol) ? self.iconName : nil;
+    self.contentView.iconImageName  = (self.iconKind == FSTModalDialogIconKindAssetImage)   ? self.iconName : nil;
     self.contentView.titleText      = self.dialogTitle;
     self.contentView.message        = self.message;
     self.contentView.primaryTitle   = self.primaryTitle;

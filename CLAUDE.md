@@ -209,6 +209,53 @@ self.pickerView.onPlanPicked = ^(FSTPlan *picked) {
 }
 ```
 
+### R6. 仅"同语义不同来源"的参数差异 → 用 enum 分类合并 init，禁止并列长 init
+
+判定 smell：两个 init selector **仅首参数前缀不同、其余完全镜像**（同 component 数、同顺序、同类型），就属于本规则范围。要么用 `NS_ENUM` 把"来源/种类"编进类型 + 单一 init，要么走 property setter；不要并列两份只差一个词的长 selector。读 caller 时不应该需要数到 selector 的某个位置才能区分调了哪个版本。
+
+**❌ 不要这么写：**
+
+```objc
+- (instancetype)initWithIconSystemName:(nullable NSString *)systemName
+                                  title:(NSString *)title
+                                message:(NSString *)message
+                           primaryTitle:(NSString *)primaryTitle
+                         secondaryTitle:(nullable NSString *)secondaryTitle
+                         primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
+                       secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler;
+
+- (instancetype)initWithIconImageName:(nullable NSString *)imageName
+                                 title:(NSString *)title
+                               message:(NSString *)message
+                          primaryTitle:(NSString *)primaryTitle
+                        secondaryTitle:(nullable NSString *)secondaryTitle
+                        primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
+                      secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler;
+```
+
+**✅ 正确写法：** 用 enum 编码"种类"，合并为单一 init。
+
+```objc
+typedef NS_ENUM(NSInteger, FSTModalDialogIconKind) {
+    FSTModalDialogIconKindNone = 0,
+    FSTModalDialogIconKindSystemSymbol,
+    FSTModalDialogIconKindAssetImage,
+};
+
+- (instancetype)initWithIconKind:(FSTModalDialogIconKind)iconKind
+                        iconName:(nullable NSString *)iconName
+                           title:(NSString *)title
+                         message:(NSString *)message
+                    primaryTitle:(NSString *)primaryTitle
+                  secondaryTitle:(nullable NSString *)secondaryTitle
+                  primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
+                secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler;
+```
+
+caller 端可读性对比：第一行立即明示种类（`FSTModalDialogIconKindAssetImage` / `FSTModalDialogIconKindSystemSymbol`），不需要扫到 selector 中段去分辨 `SystemName` vs `ImageName`。
+
+注：R6 处理的是"并列重复"问题。即便合并后 init 仍参数较多，也是单独决定要不要进一步转 property setter；不要混入本规则。
+
 ---
 
 ## When adding files

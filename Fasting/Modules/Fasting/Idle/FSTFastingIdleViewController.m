@@ -418,13 +418,14 @@ static const CGFloat kResetCornerRadius = 19;
     // 复用 FSTModalDialogViewController（与 ActiveFasting 的 phaseDialog 同款居中卡片），
     // 图标用现成的 breaking_fast_food 资源（FSTBreakingFastCardView 也在用）。
     FSTModalDialogViewController *dialog =
-        [[FSTModalDialogViewController alloc] initWithIconImageName:@"breaking_fast_food"
-                                                              title:@"Breaking fast"
-                                                            message:@"Your fast is over. It's time to replenish with light, nutritious food."
-                                                       primaryTitle:@"Got it"
-                                                     secondaryTitle:nil
-                                                     primaryHandler:nil
-                                                   secondaryHandler:nil];
+        [[FSTModalDialogViewController alloc] initWithIconKind:FSTModalDialogIconKindAssetImage
+                                                      iconName:@"breaking_fast_food"
+                                                         title:@"Breaking fast"
+                                                       message:@"Your fast is over. It's time to replenish with light, nutritious food."
+                                                  primaryTitle:@"Got it"
+                                                secondaryTitle:nil
+                                                primaryHandler:nil
+                                              secondaryHandler:nil];
     [self presentViewController:dialog animated:YES completion:nil];
 }
 

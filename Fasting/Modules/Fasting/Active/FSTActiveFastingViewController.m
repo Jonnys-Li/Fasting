@@ -263,13 +263,14 @@ static const CGFloat kTopBarHeight = 80;
 - (void)showPhaseDialog {
     if (!self.cachedPhaseDialogIcon) return;  // refresh 尚未发生过的边缘场景
     FSTModalDialogViewController *dialog =
-        [[FSTModalDialogViewController alloc] initWithIconImageName:self.cachedPhaseDialogIcon
-                                                              title:self.cachedPhaseDialogTitle
-                                                            message:self.cachedPhaseDialogMessage
-                                                       primaryTitle:@"Got it"
-                                                     secondaryTitle:nil
-                                                     primaryHandler:nil
-                                                   secondaryHandler:nil];
+        [[FSTModalDialogViewController alloc] initWithIconKind:FSTModalDialogIconKindAssetImage
+                                                      iconName:self.cachedPhaseDialogIcon
+                                                         title:self.cachedPhaseDialogTitle
+                                                       message:self.cachedPhaseDialogMessage
+                                                  primaryTitle:@"Got it"
+                                                secondaryTitle:nil
+                                                primaryHandler:nil
+                                              secondaryHandler:nil];
     [self presentViewController:dialog animated:YES completion:nil];
 }
 
@@ -285,13 +286,14 @@ static const CGFloat kTopBarHeight = 80;
 
     __weak typeof(self) weakSelf = self;
     FSTModalDialogViewController *dialog =
-        [[FSTModalDialogViewController alloc] initWithIconSystemName:@"flag.fill"
-                                                               title:@"Stop fasting?"
-                                                             message:@"Goal not yet reached. End early?"
-                                                        primaryTitle:@"No"
-                                                      secondaryTitle:@"Yes"
-                                                      primaryHandler:nil
-                                                    secondaryHandler:^{
+        [[FSTModalDialogViewController alloc] initWithIconKind:FSTModalDialogIconKindSystemSymbol
+                                                      iconName:@"flag.fill"
+                                                         title:@"Stop fasting?"
+                                                       message:@"Goal not yet reached. End early?"
+                                                  primaryTitle:@"No"
+                                                secondaryTitle:@"Yes"
+                                                primaryHandler:nil
+                                              secondaryHandler:^{
         [weakSelf proceedToFinishFasting];
     }];
     [self presentViewController:dialog animated:YES completion:nil];

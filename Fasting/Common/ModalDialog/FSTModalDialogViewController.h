@@ -13,36 +13,40 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 顶部图标来源种类。
+/// 写入方：caller 在 -initWithIconKind: 时指定。
+/// 读取方：本 VC 内部 → FSTModalDialogContentView 的 iconSystemName / iconImageName。
+typedef NS_ENUM(NSInteger, FSTModalDialogIconKind) {
+    /// 不显示图标，iconName 传 nil 即可。
+    FSTModalDialogIconKindNone = 0,
+    /// SF Symbol，iconName 形如 "flag.fill" / "checkmark.circle"。
+    FSTModalDialogIconKindSystemSymbol,
+    /// Asset Catalog 图片，用于品牌或多色图标；iconName 形如 "breaking_fast_food"。
+    FSTModalDialogIconKindAssetImage,
+};
+
 /// 弹窗按钮回调 — 点击后会先 dismiss 弹窗再触发 handler，调用方无需手动 dismiss。
 typedef void (^FSTModalDialogActionHandler)(void);
 
 @interface FSTModalDialogViewController : FSTBaseModalViewController
 
-/// 用 SF Symbol 作为顶部图标。
-/// @param systemName       SF Symbol 名（"checkmark.circle" 等）；nil 表示不显示图标。
+/// 唯一指定初始化。
+/// @param iconKind         图标来源种类；None 时 iconName 可传 nil。
+/// @param iconName         图标名（按 iconKind 解释为 SF Symbol 名或 Asset 名）。
 /// @param title            主标题。
 /// @param message          多行说明文字。
 /// @param primaryTitle     主按钮标题（如 "OK" / "Delete" / "Discard"）。
 /// @param secondaryTitle   次按钮标题（如 "Cancel"）。nil 时只显示一个主按钮。
 /// @param primaryHandler   主按钮点击回调，nil 时仅 dismiss。
 /// @param secondaryHandler 次按钮点击回调，nil 时仅 dismiss。
-- (instancetype)initWithIconSystemName:(nullable NSString *)systemName
-                                  title:(NSString *)title
-                                message:(NSString *)message
-                           primaryTitle:(NSString *)primaryTitle
-                         secondaryTitle:(nullable NSString *)secondaryTitle
-                         primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
-                       secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler;
-
-/// 同上，但用 Asset Catalog 图片代替 SF Symbol 作为顶部图标。
-/// 用于品牌图标或多色图标场景。
-- (instancetype)initWithIconImageName:(nullable NSString *)imageName
-                                 title:(NSString *)title
-                               message:(NSString *)message
-                          primaryTitle:(NSString *)primaryTitle
-                        secondaryTitle:(nullable NSString *)secondaryTitle
-                        primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
-                      secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler;
+- (instancetype)initWithIconKind:(FSTModalDialogIconKind)iconKind
+                        iconName:(nullable NSString *)iconName
+                           title:(NSString *)title
+                         message:(NSString *)message
+                    primaryTitle:(NSString *)primaryTitle
+                  secondaryTitle:(nullable NSString *)secondaryTitle
+                  primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
+                secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler;
 
 @end
 
