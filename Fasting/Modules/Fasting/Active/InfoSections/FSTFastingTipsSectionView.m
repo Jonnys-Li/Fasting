@@ -54,9 +54,9 @@ static NSString * const FSTFastingTipsExpandedText =
 - (void)buildSubviews {
     UIView *header     = [self buildSectionHeader];
     UIView *lemonCard  = [self buildLemonCard];
-    UIView *stageCard  = [self buildStageCard];
-    UIView *qaCard     = [self buildQACard];
-    [self fst_addSubviews:@[header, lemonCard, stageCard, qaCard]];
+    [self buildStageCard];  // 内部 self.stageCard / stageBgIcon / stageTitleLabel / stageBodyLabel 自赋值
+    [self buildQACard];     // 内部 self.qaCard / qaChevron / qaBodyLabel 自赋值
+    [self fst_addSubviews:@[header, lemonCard, self.stageCard, self.qaCard]];
 
     [header mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(FSTTipsSectionVInset);
@@ -65,9 +65,9 @@ static NSString * const FSTFastingTipsExpandedText =
         make.height.mas_equalTo(28);
     }];
     [self pinCard:lemonCard belowAnchor:header.mas_bottom];
-    [self pinCard:stageCard belowAnchor:lemonCard.mas_bottom];
-    [qaCard mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(stageCard.mas_bottom).offset(18);
+    [self pinCard:self.stageCard belowAnchor:lemonCard.mas_bottom];
+    [self.qaCard mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.stageCard.mas_bottom).offset(18);
         make.left.equalTo(self).offset(FSTTipsSectionHInset);
         make.right.equalTo(self).offset(-FSTTipsSectionHInset);
         make.bottom.equalTo(self).offset(-FSTTipsSectionVInset);
@@ -166,52 +166,46 @@ static NSString * const FSTFastingTipsExpandedText =
 
 #pragma mark - Stage card
 
-- (UIView *)buildStageCard {
-    UIView *card = [[UIView alloc] init];
-    card.layer.cornerRadius = FSTRadiusCard;
-    card.layer.masksToBounds = YES;
-    _stageCard = card;
+- (void)buildStageCard {
+    self.stageCard = [[UIView alloc] init];
+    self.stageCard.layer.cornerRadius = FSTRadiusCard;
+    self.stageCard.layer.masksToBounds = YES;
 
-    UIImageView *bg = [[UIImageView alloc] init];
-    bg.contentMode = UIViewContentModeScaleAspectFit;
-    _stageBgIcon = bg;
+    self.stageBgIcon = [[UIImageView alloc] init];
+    self.stageBgIcon.contentMode = UIViewContentModeScaleAspectFit;
 
-    UILabel *title = [[UILabel alloc] init];
-    title.numberOfLines = 1;
-    _stageTitleLabel = title;
+    self.stageTitleLabel = [[UILabel alloc] init];
+    self.stageTitleLabel.numberOfLines = 1;
 
-    UILabel *body = [[UILabel alloc] init];
-    body.numberOfLines = 0;
-    _stageBodyLabel = body;
+    self.stageBodyLabel = [[UILabel alloc] init];
+    self.stageBodyLabel.numberOfLines = 0;
 
-    [card fst_addSubviews:@[bg, title, body]];
+    [self.stageCard fst_addSubviews:@[self.stageBgIcon, self.stageTitleLabel, self.stageBodyLabel]];
 
-    [bg mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(card).offset(-8);
-        make.bottom.equalTo(card).offset(-10);
+    [self.stageBgIcon mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.stageCard).offset(-8);
+        make.bottom.equalTo(self.stageCard).offset(-10);
         make.size.mas_equalTo(CGSizeMake(87, 85));
     }];
-    [title mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(card).offset(24);
-        make.left.equalTo(card).offset(FSTTipsCardInset);
-        make.right.equalTo(card).offset(-FSTTipsCardInset);
+    [self.stageTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.stageCard).offset(24);
+        make.left.equalTo(self.stageCard).offset(FSTTipsCardInset);
+        make.right.equalTo(self.stageCard).offset(-FSTTipsCardInset);
         make.height.mas_equalTo(30);
     }];
-    [body mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(title.mas_bottom).offset(14);
-        make.left.equalTo(card).offset(FSTTipsCardInset);
-        make.right.equalTo(card).offset(-FSTTipsCardInset);
-        make.bottom.equalTo(card).offset(-24);
+    [self.stageBodyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.stageTitleLabel.mas_bottom).offset(14);
+        make.left.equalTo(self.stageCard).offset(FSTTipsCardInset);
+        make.right.equalTo(self.stageCard).offset(-FSTTipsCardInset);
+        make.bottom.equalTo(self.stageCard).offset(-24);
     }];
-    return card;
 }
 
 #pragma mark - QA (Fasting tips) card
 
-- (UIView *)buildQACard {
-    UIView *card = [UIView fst_containerWithBackground:[UIColor fst_stageBlue] radius:FSTRadiusCard];
-    card.layer.masksToBounds = YES;
-    _qaCard = card;
+- (void)buildQACard {
+    self.qaCard = [UIView fst_containerWithBackground:[UIColor fst_stageBlue] radius:FSTRadiusCard];
+    self.qaCard.layer.masksToBounds = YES;
 
     UIImageView *bg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_question_bg"]];
     bg.contentMode = UIViewContentModeScaleAspectFit;
@@ -219,44 +213,41 @@ static NSString * const FSTFastingTipsExpandedText =
     UILabel *title = [[UILabel alloc] init];
     title.attributedText = [self cellTitleAttributedString:@"Fasting tips"];
 
-    UIImageView *chevron = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_chevron"]];
-    chevron.contentMode = UIViewContentModeScaleAspectFit;
-    chevron.transform = CGAffineTransformMakeRotation(M_PI);  // 折叠态默认朝下
-    _qaChevron = chevron;
+    self.qaChevron = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_chevron"]];
+    self.qaChevron.contentMode = UIViewContentModeScaleAspectFit;
+    self.qaChevron.transform = CGAffineTransformMakeRotation(M_PI);  // 折叠态默认朝下
 
-    UILabel *body = [[UILabel alloc] init];
-    body.numberOfLines = 0;
-    body.attributedText = [self bodyAttributedString:FSTFastingTipsPreviewText];
-    _qaBodyLabel = body;
+    self.qaBodyLabel = [[UILabel alloc] init];
+    self.qaBodyLabel.numberOfLines = 0;
+    self.qaBodyLabel.attributedText = [self bodyAttributedString:FSTFastingTipsPreviewText];
 
-    [card fst_addSubviews:@[bg, title, chevron, body]];
+    [self.qaCard fst_addSubviews:@[bg, title, self.qaChevron, self.qaBodyLabel]];
 
     [bg mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(card).offset(-12);
-        make.bottom.equalTo(card).offset(-14);
+        make.right.equalTo(self.qaCard).offset(-12);
+        make.bottom.equalTo(self.qaCard).offset(-14);
         make.size.mas_equalTo(CGSizeMake(78, 78));
     }];
     [title mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(card).offset(24);
-        make.left.equalTo(card).offset(FSTTipsCardInset);
+        make.top.equalTo(self.qaCard).offset(24);
+        make.left.equalTo(self.qaCard).offset(FSTTipsCardInset);
         make.height.mas_equalTo(30);
     }];
-    [chevron mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(card).offset(-FSTTipsCardInset);
+    [self.qaChevron mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.qaCard).offset(-FSTTipsCardInset);
         make.centerY.equalTo(title);
         make.size.mas_equalTo(CGSizeMake(14, 8));
     }];
-    [body mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.qaBodyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(title.mas_bottom).offset(20);
-        make.left.equalTo(card).offset(FSTTipsCardInset);
-        make.right.equalTo(card).offset(-FSTTipsCardInset);
-        make.bottom.equalTo(card).offset(-24);
+        make.left.equalTo(self.qaCard).offset(FSTTipsCardInset);
+        make.right.equalTo(self.qaCard).offset(-FSTTipsCardInset);
+        make.bottom.equalTo(self.qaCard).offset(-24);
     }];
 
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleQATapped)];
-    [card addGestureRecognizer:tap];
-    _qaExpanded = NO;
-    return card;
+    [self.qaCard addGestureRecognizer:tap];
+    self.qaExpanded = NO;
 }
 
 - (void)handleQATapped {
