@@ -15,6 +15,8 @@
 #import "FSTMealDetailContentCardView.h"
 #import "FSTAppRouter.h"
 #import "FSTRecordsRepository.h"
+#import "FSTTheme.h"
+
 /// 把 UIImage 压缩到 0.82 质量并写入 Documents/meal-images/{UUID}.jpg；返回完整路径或 nil。
 /// 0.82 = 食物照片体积/画质的最优拐点（再高肉眼难分辨但文件大幅增长）。
 static NSString *FSTMealDetailSaveImage(UIImage *image) {
@@ -28,6 +30,13 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 }
 
 @interface FSTMealDetailViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@property (nonatomic, strong) FSTMealDetailRootView *rootView;
+@property (nonatomic, strong) FSTMealTimeCardView *timeCardView;
+@property (nonatomic, strong) FSTMealSlotCardView *slotCardView;
+@property (nonatomic, strong) FSTMealDietCardView *dietCardView;
+@property (nonatomic, strong) FSTMealTasteCardView *tasteCardView;
+@property (nonatomic, strong) FSTMealDetailContentCardView *detailCardView;
+
 @property (nonatomic, strong, readwrite) FSTMealRecord *mealRecord;
 @property (nonatomic, copy) NSString *imagePath;
 @property (nonatomic, assign, readwrite) BOOL returnsToTimelineTab;
@@ -49,35 +58,52 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
     return self;
 }
 
-- (void)loadView {
-    self.view = [FSTMealDetailRootView new];
-}
-
-- (FSTMealDetailRootView *)rootView {
-    return (FSTMealDetailRootView *)self.view;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    __weak typeof(self) weakSelf = self;
-    self.rootView.onBackTapped = ^{ [weakSelf.navigationController popViewControllerAnimated:YES]; };
-    self.rootView.onSaveTapped = ^{ [weakSelf handleMealSaveTapped]; };
-    self.rootView.detailCardView.onImageTapped = ^{ [weakSelf handleImageTapped]; };
-
+    [self installRootView];
+    [self bindCallbacks];
     [self pushStateIntoCards];
+}
+
+- (void)installRootView {
+    self.timeCardView   = [FSTMealTimeCardView new];
+    self.slotCardView   = [FSTMealSlotCardView new];
+    self.dietCardView   = [FSTMealDietCardView new];
+    self.tasteCardView  = [FSTMealTasteCardView new];
+    self.detailCardView = [FSTMealDetailContentCardView new];
+
+    self.rootView = [FSTMealDetailRootView new];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.rootView mountCards:@[self.timeCardView, self.slotCardView,
+                                self.dietCardView, self.tasteCardView,
+                                self.detailCardView]];
+}
+
+- (void)bindCallbacks {
+    __weak typeof(self) weakSelf = self;
+    self.rootView.onBackTapped = ^{
+        [weakSelf.navigationController popViewControllerAnimated:YES];
+    };
+    self.rootView.onSaveTapped = ^{
+        [weakSelf handleMealSaveTapped];
+    };
+    self.detailCardView.onImageTapped = ^{
+        [weakSelf handleImageTapped];
+    };
 }
 
 #pragma mark - 状态推送
 
 - (void)pushStateIntoCards {
-    FSTMealDetailRootView *root = self.rootView;
-    root.timeCardView.date = self.mealRecord.date ?: [NSDate date];
-    root.slotCardView.mealCategory = self.mealRecord.mealCategory ?: @"Meal";
-    root.dietCardView.dietType = self.mealRecord.dietType ?: @"Not sure";
-    root.tasteCardView.tasteLevel = self.mealRecord.tasteLevel;
-    root.detailCardView.imagePath = self.imagePath;
-    root.detailCardView.detailDescription = self.mealRecord.detailDescription ?: @"";
+    self.timeCardView.date          = self.mealRecord.date ?: [NSDate date];
+    self.slotCardView.mealCategory  = self.mealRecord.mealCategory ?: @"Meal";
+    self.dietCardView.dietType      = self.mealRecord.dietType ?: @"Not sure";
+    self.tasteCardView.tasteLevel   = self.mealRecord.tasteLevel;
+    self.detailCardView.imagePath   = self.imagePath;
+    self.detailCardView.detailDescription = self.mealRecord.detailDescription ?: @"";
 }
 
 #pragma mark - 图片选择
@@ -95,7 +121,7 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
     NSString *filePath = FSTMealDetailSaveImage(image);
     if (filePath) {
         self.imagePath = filePath;
-        self.rootView.detailCardView.imagePath = filePath;
+        self.detailCardView.imagePath = filePath;
     }
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
@@ -107,15 +133,14 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 #pragma mark - 保存
 
 - (void)handleMealSaveTapped {
-    FSTMealDetailRootView *root = self.rootView;
     FSTMealRecord *record = self.mealRecord ?: [FSTMealRecord new];
     record.recordID = record.recordID.length ? record.recordID : [[NSUUID UUID] UUIDString];
-    record.date = root.timeCardView.date;
-    record.mealCategory = root.slotCardView.mealCategory;
-    record.dietType = root.dietCardView.dietType;
-    record.tasteLevel = root.tasteCardView.tasteLevel;
-    record.detailDescription = root.detailCardView.detailDescription ?: @"";
-    record.imagePath = self.imagePath ?: @"";
+    record.date              = self.timeCardView.date;
+    record.mealCategory      = self.slotCardView.mealCategory;
+    record.dietType          = self.dietCardView.dietType;
+    record.tasteLevel        = self.tasteCardView.tasteLevel;
+    record.detailDescription = self.detailCardView.detailDescription ?: @"";
+    record.imagePath         = self.imagePath ?: @"";
 
     FSTRecordsRepository *repository = [FSTRecordsRepository sharedRepository];
 

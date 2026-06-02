@@ -8,38 +8,63 @@
 
 #import "FSTSendFeedbackViewController.h"
 #import "FSTSendFeedbackRootView.h"
+#import "FSTTheme.h"
+
+static NSString * const kPlaceholder = @"Anything you share helps us make fasting better for you.";
 
 @interface FSTSendFeedbackViewController () <UITextViewDelegate>
+@property (nonatomic, strong) FSTSendFeedbackRootView *rootView;
+@property (nonatomic, strong) UITextView *textView;
+@property (nonatomic, strong) UILabel *placeholderLabel;
 @end
 
 @implementation FSTSendFeedbackViewController
 
-#pragma mark - Accessors
-
-- (FSTSendFeedbackRootView *)rootView {
-    return (FSTSendFeedbackRootView *)self.view;
-}
-
-#pragma mark - Lifecycle
-
-- (void)loadView {
-    self.view = [FSTSendFeedbackRootView new];
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.rootView.textView.delegate = self;
+    [self installRootView];
+    [self bindCallbacks];
+}
 
+- (void)installRootView {
+    self.textView = [UITextView new];
+    self.textView.backgroundColor = [UIColor clearColor];
+    self.textView.font = FSTFontRegular(16);
+    self.textView.textColor = [UIColor blackColor];
+    self.textView.textContainerInset = UIEdgeInsetsMake(16, 12, 16, 12);
+    self.textView.delegate = self;
+
+    self.placeholderLabel = [UILabel fst_labelWithText:kPlaceholder
+                                                  font:FSTFontRegular(16)
+                                                 color:[UIColor fst_textSecondary]
+                                             alignment:NSTextAlignmentLeft
+                                         numberOfLines:0];
+
+    self.rootView = [FSTSendFeedbackRootView new];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.rootView mountTextView:self.textView placeholderLabel:self.placeholderLabel];
+}
+
+- (void)bindCallbacks {
     __weak typeof(self) weakSelf = self;
-    self.rootView.onBackTapped       = ^{ [weakSelf handleBack]; };
-    self.rootView.onSubmitTapped     = ^{ [weakSelf handleSubmit]; };
-    self.rootView.onAddPictureTapped = ^{ /* 样子化：保留按钮，点击 noop */ };
+    self.rootView.onBackTapped = ^{
+        [weakSelf handleBack];
+    };
+    self.rootView.onSubmitTapped = ^{
+        [weakSelf handleSubmit];
+    };
+    self.rootView.onAddPictureTapped = ^{
+        /* 样子化：保留按钮，点击 noop */
+    };
 }
 
 #pragma mark - UITextViewDelegate
 
 - (void)textViewDidChange:(UITextView *)textView {
-    self.rootView.placeholderLabel.hidden = textView.text.length > 0;
+    self.placeholderLabel.hidden = textView.text.length > 0;
 }
 
 #pragma mark - Events

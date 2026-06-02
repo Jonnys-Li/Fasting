@@ -20,7 +20,7 @@ static const CGFloat kPickerRadius = 16;
 @property (nonatomic, strong) UIView *dot;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *dateLabel;
-@property (nonatomic, strong, readwrite) UIDatePicker *picker;
+@property (nonatomic, strong) UIDatePicker *picker;
 @end
 
 @implementation FSTTimeRowView
@@ -101,6 +101,14 @@ static const CGFloat kPickerRadius = 16;
 - (void)setDateText:(NSString *)dateText {
     _dateText = [dateText copy];
     self.dateLabel.text = dateText;
+}
+
+- (void)setPickerDate:(NSDate *)pickerDate {
+    if (pickerDate) self.picker.date = pickerDate;
+}
+
+- (NSDate *)pickerDate {
+    return self.picker.date;
 }
 
 #pragma mark - 事件

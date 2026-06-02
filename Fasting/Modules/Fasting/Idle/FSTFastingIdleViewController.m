@@ -40,6 +40,7 @@ static const CGFloat kResetButtonHeight = 38;
 static const CGFloat kResetCornerRadius = 19;
 
 @interface FSTFastingIdleViewController ()
+@property (nonatomic, strong) FSTFastingIdleRootView *rootView;
 @property (nonatomic, strong, nullable) FSTFastingTopBar *topBar;
 @property (nonatomic, strong, nullable) FSTFastingIdlePickerView *pickerView;
 @property (nonatomic, strong, nullable) FSTFastingIdleReadyView *readyView;
@@ -50,16 +51,13 @@ static const CGFloat kResetCornerRadius = 19;
 
 #pragma mark - 生命周期
 
-- (void)loadView {
-    self.view = [FSTFastingIdleRootView new];
-}
-
-- (FSTFastingIdleRootView *)rootView {
-    return (FSTFastingIdleRootView *)self.view;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.rootView = [FSTFastingIdleRootView new];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
     [self reloadRootContent];
 }
 
@@ -138,10 +136,9 @@ static const CGFloat kResetCornerRadius = 19;
 
     UIButton *waterButton = [self makeWaterButton];
 
-    self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:nil
-                                                  rightButtons:@[waterButton]
-                                                 centerContent:nil
-                                                 contentHeight:kTopBarHeightPicker];
+    self.topBar = [FSTFastingTopBar new];
+    self.topBar.rightButtons  = @[waterButton];
+    self.topBar.contentHeight = kTopBarHeightPicker;
     [self.topBar installInViewController:self];
     [self.rootView anchorContentBelowTopBar:self.topBar];
 
@@ -192,10 +189,10 @@ static const CGFloat kResetCornerRadius = 19;
     UIButton *waterButton = [self makeWaterButton];
     UIButton *bellButton  = [self makeBellButton];
 
-    self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:resetButton
-                                                  rightButtons:@[waterButton, bellButton]
-                                                 centerContent:nil
-                                                 contentHeight:kTopBarHeightReady];
+    self.topBar = [FSTFastingTopBar new];
+    self.topBar.leftButton    = resetButton;
+    self.topBar.rightButtons  = @[waterButton, bellButton];
+    self.topBar.contentHeight = kTopBarHeightReady;
     [self.topBar installInViewController:self];
     [self.rootView anchorContentBelowTopBar:self.topBar];
 
@@ -212,16 +209,30 @@ static const CGFloat kResetCornerRadius = 19;
 
 - (void)bindReadyViewCallbacks {
     __weak typeof(self) weakSelf = self;
-    self.readyView.onBreakingFastTapped      = ^{
+    self.readyView.onBreakingFastTapped = ^{
         [weakSelf handleBreakingFastTapped];
     };
-    self.readyView.onChangePlanTapped        = ^{ [weakSelf handleSoftChangePlanTapped]; };
-    self.readyView.onEditNextFastStartTapped = ^{ [weakSelf handleEditNextFastStartTapped]; };
-    self.readyView.onEditNextFastEndTapped   = ^{ [weakSelf handleEditNextFastEndTapped]; };
-    self.readyView.onStartFastingTapped      = ^{ [weakSelf handleReadyStartTapped]; };
-    self.readyView.onAbortPlanTapped         = ^{ [weakSelf handleAbortScheduledReadyTapped]; };
-    self.readyView.onLogMealTapped           = ^{ [weakSelf handleAteTapped]; };
-    self.readyView.onAddRecordTapped         = ^{ [weakSelf handleAddRecordTapped]; };
+    self.readyView.onChangePlanTapped = ^{
+        [weakSelf handleSoftChangePlanTapped];
+    };
+    self.readyView.onEditNextFastStartTapped = ^{
+        [weakSelf handleEditNextFastStartTapped];
+    };
+    self.readyView.onEditNextFastEndTapped = ^{
+        [weakSelf handleEditNextFastEndTapped];
+    };
+    self.readyView.onStartFastingTapped = ^{
+        [weakSelf handleReadyStartTapped];
+    };
+    self.readyView.onAbortPlanTapped = ^{
+        [weakSelf handleAbortScheduledReadyTapped];
+    };
+    self.readyView.onLogMealTapped = ^{
+        [weakSelf handleAteTapped];
+    };
+    self.readyView.onAddRecordTapped = ^{
+        [weakSelf handleAddRecordTapped];
+    };
 }
 
 #pragma mark - 导航按钮工厂

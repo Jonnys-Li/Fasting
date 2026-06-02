@@ -3,7 +3,7 @@
 #import "../Fasting/Core/Models/Records/FSTFastingRecord+Persistence.m"
 #import "../Fasting/Core/Models/Records/FSTMealRecord+Persistence.m"
 #import "../Fasting/Core/Models/Records/FSTPlan.m"
-#import "../Fasting/Core/Services/Records/FSTRecordsRepository.m"
+#import "../Fasting/Core/Services/RecordsRepository/FSTRecordsRepository.m"
 #import "../Fasting/Core/Services/Session/FSTSessionLifecycleService.m"
 #import "../Fasting/Core/Services/Session/FSTSessionManager.m"
 #import "../Fasting/Core/Services/Session/FSTSessionPersistenceService.m"

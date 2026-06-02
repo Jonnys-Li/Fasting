@@ -22,29 +22,31 @@ static NSString * const FSTMealRecordsKey = @"kFSTMealRecords";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         repository = [FSTRecordsRepository new];
-        [repository loadFromDefaults];
     });
     return repository;
 }
 
 #pragma mark - Persistence
 
-- (void)loadFromDefaults {
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+- (instancetype)init {
+    if (self = [super init]) {
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 
-    NSArray *fastingDictionaries = [userDefaults objectForKey:FSTRecordsKey];
-    self.records = [NSMutableArray array];
-    for (NSDictionary *entry in fastingDictionaries) {
-        FSTFastingRecord *record = [FSTFastingRecord fst_recordWithDictionary:entry];
-        if (record.startDate && record.endDate) [self.records addObject:record];
-    }
+        NSArray *fastingDictionaries = [userDefaults objectForKey:FSTRecordsKey];
+        _records = [NSMutableArray array];
+        for (NSDictionary *entry in fastingDictionaries) {
+            FSTFastingRecord *record = [FSTFastingRecord fst_recordWithDictionary:entry];
+            if (record.startDate && record.endDate) [_records addObject:record];
+        }
 
-    NSArray *mealDictionaries = [userDefaults objectForKey:FSTMealRecordsKey];
-    self.mealRecords = [NSMutableArray array];
-    for (NSDictionary *entry in mealDictionaries) {
-        FSTMealRecord *record = [FSTMealRecord fst_recordWithDictionary:entry];
-        if (record.date) [self.mealRecords addObject:record];
+        NSArray *mealDictionaries = [userDefaults objectForKey:FSTMealRecordsKey];
+        _mealRecords = [NSMutableArray array];
+        for (NSDictionary *entry in mealDictionaries) {
+            FSTMealRecord *record = [FSTMealRecord fst_recordWithDictionary:entry];
+            if (record.date) [_mealRecords addObject:record];
+        }
     }
+    return self;
 }
 
 - (void)saveRecordsToDefaults {

@@ -71,17 +71,24 @@ static const CGFloat kBottomPadding = 118;
     self.eatingTitleLabel = [UILabel fst_labelWithText:@"Eating Time" font:FSTFontAvenirBold(22) color:[UIColor fst_textHeading] alignment:NSTextAlignmentCenter];
 
     self.breakingFastCardView = [FSTBreakingFastCardView new];
-    self.breakingFastCardView.onTapped = ^{ if (weakSelf.onBreakingFastTapped) weakSelf.onBreakingFastTapped(); };
+    self.breakingFastCardView.onTapped = ^{
+        if (weakSelf.onBreakingFastTapped) weakSelf.onBreakingFastTapped();
+    };
 
     self.readyRingView = [FSTFastingIdleReadyRingView new];
-    self.readyRingView.onChangePlanTapped = ^{ if (weakSelf.onChangePlanTapped) weakSelf.onChangePlanTapped(); };
+    self.readyRingView.onChangePlanTapped = ^{
+        if (weakSelf.onChangePlanTapped) weakSelf.onChangePlanTapped();
+    };
 
-    self.nextFastTimesRow = [[FSTFastingTimesRow alloc] initWithStartCaption:@"Next fast starts"
-                                                                  endCaption:@"Next fast ends"
-                                                                    editable:YES
-                                                         startHighlightColor:nil];
-    self.nextFastTimesRow.onEditStartTapped = ^{ if (weakSelf.onEditNextFastStartTapped) weakSelf.onEditNextFastStartTapped(); };
-    self.nextFastTimesRow.onEditEndTapped   = ^{ if (weakSelf.onEditNextFastEndTapped) weakSelf.onEditNextFastEndTapped(); };
+    self.nextFastTimesRow = [FSTFastingTimesRow new];
+    self.nextFastTimesRow.startCaption = @"Next fast starts";
+    self.nextFastTimesRow.endCaption   = @"Next fast ends";
+    self.nextFastTimesRow.onEditStartTapped = ^{
+        if (weakSelf.onEditNextFastStartTapped) weakSelf.onEditNextFastStartTapped();
+    };
+    self.nextFastTimesRow.onEditEndTapped = ^{
+        if (weakSelf.onEditNextFastEndTapped) weakSelf.onEditNextFastEndTapped();
+    };
 
     self.startFastingButton = [UIButton fst_pillButtonWithTitle:@"Start Fasting" style:FSTPillButtonStyleAppCTA];
     [self.startFastingButton addTarget:self action:@selector(handleStartFastingTapped) forControlEvents:UIControlEventTouchUpInside];

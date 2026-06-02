@@ -68,8 +68,9 @@ static const CGFloat kCornerRadius = 22.0;
 #pragma mark - Content View
 
 - (void)buildContentView {
-    self.contentView = [[FSTTimeEditorSheetContentView alloc] initWithTitle:self.titleText
-                                                             alignChipText:self.alignChipText];
+    self.contentView = [FSTTimeEditorSheetContentView new];
+    self.contentView.titleText     = self.titleText;
+    self.contentView.alignChipText = self.alignChipText;
     [self.cardContainer addSubview:self.contentView];
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.cardContainer);
@@ -80,10 +81,18 @@ static const CGFloat kCornerRadius = 22.0;
     self.contentView.datePicker.maximumDate = self.maximumDate;
 
     __weak typeof(self) weakSelf = self;
-    self.contentView.onCloseTapped       = ^{ [weakSelf handleCloseTapped]; };
-    self.contentView.onSaveTapped        = ^{ [weakSelf handleSaveTapped]; };
-    self.contentView.onAlignToggled      = ^{ [weakSelf handleAlignTapped]; };
-    self.contentView.onPickerValueChanged = ^{ [weakSelf handlePickerValueChanged]; };
+    self.contentView.onCloseTapped = ^{
+        [weakSelf handleCloseTapped];
+    };
+    self.contentView.onSaveTapped = ^{
+        [weakSelf handleSaveTapped];
+    };
+    self.contentView.onAlignToggled = ^{
+        [weakSelf handleAlignTapped];
+    };
+    self.contentView.onPickerValueChanged = ^{
+        [weakSelf handlePickerValueChanged];
+    };
 }
 
 #pragma mark - State

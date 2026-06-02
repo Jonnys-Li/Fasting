@@ -34,11 +34,15 @@
     self.inputCardView.initialUnit = [FSTSessionManager sharedManager].preferredWeightUnit;
     self.inputCardView.weightKg = self.weightKg;
     __weak typeof(self) weakSelf = self;
-    self.inputCardView.onClose = ^{ [weakSelf dismissViewControllerAnimated:YES completion:nil]; };
+    self.inputCardView.onClose = ^{
+        [weakSelf dismissViewControllerAnimated:YES completion:nil];
+    };
     self.inputCardView.onSave = ^(CGFloat enteredWeightKg) {
         [FSTSessionManager sharedManager].preferredWeightUnit = weakSelf.inputCardView.currentUnit;
         void (^saveCallback)(CGFloat) = weakSelf.onSave;
-        [weakSelf dismissViewControllerAnimated:YES completion:^{ if (saveCallback) saveCallback(enteredWeightKg); }];
+        [weakSelf dismissViewControllerAnimated:YES completion:^{
+            if (saveCallback) saveCallback(enteredWeightKg);
+        }];
     };
     [self.cardContainer addSubview:self.inputCardView];
     [self.inputCardView mas_makeConstraints:^(MASConstraintMaker *make) {

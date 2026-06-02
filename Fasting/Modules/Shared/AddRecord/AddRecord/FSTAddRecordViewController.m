@@ -20,6 +20,13 @@
 #import "FSTTheme.h"
 
 @interface FSTAddRecordViewController ()
+@property (nonatomic, strong) FSTAddRecordRootView *rootView;
+@property (nonatomic, strong) FSTAddRecordHeaderView *headerView;
+@property (nonatomic, strong) FSTAddRecordTimeCardView *timeCardView;
+@property (nonatomic, strong) FSTAddRecordWeightCardView *weightCardView;
+@property (nonatomic, strong) FSTAddRecordFeelingCardView *feelingCardView;
+@property (nonatomic, strong) FSTAddRecordNoteCardView *noteCardView;
+
 @property (nonatomic, strong, readwrite, nullable) FSTFastingRecord *editingRecord;
 @property (nonatomic, assign) BOOL editingExistingRecord;
 @property (nonatomic, strong, readwrite) NSDate *startDate;
@@ -66,60 +73,80 @@
 
 #pragma mark - 生命周期
 
-- (void)loadView {
-    self.view = [FSTAddRecordRootView new];
-}
-
-- (FSTAddRecordRootView *)rootView {
-    return (FSTAddRecordRootView *)self.view;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self installRootView];
     [self bindCardCallbacks];
     [self pushStateIntoCards];
 }
 
+- (void)installRootView {
+    self.headerView      = [FSTAddRecordHeaderView new];
+    self.timeCardView    = [FSTAddRecordTimeCardView new];
+    self.weightCardView  = [FSTAddRecordWeightCardView new];
+    self.feelingCardView = [FSTAddRecordFeelingCardView new];
+    self.noteCardView    = [FSTAddRecordNoteCardView new];
+
+    self.rootView = [FSTAddRecordRootView new];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.rootView mountHeaderView:self.headerView
+                             cards:@[self.timeCardView, self.weightCardView,
+                                     self.feelingCardView, self.noteCardView]];
+}
+
 #pragma mark - 卡片回调接线
 
-/// 把 RootView 上各子卡片暴露的 block 与 VC 的事件处理方法接起来。
+/// 把各子卡片暴露的 block 与 VC 的事件处理方法接起来。
 - (void)bindCardCallbacks {
     __weak typeof(self) weakSelf = self;
-    FSTAddRecordRootView *rootView = self.rootView;
 
-    rootView.headerView.onBackTapped  = ^{ [weakSelf handleCancelTapped]; };
-    rootView.headerView.onTrashTapped = ^{ [weakSelf handleTrashTapped]; };
-
-    rootView.timeCardView.editingExistingRecord = self.editingExistingRecord;
-    rootView.timeCardView.onDatesChanged = ^(NSDate *startDate, NSDate *endDate) {
-        weakSelf.startDate = startDate;
-        weakSelf.endDate = endDate;
-        weakSelf.rootView.headerView.totalSeconds = [endDate timeIntervalSinceDate:startDate];
+    self.headerView.onBackTapped = ^{
+        [weakSelf handleCancelTapped];
+    };
+    self.headerView.onTrashTapped = ^{
+        [weakSelf handleTrashTapped];
     };
 
-    rootView.weightCardView.onEditTapped    = ^{ [weakSelf handleWeightEditTapped]; };
-    rootView.weightCardView.onHealthChanged = ^(BOOL enabled) { weakSelf.appleHealthEnabled = enabled; };
+    self.timeCardView.editingExistingRecord = self.editingExistingRecord;
+    self.timeCardView.onDatesChanged = ^(NSDate *startDate, NSDate *endDate) {
+        weakSelf.startDate = startDate;
+        weakSelf.endDate = endDate;
+        weakSelf.headerView.totalSeconds = [endDate timeIntervalSinceDate:startDate];
+    };
 
-    rootView.onCancelTapped = ^{ [weakSelf handleCancelTapped]; };
-    rootView.onSaveTapped   = ^{ [weakSelf handleSaveTapped]; };
+    self.weightCardView.onEditTapped = ^{
+        [weakSelf handleWeightEditTapped];
+    };
+    self.weightCardView.onHealthChanged = ^(BOOL enabled) {
+        weakSelf.appleHealthEnabled = enabled;
+    };
+
+    self.rootView.onCancelTapped = ^{
+        [weakSelf handleCancelTapped];
+    };
+    self.rootView.onSaveTapped = ^{
+        [weakSelf handleSaveTapped];
+    };
 }
 
 #pragma mark - 状态推送
 
 /// 把 VC 持有的当前状态推送到各子卡片。VC 是状态权威，每张卡片仅作显示与局部编辑。
 - (void)pushStateIntoCards {
-    FSTAddRecordRootView *rootView = self.rootView;
-    rootView.headerView.totalSeconds = [self.endDate timeIntervalSinceDate:self.startDate];
-    rootView.timeCardView.planName   = [self planName];
-    rootView.timeCardView.startDate  = self.startDate;
-    rootView.timeCardView.endDate    = self.endDate;
-    rootView.weightCardView.weightKg           = self.weightKg;
-    rootView.weightCardView.initialWeightKg    = self.initialWeightKg;
-    rootView.weightCardView.targetWeightKg     = self.targetWeightKg;
-    rootView.weightCardView.usePounds          = [FSTSessionManager sharedManager].preferredWeightUnit == FSTWeightUnitLb;
-    rootView.weightCardView.appleHealthEnabled = self.appleHealthEnabled;
-    rootView.feelingCardView.feelingLevel = self.feelingLevel;
-    rootView.noteCardView.text            = self.editingRecord.note ?: @"";
+    self.headerView.totalSeconds = [self.endDate timeIntervalSinceDate:self.startDate];
+    self.timeCardView.planName   = [self planName];
+    self.timeCardView.startDate  = self.startDate;
+    self.timeCardView.endDate    = self.endDate;
+    self.weightCardView.weightKg           = self.weightKg;
+    self.weightCardView.initialWeightKg    = self.initialWeightKg;
+    self.weightCardView.targetWeightKg     = self.targetWeightKg;
+    self.weightCardView.usePounds          = [FSTSessionManager sharedManager].preferredWeightUnit == FSTWeightUnitLb;
+    self.weightCardView.appleHealthEnabled = self.appleHealthEnabled;
+    self.feelingCardView.feelingLevel = self.feelingLevel;
+    self.noteCardView.text            = self.editingRecord.note ?: @"";
 }
 
 - (NSString *)planName {
@@ -150,7 +177,7 @@
                                   onSave:^(CGFloat newWeightKg) {
         if (newWeightKg <= 0) return;
         weakSelf.weightKg = newWeightKg;
-        weakSelf.rootView.weightCardView.weightKg = newWeightKg;
+        weakSelf.weightCardView.weightKg = newWeightKg;
     }];
 }
 
@@ -166,8 +193,8 @@
     FSTFastingRecord *record = FSTBuildFastingRecord(self.editingExistingRecord ? self.editingRecord : nil,
                                                       self.startDate, self.endDate,
                                                       self.weightKg, self.initialWeightKg, self.targetWeightKg,
-                                                      self.rootView.feelingCardView.feelingLevel,
-                                                      self.rootView.noteCardView.text,
+                                                      self.feelingCardView.feelingLevel,
+                                                      self.noteCardView.text,
                                                       self.appleHealthEnabled);
 
     if (self.editingExistingRecord) {

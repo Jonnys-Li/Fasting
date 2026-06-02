@@ -11,8 +11,13 @@
 #import "FSTSessionManager.h"
 #import "UIViewController+FSTTimeEditor.h"
 #import "UINavigationController+FSTHelpers.h"
+#import "FSTTheme.h"
 
 @interface FSTPlanConfirmViewController ()
+@property (nonatomic, strong) FSTPlanConfirmRootView *rootView;
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) FSTPlanConfirmTimelineView *timelineView;
+
 @property (nonatomic, strong, readwrite) FSTPlan *plan;
 @property (nonatomic, strong) NSDate *selectedStartDate;
 @end
@@ -26,34 +31,50 @@
     return self;
 }
 
-- (void)loadView {
-    self.view = [FSTPlanConfirmRootView new];
-}
-
-- (FSTPlanConfirmRootView *)rootView {
-    return (FSTPlanConfirmRootView *)self.view;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.selectedStartDate = [NSDate date];
-
-    __weak typeof(self) weakSelf = self;
-    self.rootView.onBackTapped = ^{ [weakSelf handleBackTapped]; };
-    self.rootView.onStartTapped = ^{ [weakSelf handleStartTapped]; };
-    self.rootView.onEditStartTapped = ^{ [weakSelf handleEditStartTapped]; };
-
+    [self installRootView];
+    [self bindCallbacks];
     [self refreshPlanLabels];
+}
+
+- (void)installRootView {
+    self.titleLabel = [UILabel fst_labelWithText:nil
+                                            font:FSTFontBold(34)
+                                           color:[UIColor fst_textPrimary]
+                                       alignment:NSTextAlignmentCenter];
+    self.timelineView = [FSTPlanConfirmTimelineView new];
+
+    self.rootView = [FSTPlanConfirmRootView new];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.rootView mountTitleLabel:self.titleLabel timelineView:self.timelineView];
+}
+
+- (void)bindCallbacks {
+    __weak typeof(self) weakSelf = self;
+    self.rootView.onBackTapped = ^{
+        [weakSelf handleBackTapped];
+    };
+    self.rootView.onStartTapped = ^{
+        [weakSelf handleStartTapped];
+    };
+    self.timelineView.onEditStartTapped = ^{
+        [weakSelf handleEditStartTapped];
+    };
 }
 
 #pragma mark - 状态
 
 - (void)refreshPlanLabels {
-    self.rootView.titleLabel.text = self.plan.name;
+    self.titleLabel.text = self.plan.name;
     NSDate *startDate = self.selectedStartDate ?: [NSDate date];
     NSDate *endDate = [startDate dateByAddingTimeInterval:self.plan.fastingHours * 3600.0];
-    self.rootView.timelineView.startDate = startDate;
-    self.rootView.timelineView.endDate = endDate;
+    self.timelineView.startDate = startDate;
+    self.timelineView.endDate   = endDate;
 }
 
 #pragma mark - 事件

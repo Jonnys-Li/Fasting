@@ -6,10 +6,6 @@
 #import "FSTSendFeedbackRootView.h"
 #import "FSTTheme.h"
 
-#pragma mark - Strings
-
-static NSString * const kPlaceholder = @"Anything you share helps us make fasting better for you.";
-
 #pragma mark - Layout constants
 
 // 通用
@@ -29,8 +25,6 @@ static const CGFloat kSubmitHeight = 56;
 static const CGFloat kSubmitRadius = 28;
 
 @interface FSTSendFeedbackRootView ()
-@property (nonatomic, strong, readwrite) UITextView *textView;
-@property (nonatomic, strong, readwrite) UILabel *placeholderLabel;
 @property (nonatomic, strong, readwrite) UIImageView *pickedImageView;
 @property (nonatomic, copy, readwrite) NSArray<NSString *> *chipTitles;
 
@@ -92,19 +86,6 @@ static const CGFloat kSubmitRadius = 28;
 
     self.textViewContainer = [UIView fst_containerWithBackground:[UIColor fst_inputBackground] radius:16];
     self.textViewContainer.layer.masksToBounds = YES;
-
-    self.textView = [UITextView new];
-    self.textView.backgroundColor = [UIColor clearColor];
-    self.textView.font = FSTFontRegular(16);
-    self.textView.textColor = [UIColor blackColor];
-    self.textView.textContainerInset = UIEdgeInsetsMake(16, 12, 16, 12);
-
-    self.placeholderLabel = [UILabel fst_labelWithText:kPlaceholder
-                                                  font:FSTFontRegular(16)
-                                                 color:[UIColor fst_textSecondary]
-                                             alignment:NSTextAlignmentLeft
-                                         numberOfLines:0];
-    [self.textViewContainer fst_addSubviews:@[self.textView, self.placeholderLabel]];
 
     self.addPictureButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.addPictureButton.backgroundColor = [UIColor fst_chipBackground];
@@ -232,14 +213,6 @@ static const CGFloat kSubmitRadius = 28;
         make.left.right.equalTo(self.contentView).inset(kSideInset);
         make.height.mas_equalTo(kTextViewHeight);
     }];
-    [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.textViewContainer);
-    }];
-    [self.placeholderLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.textViewContainer).offset(16);
-        make.left.equalTo(self.textViewContainer).offset(17);
-        make.right.equalTo(self.textViewContainer).offset(-17);
-    }];
     [self.addPictureButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.textViewContainer.mas_bottom).offset(16);
         make.left.equalTo(self.contentView).offset(kSideInset);
@@ -263,6 +236,22 @@ static const CGFloat kSubmitRadius = 28;
     [below mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(above.mas_bottom).offset(offset);
         make.left.right.equalTo(self.contentView).inset(kSideInset);
+    }];
+}
+
+#pragma mark - Mount API
+
+- (void)mountTextView:(UITextView *)textView placeholderLabel:(UILabel *)placeholderLabel {
+    [self.textViewContainer addSubview:textView];
+    [self.textViewContainer addSubview:placeholderLabel];
+
+    [textView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.textViewContainer);
+    }];
+    [placeholderLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.textViewContainer).offset(16);
+        make.left.equalTo(self.textViewContainer).offset(17);
+        make.right.equalTo(self.textViewContainer).offset(-17);
     }];
 }
 

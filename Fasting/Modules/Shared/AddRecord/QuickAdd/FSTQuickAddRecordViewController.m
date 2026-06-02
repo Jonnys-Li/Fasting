@@ -12,24 +12,20 @@
 #import "FSTSessionManager.h"
 #import "FSTFastingRecord.h"
 #import "FSTFastingRecordBuilder.h"
+#import "FSTTheme.h"
 
 @interface FSTQuickAddRecordViewController ()
+@property (nonatomic, strong) FSTQuickAddRecordRootView *rootView;
+@property (nonatomic, strong) FSTTimeRowView *startRow;
+@property (nonatomic, strong) FSTTimeRowView *endRow;
+@property (nonatomic, strong) UILabel *durationValueLabel;
+
 @property (nonatomic, strong) NSDate *startDate;
 @property (nonatomic, strong) NSDate *endDate;
 @property (nonatomic, strong) NSDateFormatter *displayFormatter;
 @end
 
 @implementation FSTQuickAddRecordViewController
-
-#pragma mark - 根视图
-
-- (void)loadView {
-    self.view = [FSTQuickAddRecordRootView new];
-}
-
-- (FSTQuickAddRecordRootView *)rootView {
-    return (FSTQuickAddRecordRootView *)self.view;
-}
 
 #pragma mark - 生命周期
 
@@ -46,8 +42,33 @@
     self.endDate   = [NSDate date];
     self.startDate = [self.endDate dateByAddingTimeInterval:-24 * 3600];
 
+    [self installRootView];
     [self bindCallbacks];
     [self refreshDisplay];
+}
+
+- (void)installRootView {
+    self.startRow = [FSTTimeRowView new];
+    self.startRow.title = @"Fast starts";
+    self.startRow.dotColor = [UIColor fst_eatingTimeGreen];
+
+    self.endRow = [FSTTimeRowView new];
+    self.endRow.title = @"Fast ends";
+    self.endRow.dotColor = [UIColor fst_colorWithHex:0xFF7373];
+
+    self.durationValueLabel = [UILabel fst_labelWithText:nil
+                                                    font:FSTFontBold(16)
+                                                   color:[UIColor blackColor]
+                                               alignment:NSTextAlignmentRight];
+
+    self.rootView = [FSTQuickAddRecordRootView new];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.rootView mountStartRow:self.startRow
+                          endRow:self.endRow
+              durationValueLabel:self.durationValueLabel];
 }
 
 #pragma mark - 回调绑定
@@ -61,11 +82,11 @@
     self.rootView.onSaveTapped = ^{
         [weakSelf handleSave];
     };
-    self.rootView.startRow.onDateChanged = ^(NSDate *date) {
+    self.startRow.onDateChanged = ^(NSDate *date) {
         weakSelf.startDate = date;
         [weakSelf refreshDisplay];
     };
-    self.rootView.endRow.onDateChanged = ^(NSDate *date) {
+    self.endRow.onDateChanged = ^(NSDate *date) {
         weakSelf.endDate = date;
         [weakSelf refreshDisplay];
     };
@@ -74,13 +95,11 @@
 #pragma mark - 刷新显示
 
 - (void)refreshDisplay {
-    FSTQuickAddRecordRootView *rv = self.rootView;
+    self.startRow.pickerDate = self.startDate;
+    self.endRow.pickerDate   = self.endDate;
 
-    rv.startRow.picker.date = self.startDate;
-    rv.endRow.picker.date   = self.endDate;
-
-    rv.startRow.dateText = [self.displayFormatter stringFromDate:self.startDate];
-    rv.endRow.dateText   = [self.displayFormatter stringFromDate:self.endDate];
+    self.startRow.dateText = [self.displayFormatter stringFromDate:self.startDate];
+    self.endRow.dateText   = [self.displayFormatter stringFromDate:self.endDate];
 
     NSTimeInterval duration = [self.endDate timeIntervalSinceDate:self.startDate];
     if (duration < 0) duration = 0;
@@ -88,11 +107,11 @@
     NSInteger hours   = totalMinutes / 60;
     NSInteger minutes = totalMinutes % 60;
     if (hours > 0 && minutes > 0) {
-        rv.durationValueLabel.text = [NSString stringWithFormat:@"%ldhr %ldmin", (long)hours, (long)minutes];
+        self.durationValueLabel.text = [NSString stringWithFormat:@"%ldhr %ldmin", (long)hours, (long)minutes];
     } else if (hours > 0) {
-        rv.durationValueLabel.text = [NSString stringWithFormat:@"%ldhr", (long)hours];
+        self.durationValueLabel.text = [NSString stringWithFormat:@"%ldhr", (long)hours];
     } else {
-        rv.durationValueLabel.text = [NSString stringWithFormat:@"%ldmin", (long)minutes];
+        self.durationValueLabel.text = [NSString stringWithFormat:@"%ldmin", (long)minutes];
     }
 }
 

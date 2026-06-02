@@ -90,21 +90,28 @@
 #pragma mark - Content View
 
 - (void)buildContentView {
-    self.contentView = [[FSTModalDialogContentView alloc] initWithIconSystemName:self.iconSystemName
-                                                                  iconImageName:self.iconImageName
-                                                                          title:self.dialogTitle
-                                                                        message:self.message
-                                                                   primaryTitle:self.primaryTitle
-                                                                 secondaryTitle:self.secondaryTitle];
+    self.contentView = [FSTModalDialogContentView new];
+    self.contentView.iconSystemName = self.iconSystemName;
+    self.contentView.iconImageName  = self.iconImageName;
+    self.contentView.titleText      = self.dialogTitle;
+    self.contentView.message        = self.message;
+    self.contentView.primaryTitle   = self.primaryTitle;
+    self.contentView.secondaryTitle = self.secondaryTitle;
     [self.cardContainer addSubview:self.contentView];
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.cardContainer);
     }];
 
     __weak typeof(self) weakSelf = self;
-    self.contentView.onCloseTapped     = ^{ [weakSelf handleCloseTapped]; };
-    self.contentView.onPrimaryTapped   = ^{ [weakSelf handlePrimaryTapped]; };
-    self.contentView.onSecondaryTapped = ^{ [weakSelf handleSecondaryTapped]; };
+    self.contentView.onCloseTapped = ^{
+        [weakSelf handleCloseTapped];
+    };
+    self.contentView.onPrimaryTapped = ^{
+        [weakSelf handlePrimaryTapped];
+    };
+    self.contentView.onSecondaryTapped = ^{
+        [weakSelf handleSecondaryTapped];
+    };
 }
 
 #pragma mark - Events

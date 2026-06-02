@@ -15,6 +15,9 @@
 #import "FSTTheme.h"
 
 @interface FSTTimelineViewController ()
+@property (nonatomic, strong) FSTTimelineRootView *rootView;
+@property (nonatomic, strong) FSTFastingTimelineCardView *fastingModuleView;
+@property (nonatomic, strong) FSTTimelineModuleView *mealModuleView;
 @property (nonatomic, strong, nullable) FSTMealRecord *latestMealRecord;
 @end
 
@@ -22,18 +25,26 @@
 
 #pragma mark - 生命周期
 
-- (void)loadView {
-    self.view = [FSTTimelineRootView new];
-}
-
-- (FSTTimelineRootView *)rootView {
-    return (FSTTimelineRootView *)self.view;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self installRootView];
     [self bindCallbacks];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshHome) name:FSTRecordsDidChangeNotification object:nil];
+}
+
+- (void)installRootView {
+    self.fastingModuleView = [FSTFastingTimelineCardView new];
+    self.fastingModuleView.titleText = @"Fasting";
+
+    self.mealModuleView = [FSTTimelineModuleView new];
+
+    self.rootView = [FSTTimelineRootView new];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.rootView mountFastingModuleView:self.fastingModuleView
+                           mealModuleView:self.mealModuleView];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -45,10 +56,18 @@
 
 - (void)bindCallbacks {
     __weak typeof(self) weakSelf = self;
-    self.rootView.fastingModuleView.onMoreTapped = ^{ [weakSelf handleMoreFastingTapped]; };
-    self.rootView.mealModuleView.onChevronTapped = ^{ [weakSelf handleMealChevronTapped]; };
-    self.rootView.mealModuleView.onAddTapped     = ^{ [weakSelf handleMealAddTapped]; };
-    self.rootView.mealModuleView.onEntryTapped   = ^{ [weakSelf handleMealEntryTapped]; };
+    self.fastingModuleView.onMoreTapped = ^{
+        [weakSelf handleMoreFastingTapped];
+    };
+    self.mealModuleView.onChevronTapped = ^{
+        [weakSelf handleMealChevronTapped];
+    };
+    self.mealModuleView.onAddTapped = ^{
+        [weakSelf handleMealAddTapped];
+    };
+    self.mealModuleView.onEntryTapped = ^{
+        [weakSelf handleMealEntryTapped];
+    };
 }
 
 #pragma mark - 数据刷新
@@ -57,14 +76,14 @@
 - (void)refreshHome {
     FSTRecordsRepository *repository = [FSTRecordsRepository sharedRepository];
     FSTFastingRecord *fastingRecord = [repository allRecords].firstObject;
-    [self.rootView.fastingModuleView configureWithRecord:fastingRecord];
+    [self.fastingModuleView configureWithRecord:fastingRecord];
 
     self.latestMealRecord = [repository allMealRecords].firstObject;
     FSTMealRecord *mr = self.latestMealRecord;
-    [self.rootView.mealModuleView updateWithCategory:mr.mealCategory
-                                            dietType:mr.dietType
-                                          tasteLevel:mr.tasteLevel
-                                            dateText:mr ? FSTFormatRelativeDateTime(mr.date ?: [NSDate date]) : nil];
+    [self.mealModuleView updateWithCategory:mr.mealCategory
+                                   dietType:mr.dietType
+                                 tasteLevel:mr.tasteLevel
+                                   dateText:mr ? FSTFormatRelativeDateTime(mr.date ?: [NSDate date]) : nil];
 }
 
 #pragma mark - 事件
