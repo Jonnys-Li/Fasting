@@ -34,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 加到 VC.view 顶部并装上约束。先把 scrollView 加入 VC.view，再调用本方法。
 - (void)installInViewController:(UIViewController *)viewController;
+- (void)updateData;
 
 @end
 

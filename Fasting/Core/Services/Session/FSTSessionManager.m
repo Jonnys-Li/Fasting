@@ -24,16 +24,25 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [FSTSessionManager new];
-        [manager loadFromDefaults];
+//        [manager loadFromDefaults];
     });
     return manager;
 }
 
 #pragma mark - Persistence
 
-- (void)loadFromDefaults {
-    [FSTSessionPersistenceService loadSession:self];
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [FSTSessionPersistenceService loadSession:self];
+    }
+    return self;
 }
+
+//- (void)loadFromDefaults {
+//    [FSTSessionPersistenceService loadSession:self];
+//}
 
 - (void)setPreferredWeightUnit:(FSTWeightUnit)preferredWeightUnit {
     _preferredWeightUnit = preferredWeightUnit;

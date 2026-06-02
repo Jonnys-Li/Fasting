@@ -21,8 +21,8 @@ typedef NS_ENUM(NSInteger, FSTDailyPlanReadyPrimaryActionMode) {
     FSTDailyPlanReadyPrimaryActionAbortPlan,
 };
 
-/// Plan 首页"已选未开始"状态下的内容视图，嵌入到 VC 的 scrollView contentView 内。
-/// VC 把本视图 edges 约束到 contentView 即可；状态由 VC 通过 setter 推入。
+/// Plan 首页"已选未开始"状态下的 body 视图，由 FSTFastingIdleRootView 承载
+/// （edges 贴满其 contentView）；状态由 VC 通过 setter 推入。
 @interface FSTFastingIdleReadyView : UIView
 
 #pragma mark - 计划信息

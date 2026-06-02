@@ -19,22 +19,42 @@ static const CGFloat kButtonSpacing        = 12;
 @property (nonatomic, strong, nullable) NSArray<UIButton *> *rightButtons;
 @property (nonatomic, strong, nullable) UIView *centerContent;
 @property (nonatomic, assign) CGFloat contentHeight;
+left
 @end
 
 @implementation FSTFastingTopBar
 
-- (instancetype)initWithLeftButton:(nullable UIButton *)leftButton
-                      rightButtons:(nullable NSArray<UIButton *> *)rightButtons
-                     centerContent:(nullable UIView *)centerContent
-                     contentHeight:(CGFloat)contentHeight {
-    if ((self = [super initWithFrame:CGRectZero])) {
-        _leftButton    = leftButton;
-        _rightButtons  = [rightButtons copy];
-        _centerContent = centerContent;
-        _contentHeight = contentHeight > 0 ? contentHeight : kDefaultContentHeight;
-        self.backgroundColor = [UIColor fst_pageBackground];
+//- (instancetype)initWithLeftButton:(nullable UIButton *)leftButton
+//                      rightButtons:(nullable NSArray<UIButton *> *)rightButtons
+//                     centerContent:(nullable UIView *)centerContent
+//                     contentHeight:(CGFloat)contentHeight {
+//    if ((self = [super initWithFrame:CGRectZero])) {
+//        _leftButton    = leftButton;
+//        _rightButtons  = [rightButtons copy];
+//        _centerContent = centerContent;
+//        _contentHeight = contentHeight > 0 ? contentHeight : kDefaultContentHeight;
+//        self.backgroundColor = [UIColor fst_pageBackground];
+//        
+//        [self setupSubviews];
+//        [self setupConstraints];
+//    }
+//    return self;
+//}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        [self setupSubviews];
+        [self setupConstraints];
     }
     return self;
+}
+
+- (void)setupSubviews {
+    
+}
+
+- (void)setupConstraints {
+    
 }
 
 - (void)installInViewController:(UIViewController *)viewController {

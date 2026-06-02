@@ -5,11 +5,13 @@
 //  断食计划首页：两种状态。无计划时显示 4 种计划卡片让用户选；
 //  已选计划但未开始时显示「准备开始断食」页面（黄色提示卡 + 空圆环 + 开始按钮）。
 //
-//  UI 组装由 FSTFastingIdlePickerView / FSTFastingIdleReadyView 承担；VC 负责状态分发、
+//  滚动容器由 FSTFastingIdleRootView 承载，picker / ready 两态 body 分别由
+//  FSTFastingIdlePickerView / FSTFastingIdleReadyView 组装；VC 负责状态分发、
 //  topBar 创建、ready 态数据刷新（含定时器）、用户事件与导航（导航统一走 FSTAppRouter）。
 //
 
 #import "FSTFastingIdleViewController.h"
+#import "FSTFastingIdleRootView.h"
 #import "FSTPlanConfirmViewController.h"
 #import "FSTAppRouter.h"
 #import "FSTModalDialogViewController.h"
@@ -38,8 +40,6 @@ static const CGFloat kResetButtonHeight = 38;
 static const CGFloat kResetCornerRadius = 19;
 
 @interface FSTFastingIdleViewController ()
-@property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, strong, nullable) FSTFastingTopBar *topBar;
 @property (nonatomic, strong, nullable) FSTFastingIdlePickerView *pickerView;
 @property (nonatomic, strong, nullable) FSTFastingIdleReadyView *readyView;
@@ -50,9 +50,16 @@ static const CGFloat kResetCornerRadius = 19;
 
 #pragma mark - 生命周期
 
+- (void)loadView {
+    self.view = [FSTFastingIdleRootView new];
+}
+
+- (FSTFastingIdleRootView *)rootView {
+    return (FSTFastingIdleRootView *)self.view;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self buildScrollContainer];
     [self reloadRootContent];
 }
 
@@ -82,30 +89,6 @@ static const CGFloat kResetCornerRadius = 19;
     [self refreshReadyState];
 }
 
-#pragma mark - 容器
-
-- (void)buildScrollContainer {
-    self.scrollView = [UIScrollView new];
-    self.scrollView.alwaysBounceVertical = YES;
-    self.scrollView.showsVerticalScrollIndicator = NO;
-    [self.view addSubview:self.scrollView];
-
-    self.contentView = [UIView new];
-    [self.scrollView addSubview:self.contentView];
-
-    [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.scrollView);
-        make.width.equalTo(self.scrollView);
-    }];
-}
-
-- (void)anchorScrollViewToTopBar {
-    [self.scrollView mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.topBar.mas_bottom);
-        make.left.right.bottom.equalTo(self.view);
-    }];
-}
-
 #pragma mark - 状态切换
 
 /// 根据是否有计划，渲染"计划选择列表"或"准备开始"两种状态。
@@ -130,9 +113,8 @@ static const CGFloat kResetCornerRadius = 19;
 }
 
 - (void)tearDownCurrentContent {
-    [self.pickerView removeFromSuperview];
+    self.rootView.bodyView = nil;
     self.pickerView = nil;
-    [self.readyView removeFromSuperview];
     self.readyView = nil;
     [self.topBar removeFromSuperview];
     self.topBar = nil;
@@ -145,11 +127,10 @@ static const CGFloat kResetCornerRadius = 19;
 
     self.pickerView = [FSTFastingIdlePickerView new];
     __weak typeof(self) weakSelf = self;
-    self.pickerView.onPlanPicked = ^(FSTPlan *picked) { [weakSelf handlePlanTapped:picked]; };
-    [self.contentView addSubview:self.pickerView];
-    [self.pickerView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.contentView);
-    }];
+    self.pickerView.onPlanPicked = ^(FSTPlan *picked) {
+        [weakSelf handlePlanTapped:picked];
+    };
+    self.rootView.bodyView = self.pickerView;
 }
 
 - (void)installPickerTopBar {
@@ -162,7 +143,7 @@ static const CGFloat kResetCornerRadius = 19;
                                                  centerContent:nil
                                                  contentHeight:kTopBarHeightPicker];
     [self.topBar installInViewController:self];
-    [self anchorScrollViewToTopBar];
+    [self.rootView anchorContentBelowTopBar:self.topBar];
 
     [waterButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(kNavButtonDiameter, kNavButtonDiameter));
@@ -182,10 +163,7 @@ static const CGFloat kResetCornerRadius = 19;
 
     self.readyView = [FSTFastingIdleReadyView new];
     [self bindReadyViewCallbacks];
-    [self.contentView addSubview:self.readyView];
-    [self.readyView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.contentView);
-    }];
+    self.rootView.bodyView = self.readyView;
 
     FSTPlan *currentPlan = [FSTSessionManager sharedManager].currentPlan;
     self.readyView.planName = currentPlan.name ?: @"14-10";
@@ -219,7 +197,7 @@ static const CGFloat kResetCornerRadius = 19;
                                                  centerContent:nil
                                                  contentHeight:kTopBarHeightReady];
     [self.topBar installInViewController:self];
-    [self anchorScrollViewToTopBar];
+    [self.rootView anchorContentBelowTopBar:self.topBar];
 
     [resetButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(kResetButtonWidth, kResetButtonHeight));
@@ -234,7 +212,9 @@ static const CGFloat kResetCornerRadius = 19;
 
 - (void)bindReadyViewCallbacks {
     __weak typeof(self) weakSelf = self;
-    self.readyView.onBreakingFastTapped      = ^{ [weakSelf handleBreakingFastTapped]; };
+    self.readyView.onBreakingFastTapped      = ^{
+        [weakSelf handleBreakingFastTapped];
+    };
     self.readyView.onChangePlanTapped        = ^{ [weakSelf handleSoftChangePlanTapped]; };
     self.readyView.onEditNextFastStartTapped = ^{ [weakSelf handleEditNextFastStartTapped]; };
     self.readyView.onEditNextFastEndTapped   = ^{ [weakSelf handleEditNextFastEndTapped]; };

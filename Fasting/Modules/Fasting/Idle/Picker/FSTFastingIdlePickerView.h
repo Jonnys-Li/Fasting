@@ -11,8 +11,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Plan 首页"未选计划"状态下的内容视图，需嵌入到 VC 的 scrollView contentView 内。
-/// VC 把本视图 edges 约束到 contentView 即可。
+/// Plan 首页"未选计划"状态下的 body 视图，由 FSTFastingIdleRootView 承载
+/// （edges 贴满其 contentView）。
 @interface FSTFastingIdlePickerView : UIView
 
 /// 用户点击任一计划卡时回调。

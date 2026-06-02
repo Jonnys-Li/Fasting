@@ -44,6 +44,7 @@ static const CGFloat kTopBarHeight = 80;
 
 @interface FSTActiveFastingViewController ()
 @property (nonatomic, strong) FSTFastingTopBar *topBar;
+@property (nonatomic, strong) FSTActiveFastingRootView *rootView;
 @property (nonatomic, strong) FSTFastingSegmentControl *segment;
 @property (nonatomic, assign) FSTRingDisplayMode displayMode;
 @property (nonatomic, assign) BOOL initialStartTimePromptDisplayed;
