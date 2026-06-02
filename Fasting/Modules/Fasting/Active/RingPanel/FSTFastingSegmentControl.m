@@ -26,7 +26,7 @@
 
 /// 视觉：左侧 body 图标 + 右侧 fork 图标 + 中央白色滑块（静态，纯展示）。
 - (void)buildSubviews {
-    self.selectorView = [UIView new];
+    self.selectorView = [[UIView alloc] init];
     self.selectorView.backgroundColor = [UIColor whiteColor];
     self.selectorView.layer.cornerRadius = FSTRadiusChip;
     self.selectorView.userInteractionEnabled = NO;

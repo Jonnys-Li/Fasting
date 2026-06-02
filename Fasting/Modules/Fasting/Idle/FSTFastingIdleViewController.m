@@ -53,7 +53,7 @@ static const CGFloat kResetCornerRadius = 19;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.rootView = [FSTFastingIdleRootView new];
+    self.rootView = [[FSTFastingIdleRootView alloc] init];
     [self.view addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -123,7 +123,7 @@ static const CGFloat kResetCornerRadius = 19;
 - (void)installPickerState {
     [self installPickerTopBar];
 
-    self.pickerView = [FSTFastingIdlePickerView new];
+    self.pickerView = [[FSTFastingIdlePickerView alloc] init];
     __weak typeof(self) weakSelf = self;
     self.pickerView.onPlanPicked = ^(FSTPlan *picked) {
         [weakSelf handlePlanTapped:picked];
@@ -136,7 +136,7 @@ static const CGFloat kResetCornerRadius = 19;
 
     UIButton *waterButton = [self makeWaterButton];
 
-    self.topBar = [FSTFastingTopBar new];
+    self.topBar = [[FSTFastingTopBar alloc] init];
     self.topBar.rightButtons  = @[waterButton];
     self.topBar.contentHeight = kTopBarHeightPicker;
     [self.topBar installInViewController:self];
@@ -158,7 +158,7 @@ static const CGFloat kResetCornerRadius = 19;
 - (void)installReadyState {
     [self installReadyTopBar];
 
-    self.readyView = [FSTFastingIdleReadyView new];
+    self.readyView = [[FSTFastingIdleReadyView alloc] init];
     [self bindReadyViewCallbacks];
     self.rootView.bodyView = self.readyView;
 
@@ -173,7 +173,7 @@ static const CGFloat kResetCornerRadius = 19;
     resetButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
     resetButton.contentVerticalAlignment   = UIControlContentVerticalAlignmentCenter;
 
-    NSMutableParagraphStyle *resetParagraphStyle = [NSMutableParagraphStyle new];
+    NSMutableParagraphStyle *resetParagraphStyle = [[NSMutableParagraphStyle alloc] init];
     resetParagraphStyle.alignment         = NSTextAlignmentCenter;
     resetParagraphStyle.minimumLineHeight = 22;
     resetParagraphStyle.maximumLineHeight = 22;
@@ -189,7 +189,7 @@ static const CGFloat kResetCornerRadius = 19;
     UIButton *waterButton = [self makeWaterButton];
     UIButton *bellButton  = [self makeBellButton];
 
-    self.topBar = [FSTFastingTopBar new];
+    self.topBar = [[FSTFastingTopBar alloc] init];
     self.topBar.leftButton    = resetButton;
     self.topBar.rightButtons  = @[waterButton, bellButton];
     self.topBar.contentHeight = kTopBarHeightReady;
@@ -417,7 +417,7 @@ static const CGFloat kResetCornerRadius = 19;
 - (void)handleBreakingFastTapped {
     // 复用 FSTModalDialogViewController（与 ActiveFasting 的 phaseDialog 同款居中卡片），
     // 图标用现成的 breaking_fast_food 资源（FSTBreakingFastCardView 也在用）。
-    FSTModalDialogViewController *dialog = [FSTModalDialogViewController new];
+    FSTModalDialogViewController *dialog = [[FSTModalDialogViewController alloc] init];
     dialog.iconKind     = FSTModalDialogIconKindAssetImage;
     dialog.iconName     = @"breaking_fast_food";
     dialog.titleText    = @"Breaking fast";

@@ -323,6 +323,31 @@ caller 端可读性对比：第一行立即明示种类（`FSTModalDialogIconKin
 
 注：R6 处理的是"并列重复"问题。即便合并后 init 仍参数较多，也是单独决定要不要进一步转 property setter；不要混入本规则。
 
+### R7. 无参 init 统一用 `[[Foo alloc] init]`，禁用 `[Foo new]`
+
+虽然 `[Foo new]` 与 `[[Foo alloc] init]` 在 NSObject 层完全等价，但项目统一用 `[[Foo alloc] init]` 形式：
+
+- **视觉对称**：与有参 init `[[Foo alloc] initWithXxx:...]` 写法一致，不需要在脑内做 `new ≡ alloc/init` 的二次映射
+- **一致性**：多 init 并存时（默认 init + 带身份参 init）扫读不出现风格切换
+
+适用范围：所有 `.m` / `.h`，包括 Modules / Common / Core / FastingTests。
+
+**❌ 不要这么写：**
+
+```objc
+FSTModalDialogViewController *dialog = [FSTModalDialogViewController new];
+self.scrollView = [UIScrollView new];
+```
+
+**✅ 要这么写：**
+
+```objc
+FSTModalDialogViewController *dialog = [[FSTModalDialogViewController alloc] init];
+self.scrollView = [[UIScrollView alloc] init];
+```
+
+带参 init 形式不受影响：`[[FSTPlanConfirmViewController alloc] initWithPlan:plan]` 写法不变。
+
 ---
 
 ## When adding files

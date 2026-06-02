@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 以避开灵动岛/状态栏。三个槽位（left / center / right），right 自右向左排列。
 ///
 /// 使用方式（caller 端）：
-///     bar = [FSTFastingTopBar new];
+///     bar = [[FSTFastingTopBar alloc] init];
 ///     bar.leftButton    = ...;            // 可空
 ///     bar.rightButtons  = @[...];         // 可空，按入参顺序从右向左排列
 ///     bar.centerContent = ...;            // 可空

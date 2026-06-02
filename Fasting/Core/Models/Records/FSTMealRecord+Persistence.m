@@ -14,7 +14,7 @@ static const NSInteger kDefaultTasteLevel   = 1;
 @implementation FSTMealRecord (Persistence)
 
 + (instancetype)fst_recordWithDictionary:(NSDictionary *)dictionary {
-    FSTMealRecord *record = [FSTMealRecord new];
+    FSTMealRecord *record = [[FSTMealRecord alloc] init];
     record.recordID = dictionary[@"recordID"] ?: [[NSUUID UUID] UUIDString];
     NSNumber *dateTimeInterval = dictionary[@"dateTimeInterval"];
     record.date = dateTimeInterval != nil ? [NSDate dateWithTimeIntervalSince1970:dateTimeInterval.doubleValue] : nil;

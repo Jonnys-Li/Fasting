@@ -49,7 +49,7 @@ static const CGFloat kRowHeight = 264;
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
 
-    self.rootView = [FSTFastingHistoryRootView new];
+    self.rootView = [[FSTFastingHistoryRootView alloc] init];
     [self.view addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);

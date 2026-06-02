@@ -27,15 +27,15 @@
 }
 
 - (void)buildSubviews {
-    _stageIconView = [UIImageView new];
+    _stageIconView = [[UIImageView alloc] init];
     _stageIconView.contentMode = UIViewContentModeScaleAspectFit;
     [self addSubview:_stageIconView];
 
-    _levelLabel = [UILabel new];
+    _levelLabel = [[UILabel alloc] init];
     _levelLabel.textAlignment = NSTextAlignmentLeft;
     [self addSubview:_levelLabel];
 
-    _titleLabel = [UILabel new];
+    _titleLabel = [[UILabel alloc] init];
     [self addSubview:_titleLabel];
 
     _chevronIconView = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.right"]];

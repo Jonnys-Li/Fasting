@@ -41,8 +41,8 @@ static const CGFloat kPencilGap  = 6;
 #pragma mark - 视图组装
 
 - (void)setupSubviews {
-    self.leftColumn  = [UIView new];
-    self.rightColumn = [UIView new];
+    self.leftColumn  = [[UIView alloc] init];
+    self.rightColumn = [[UIView alloc] init];
 
     self.startCaptionLabel = [UILabel fst_labelWithText:@"" font:FSTFontRegular(14) color:[UIColor fst_textSecondary]];
     self.startCaptionLabel.adjustsFontSizeToFitWidth = YES;

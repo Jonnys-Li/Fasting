@@ -30,7 +30,7 @@ static const CGFloat kDotSize = 14;
 - (void)buildSubviews {
     UIView *startDotLabel = [self dotLabelWithColor:[UIColor fst_primaryGreen]];
     UIView *endDotLabel = [self dotLabelWithColor:[UIColor fst_redDot]];
-    UIView *connectorLineView = [UIView new];
+    UIView *connectorLineView = [[UIView alloc] init];
     connectorLineView.backgroundColor = [UIColor fst_ringTrack];
 
     UILabel *startTitleLabel = [UILabel fst_labelWithText:@"Start" font:FSTFontBold(18) color:[UIColor fst_textSecondary]];

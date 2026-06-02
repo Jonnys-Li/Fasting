@@ -33,12 +33,12 @@
 }
 
 - (void)installRootView {
-    self.fastingModuleView = [FSTFastingTimelineCardView new];
+    self.fastingModuleView = [[FSTFastingTimelineCardView alloc] init];
     self.fastingModuleView.titleText = @"Fasting";
 
-    self.mealModuleView = [FSTTimelineModuleView new];
+    self.mealModuleView = [[FSTTimelineModuleView alloc] init];
 
-    self.rootView = [FSTTimelineRootView new];
+    self.rootView = [[FSTTimelineRootView alloc] init];
     [self.view addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);

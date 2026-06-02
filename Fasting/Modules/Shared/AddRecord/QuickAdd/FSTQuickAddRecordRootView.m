@@ -52,15 +52,15 @@ static const CGFloat kSubmitRadius = 28;
                                        alignment:NSTextAlignmentCenter];
     [self addSubview:self.titleLabel];
 
-    self.scrollView = [UIScrollView new];
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
     [self addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
-    self.durationRow = [UIView new];
+    self.durationRow = [[UIView alloc] init];
     [self.contentView addSubview:self.durationRow];
 
     self.durationTitle = [UILabel fst_labelWithText:@"Fast duration"

@@ -28,7 +28,7 @@
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Meal/Snack" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 
-    UIStackView *tilesStack = [UIStackView new];
+    UIStackView *tilesStack = [[UIStackView alloc] init];
     tilesStack.axis = UILayoutConstraintAxisHorizontal;
     tilesStack.distribution = UIStackViewDistributionFillEqually;
     tilesStack.spacing = 28;
@@ -54,14 +54,14 @@
 
 /// 单个 emoji + 标题方块。
 - (UIControl *)tileWithEmoji:(NSString *)emoji title:(NSString *)title tag:(NSInteger)tag {
-    UIControl *tile = [UIControl new];
+    UIControl *tile = [[UIControl alloc] init];
     tile.tag = tag;
     tile.layer.cornerRadius = 16;
     tile.layer.borderWidth = 1.3;
     tile.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.35].CGColor;
     [tile addTarget:self action:@selector(handleTileTapped:) forControlEvents:UIControlEventTouchUpInside];
 
-    UIView *iconBox = [UIView new];
+    UIView *iconBox = [[UIView alloc] init];
     iconBox.backgroundColor = [UIColor fst_mealSlotIconBackground];
     iconBox.layer.cornerRadius = FSTRadiusM;
     iconBox.userInteractionEnabled = NO;

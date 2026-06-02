@@ -31,12 +31,12 @@
 #pragma mark - 视图组装
 
 - (void)setupSubviews {
-    self.scrollView = [UIScrollView new];
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
     [self addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
     self.backButton = [UIButton fst_navPlainButtonWithImageNamed:@"nav_back" size:CGSizeMake(34, 34)];
@@ -58,7 +58,7 @@
               forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.startButton];
 
-    self.prepCardView = [FSTPlanPrepCardView new];
+    self.prepCardView = [[FSTPlanPrepCardView alloc] init];
     [self.contentView addSubview:self.prepCardView];
 }
 

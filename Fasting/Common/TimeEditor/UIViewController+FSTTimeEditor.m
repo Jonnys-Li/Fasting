@@ -33,7 +33,7 @@
                              alignMode:(FSTTimeEditorAlignMode)alignMode
                     alignReferenceDate:(nullable NSDate *)alignReferenceDate
                               onCommit:(void (^)(NSDate *pickedDate, BOOL aligned))onCommit {
-    FSTTimeEditorSheetViewController *sheet = [FSTTimeEditorSheetViewController new];
+    FSTTimeEditorSheetViewController *sheet = [[FSTTimeEditorSheetViewController alloc] init];
     sheet.titleText            = title;
     sheet.initialDate          = initialDate ?: [NSDate date];
     sheet.minimumDate          = minimumDate;

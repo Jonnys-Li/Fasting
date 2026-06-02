@@ -6,7 +6,7 @@
 //  由 FSTTimeEditorSheetViewController 创建并放入 cardContainer 内；
 //  VC 负责状态逻辑（align 应用与否、clamp date），本视图只负责 UI 创建与约束。
 //
-//  使用方式：[FSTTimeEditorSheetContentView new]，set titleText / alignChipText 等属性。
+//  使用方式：[[FSTTimeEditorSheetContentView alloc] init]，set titleText / alignChipText 等属性。
 //  alignChipText 为 nil 或空串时不创建 align 芯片，布局更紧凑（picker 更短、顶部留白更小）。
 //
 

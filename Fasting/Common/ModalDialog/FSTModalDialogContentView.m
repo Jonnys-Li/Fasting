@@ -51,13 +51,13 @@ static const CGFloat kBottomInset   = 36.0;
 #pragma mark - 视图组装
 
 - (void)setupSubviews {
-    self.iconBackground = [UIView new];
+    self.iconBackground = [[UIView alloc] init];
     self.iconBackground.backgroundColor = [UIColor fst_dialogIconBackground];
     self.iconBackground.layer.cornerRadius = kIconSize / 2.0;
     self.iconBackground.layer.masksToBounds = YES;
     [self addSubview:self.iconBackground];
 
-    self.iconView = [UIImageView new];
+    self.iconView = [[UIImageView alloc] init];
     self.iconView.contentMode = UIViewContentModeScaleAspectFit;
     [self.iconBackground addSubview:self.iconView];
 
@@ -86,7 +86,7 @@ static const CGFloat kBottomInset   = 36.0;
     self.messageLabel.numberOfLines = 0;
     [self addSubview:self.messageLabel];
 
-    self.buttonStack = [UIStackView new];
+    self.buttonStack = [[UIStackView alloc] init];
     self.buttonStack.axis = UILayoutConstraintAxisHorizontal;
     self.buttonStack.alignment = UIStackViewAlignmentFill;
     self.buttonStack.distribution = UIStackViewDistributionFillEqually;

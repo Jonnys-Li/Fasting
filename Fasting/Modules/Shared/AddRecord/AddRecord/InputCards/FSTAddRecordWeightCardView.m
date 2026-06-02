@@ -43,20 +43,20 @@
                                                               tintColor:nil];
     [editButton addTarget:self action:@selector(emitEditTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    UIView *progressBar = [UIView new];
+    UIView *progressBar = [[UIView alloc] init];
     progressBar.backgroundColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.18];
     progressBar.layer.cornerRadius = 5;
 
     self.initialLabel = [self mutedLabelWithText:@""];
     self.targetLabel = [self mutedLabelWithText:@""];
 
-    UIView *healthRowView = [UIView new];
+    UIView *healthRowView = [[UIView alloc] init];
     healthRowView.backgroundColor = [UIColor fst_inputBackground];
     healthRowView.layer.cornerRadius = FSTRadiusM;
 
     UILabel *healthTitleLabel = [UILabel fst_labelWithText:@"▣  Apple Health" font:FSTFontBold(18) color:[UIColor fst_textPrimary]];
 
-    self.healthSwitch = [UISwitch new];
+    self.healthSwitch = [[UISwitch alloc] init];
     [self.healthSwitch addTarget:self action:@selector(handleHealthSwitchChanged:) forControlEvents:UIControlEventValueChanged];
 
     [self fst_addSubviews:@[titleLabel, todayLabel, self.weightValueLabel, editButton, progressBar,

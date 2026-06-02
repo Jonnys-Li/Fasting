@@ -36,18 +36,18 @@
 }
 
 - (void)testRecordsRepositoryOrdersUpsertsAndDeletesFastingRecords {
-    FSTRecordsRepository *repository = [FSTRecordsRepository new];
+    FSTRecordsRepository *repository = [[FSTRecordsRepository alloc] init];
     [repository setValue:[NSMutableArray array] forKey:@"records"];
     [repository setValue:[NSMutableArray array] forKey:@"mealRecords"];
 
     NSDate *base = [NSDate dateWithTimeIntervalSince1970:2000];
-    FSTFastingRecord *older = [FSTFastingRecord new];
+    FSTFastingRecord *older = [[FSTFastingRecord alloc] init];
     older.recordID = @"older";
     older.startDate = base;
     older.endDate = [base dateByAddingTimeInterval:1000];
     older.fastingHours = 14;
 
-    FSTFastingRecord *newer = [FSTFastingRecord new];
+    FSTFastingRecord *newer = [[FSTFastingRecord alloc] init];
     newer.recordID = @"newer";
     newer.startDate = base;
     newer.endDate = [base dateByAddingTimeInterval:2000];
@@ -68,16 +68,16 @@
 }
 
 - (void)testRecordsRepositoryOrdersUpsertsAndDeletesMealRecords {
-    FSTRecordsRepository *repository = [FSTRecordsRepository new];
+    FSTRecordsRepository *repository = [[FSTRecordsRepository alloc] init];
     [repository setValue:[NSMutableArray array] forKey:@"records"];
     [repository setValue:[NSMutableArray array] forKey:@"mealRecords"];
 
     NSDate *base = [NSDate dateWithTimeIntervalSince1970:3000];
-    FSTMealRecord *breakfast = [FSTMealRecord new];
+    FSTMealRecord *breakfast = [[FSTMealRecord alloc] init];
     breakfast.recordID = @"breakfast";
     breakfast.date = base;
 
-    FSTMealRecord *dinner = [FSTMealRecord new];
+    FSTMealRecord *dinner = [[FSTMealRecord alloc] init];
     dinner.recordID = @"dinner";
     dinner.date = [base dateByAddingTimeInterval:3000];
 
@@ -96,7 +96,7 @@
 }
 
 - (void)testSessionManagerRecordsAndClearsNextStartOverrideAnchor {
-    FSTSessionManager *manager = [FSTSessionManager new];
+    FSTSessionManager *manager = [[FSTSessionManager alloc] init];
     NSDate *beforeSet = [NSDate date];
     NSDate *nextStartDate = [beforeSet dateByAddingTimeInterval:60.0];
 

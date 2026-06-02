@@ -32,7 +32,7 @@
 #pragma mark - Content View
 
 - (void)buildContentView {
-    self.contentView = [FSTModalDialogContentView new];
+    self.contentView = [[FSTModalDialogContentView alloc] init];
     self.contentView.iconSystemName = (self.iconKind == FSTModalDialogIconKindSystemSymbol) ? self.iconName : nil;
     self.contentView.iconImageName  = (self.iconKind == FSTModalDialogIconKindAssetImage)   ? self.iconName : nil;
     self.contentView.titleText      = self.titleText;

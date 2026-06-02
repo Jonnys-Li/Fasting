@@ -13,7 +13,7 @@
     for (FSTPlan *plan in [self defaultDailyPlans]) {
         if ([plan.name isEqualToString:name]) return plan;
     }
-    FSTPlan *plan = [FSTPlan new];
+    FSTPlan *plan = [[FSTPlan alloc] init];
     plan.name                = name;
     plan.fastingHours        = [dictionary[@"fastingHours"]    integerValue];
     plan.eatingHours         = [dictionary[@"eatingHours"]     integerValue];

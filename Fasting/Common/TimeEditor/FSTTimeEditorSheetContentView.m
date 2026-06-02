@@ -58,7 +58,7 @@ static const CGFloat kPickerTopOffsetAligned = 22.0;
     self.titleLabel.minimumScaleFactor = 0.76;
     [self addSubview:self.titleLabel];
 
-    self.datePicker = [UIDatePicker new];
+    self.datePicker = [[UIDatePicker alloc] init];
     self.datePicker.datePickerMode = UIDatePickerModeDateAndTime;
     if (@available(iOS 13.4, *)) {
         self.datePicker.preferredDatePickerStyle = UIDatePickerStyleWheels;
@@ -125,7 +125,7 @@ static const CGFloat kPickerTopOffsetAligned = 22.0;
 }
 
 - (void)installAlignChip {
-    UIControl *control = [UIControl new];
+    UIControl *control = [[UIControl alloc] init];
     control.layer.cornerRadius = FSTRadiusChip;
     [control addTarget:self action:@selector(handleAlignToggled)
       forControlEvents:UIControlEventTouchUpInside];

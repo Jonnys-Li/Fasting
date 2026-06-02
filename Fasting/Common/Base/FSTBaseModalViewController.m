@@ -51,7 +51,7 @@
 
 /// 创建并约束半透明遮罩，铺满全屏并保留背后页面可见。
 - (void)buildBackdrop {
-    self.backdropView = [UIView new];
+    self.backdropView = [[UIView alloc] init];
     UIColor *baseColor = self.backdropColor ?: [UIColor blackColor];
     self.backdropView.backgroundColor = [baseColor colorWithAlphaComponent:self.backdropAlpha];
     [self.view addSubview:self.backdropView];
@@ -65,7 +65,7 @@
 
 /// 创建白色卡片容器，水平边距 28，垂直居中。
 - (void)buildCardContainer {
-    self.cardContainer = [UIView new];
+    self.cardContainer = [[UIView alloc] init];
     self.cardContainer.backgroundColor = [UIColor whiteColor];
     self.cardContainer.layer.cornerRadius = self.containerCornerRadius;
     self.cardContainer.layer.masksToBounds = self.containerClipsToBounds;

@@ -28,7 +28,7 @@
 
 /// 构建：山形背景色块 + 左右两个圆形按钮 + 标题 + 大数字。
 - (void)buildSubviews {
-    UIView *mountainBackground = [UIView new];
+    UIView *mountainBackground = [[UIView alloc] init];
     mountainBackground.backgroundColor = [[UIColor fst_addRecordMountainGreen] colorWithAlphaComponent:0.35];
 
     UIButton *backButton = [self roundButtonWithSymbol:@"arrow.left"];

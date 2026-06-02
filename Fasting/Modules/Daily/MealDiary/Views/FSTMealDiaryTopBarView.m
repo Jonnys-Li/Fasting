@@ -32,7 +32,7 @@
     UIButton *backButton = [UIButton fst_iconButtonWithSystemName:@"arrow.left" size:44];
     [backButton addTarget:self action:@selector(emitBackTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    UIControl *dateChip = [UIControl new];
+    UIControl *dateChip = [[UIControl alloc] init];
     [dateChip addTarget:self action:@selector(emitDateChipTapped) forControlEvents:UIControlEventTouchUpInside];
 
     UILabel *calendarIconLabel = [UILabel fst_labelWithText:@"📅" font:FSTFontRegular(22) color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
@@ -49,7 +49,7 @@
     UIButton *filterButton = [UIButton fst_iconButtonWithSystemName:@"line.3.horizontal.decrease" size:44];
     [filterButton addTarget:self action:@selector(emitFilterTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    UIView *redDotView = [UIView new];
+    UIView *redDotView = [[UIView alloc] init];
     redDotView.backgroundColor = [UIColor fst_redDot];
     redDotView.layer.cornerRadius = 4;
     redDotView.userInteractionEnabled = NO;

@@ -47,11 +47,11 @@ static NSString *const FSTChipDefaultSelected = @"Daily plan";
 }
 
 - (UIScrollView *)buildRowWithTitles:(NSArray<NSString *> *)titles {
-    UIScrollView *scrollView = [UIScrollView new];
+    UIScrollView *scrollView = [[UIScrollView alloc] init];
     scrollView.showsHorizontalScrollIndicator = NO;
     scrollView.contentInset = UIEdgeInsetsMake(0, 22, 0, 22);
 
-    UIStackView *stack = [UIStackView new];
+    UIStackView *stack = [[UIStackView alloc] init];
     stack.axis = UILayoutConstraintAxisHorizontal;
     stack.spacing = 8;
     stack.alignment = UIStackViewAlignmentCenter;

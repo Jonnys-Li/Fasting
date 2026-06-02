@@ -35,12 +35,12 @@ static const CGFloat kBottomPadding = 120;
 }
 
 - (void)setupSubviews {
-    self.scrollView = [UIScrollView new];
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.alwaysBounceVertical = YES;
     [self addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
     self.titleLabel = [UILabel fst_titleLabelWithText:@"Timeline"];

@@ -32,7 +32,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.displayFormatter = [NSDateFormatter new];
+    self.displayFormatter = [[NSDateFormatter alloc] init];
     self.displayFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
     self.displayFormatter.doesRelativeDateFormatting = YES;
     self.displayFormatter.dateStyle = NSDateFormatterMediumStyle;
@@ -48,11 +48,11 @@
 }
 
 - (void)installRootView {
-    self.startRow = [FSTTimeRowView new];
+    self.startRow = [[FSTTimeRowView alloc] init];
     self.startRow.title = @"Fast starts";
     self.startRow.dotColor = [UIColor fst_eatingTimeGreen];
 
-    self.endRow = [FSTTimeRowView new];
+    self.endRow = [[FSTTimeRowView alloc] init];
     self.endRow.title = @"Fast ends";
     self.endRow.dotColor = [UIColor fst_colorWithHex:0xFF7373];
 
@@ -61,7 +61,7 @@
                                                    color:[UIColor blackColor]
                                                alignment:NSTextAlignmentRight];
 
-    self.rootView = [FSTQuickAddRecordRootView new];
+    self.rootView = [[FSTQuickAddRecordRootView alloc] init];
     [self.view addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);

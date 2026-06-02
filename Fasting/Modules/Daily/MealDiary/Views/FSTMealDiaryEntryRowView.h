@@ -5,7 +5,7 @@
 //  MealDiary 一行条目：左侧 timeline dot + 顶/底线，右侧 timeLabel + 卡片
 //  （食物图标 + category chip + diet chip + feeling 图标）。
 //
-//  使用方式：[FSTMealDiaryEntryRowView new]，set 各属性（category/dietType/tasteLevel/dateText
+//  使用方式：[[FSTMealDiaryEntryRowView alloc] init]，set 各属性（category/dietType/tasteLevel/dateText
 //  以及 hidesTopLine/hidesBottomLine），赋值即更新显示。
 //
 

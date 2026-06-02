@@ -40,7 +40,7 @@
     tapGesture.cancelsTouchesInView = NO;
     [self addGestureRecognizer:tapGesture];
 
-    self.datePicker = [UIDatePicker new];
+    self.datePicker = [[UIDatePicker alloc] init];
     self.datePicker.datePickerMode = UIDatePickerModeDateAndTime;
     self.datePicker.date = self.date;
     self.datePicker.clipsToBounds = YES;

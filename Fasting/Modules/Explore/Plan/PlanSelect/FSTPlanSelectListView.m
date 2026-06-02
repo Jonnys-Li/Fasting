@@ -25,7 +25,7 @@ static const CGFloat FSTPlanSelectCellSpacing = 16.0;
         self.backgroundColor = UIColor.clearColor;
         self.contentView.backgroundColor = UIColor.clearColor;
 
-        _planImageView = [UIImageView new];
+        _planImageView = [[UIImageView alloc] init];
         _planImageView.contentMode = UIViewContentModeScaleAspectFit;
         _planImageView.clipsToBounds = YES;
         [self.contentView addSubview:_planImageView];

@@ -38,13 +38,13 @@ static const CGFloat FSTPlanSelectHeaderHeight = 162;  // 8pt 顶部 + 48pt 按�
 }
 
 - (void)buildScrollContainer {
-    self.scrollView = [UIScrollView new];
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     [self.view addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
     [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -55,7 +55,7 @@ static const CGFloat FSTPlanSelectHeaderHeight = 162;  // 8pt 顶部 + 48pt 按�
         make.width.equalTo(self.scrollView);
     }];
 
-    FSTPlanSelectListView *listView = [FSTPlanSelectListView new];
+    FSTPlanSelectListView *listView = [[FSTPlanSelectListView alloc] init];
     __weak typeof(self) weakSelf = self;
     listView.onPlanPicked = ^(FSTPlan *picked) {
         if (weakSelf.onPlanPicked) weakSelf.onPlanPicked(picked);
@@ -81,10 +81,10 @@ static const CGFloat FSTPlanSelectHeaderHeight = 162;  // 8pt 顶部 + 48pt 按�
 
 - (void)buildStickyHeader {
     // 顶部白条要顶到屏幕物理顶部（盖住状态栏背景），里面的控件再用 safeAreaLayoutGuide 避开灵动岛/状态栏。
-    self.headerView = [UIView new];
+    self.headerView = [[UIView alloc] init];
     self.headerView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.headerView];
-    UIView *headerContentView = [UIView new];
+    UIView *headerContentView = [[UIView alloc] init];
       [self.headerView addSubview:headerContentView];
 
     UIButton *closeButton = nil;
@@ -102,7 +102,7 @@ static const CGFloat FSTPlanSelectHeaderHeight = 162;  // 8pt 顶部 + 48pt 按�
     titleLabel.minimumScaleFactor = 0.8;
     [headerContentView addSubview:titleLabel];
 
-    FSTPlanTagChipsBar *chipsBar = [FSTPlanTagChipsBar new];
+    FSTPlanTagChipsBar *chipsBar = [[FSTPlanTagChipsBar alloc] init];
     [headerContentView addSubview:chipsBar];
 
     [self.headerView mas_makeConstraints:^(MASConstraintMaker *make) {

@@ -18,7 +18,7 @@ static NSString *FSTTimelineCardFullTime(NSDate *date) {
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        formatter = [NSDateFormatter new];
+        formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"MMM d, h:mm a";
         formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
     });
@@ -34,7 +34,7 @@ static NSString *FSTTimelineCardEndTime(NSDate *startDate, NSDate *endDate) {
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        formatter = [NSDateFormatter new];
+        formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"hh:mm a";
         formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
     });
@@ -96,7 +96,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     self.titleLabel = [UILabel fst_labelWithText:nil font:FSTFontSubhead() color:[UIColor whiteColor]];
     self.streakImageView = [self originalImageViewNamed:@"tl_streak_bolts" fit:YES];
 
-    self.moreControl = [UIControl new];
+    self.moreControl = [[UIControl alloc] init];
     [self.moreControl addTarget:self action:@selector(handleMoreTapped) forControlEvents:UIControlEventTouchUpInside];
 
     self.chevronImageView = [self originalImageViewNamed:@"tl_chevron" fit:YES];
@@ -109,7 +109,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     self.minutesValueLabel = [self durationValueLabel];
     self.minutesUnitLabel  = [self durationUnitLabelWithText:@"mins"];
 
-    self.ratingContainerView = [UIView new];
+    self.ratingContainerView = [[UIView alloc] init];
     self.ratingContainerView.userInteractionEnabled = NO;
     self.ratingImageView = [self originalImageViewNamed:@"tl_rating_ok" fit:YES];
 

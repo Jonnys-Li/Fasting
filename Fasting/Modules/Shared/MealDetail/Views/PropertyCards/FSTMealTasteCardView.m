@@ -29,7 +29,7 @@
     UILabel *titleLabel = [UILabel fst_labelWithText:@"How was the food?" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 
-    UIStackView *buttonsStack = [UIStackView new];
+    UIStackView *buttonsStack = [[UIStackView alloc] init];
     buttonsStack.axis = UILayoutConstraintAxisHorizontal;
     buttonsStack.distribution = UIStackViewDistributionFillEqually;
     [self addSubview:buttonsStack];
@@ -56,7 +56,7 @@
 }
 
 - (UIControl *)faceButtonWithImageName:(NSString *)imageName title:(NSString *)title tag:(NSInteger)tag {
-    UIControl *button = [UIControl new];
+    UIControl *button = [[UIControl alloc] init];
     button.tag = tag;
     button.layer.cornerRadius = 16;
     button.layer.borderWidth = 1.2;

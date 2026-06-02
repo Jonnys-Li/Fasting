@@ -100,7 +100,7 @@ static FSTMealRecord    *FSTLookupMealRecord(NSString *recordID);
     NSDictionary *userInfo = activity.userInfo;
     if (![userInfo[kKeyVersion] isEqual:@(FSTSceneRestorationSchemaVersion)]) return nil;
 
-    FSTRootTabBarController *tabBar = [FSTRootTabBarController new];
+    FSTRootTabBarController *tabBar = [[FSTRootTabBarController alloc] init];
     // 触发 viewDidLoad，让 RootTabBarController 把 3 个 tab（含 nav controllers）装好。
     (void)tabBar.view;
 
@@ -192,7 +192,7 @@ static UIViewController *FSTViewControllerForRestorationToken(NSDictionary *toke
     if ([type isEqualToString:kTypeActiveFasting]) {
         // 没有进行中的断食时恢复 ActiveFasting 没意义（页面会立刻 redirect 回 Plan）。
         if (![[FSTSessionManager sharedManager] hasActiveFasting]) return nil;
-        return [FSTActiveFastingViewController new];
+        return [[FSTActiveFastingViewController alloc] init];
     }
     if ([type isEqualToString:kTypeAddRecordEdit]) {
         FSTFastingRecord *record = FSTLookupFastingRecord(token[kKeyRecordID]);
@@ -206,13 +206,13 @@ static UIViewController *FSTViewControllerForRestorationToken(NSDictionary *toke
         return [[FSTAddRecordViewController alloc] initWithStartDate:startDate endDate:endDate];
     }
     if ([type isEqualToString:kTypeQuickAddRecord]) {
-        return [FSTQuickAddRecordViewController new];
+        return [[FSTQuickAddRecordViewController alloc] init];
     }
     if ([type isEqualToString:kTypeFastingHistory]) {
-        return [FSTFastingHistoryViewController new];
+        return [[FSTFastingHistoryViewController alloc] init];
     }
     if ([type isEqualToString:kTypeMealDiary]) {
-        return [FSTMealDiaryViewController new];
+        return [[FSTMealDiaryViewController alloc] init];
     }
     if ([type isEqualToString:kTypeMealDetail]) {
         FSTMealRecord *record = FSTLookupMealRecord(token[kKeyRecordID]);
@@ -222,7 +222,7 @@ static UIViewController *FSTViewControllerForRestorationToken(NSDictionary *toke
                                                   returnsToTimelineTab:returnsToTimeline];
     }
     if ([type isEqualToString:kTypeSendFeedback]) {
-        return [FSTSendFeedbackViewController new];
+        return [[FSTSendFeedbackViewController alloc] init];
     }
     if ([type isEqualToString:kTypePlanConfirm]) {
         NSString *planName = token[kKeyPlanName];

@@ -80,15 +80,15 @@ static const CGFloat kTopBarHeight = 80;
 }
 
 - (void)installRootView {
-    self.phaseCard = [FSTFastingPhaseSummaryCard new];
-    self.ringPanel = [FSTFastingRingPanelView new];
-    self.timesRow  = [FSTFastingTimesRow new];
+    self.phaseCard = [[FSTFastingPhaseSummaryCard alloc] init];
+    self.ringPanel = [[FSTFastingRingPanelView alloc] init];
+    self.timesRow  = [[FSTFastingTimesRow alloc] init];
     self.timesRow.startCaption = @"Fast starts";
     self.timesRow.endCaption   = @"Fast ends";
     self.stopButton = [UIButton fst_pillButtonWithTitle:@"END FASTING" style:FSTPillButtonStyleInactive];
-    self.tipsSection = [FSTFastingTipsSectionView new];
+    self.tipsSection = [[FSTFastingTipsSectionView alloc] init];
 
-    self.rootView = [FSTActiveFastingRootView new];
+    self.rootView = [[FSTActiveFastingRootView alloc] init];
     [self.view addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -122,10 +122,10 @@ static const CGFloat kTopBarHeight = 80;
     UIButton *waterButton = [UIButton fst_navCircleButtonWithImageNamed:@"nav_water"
                                                                diameter:kNavButtonDiameter];
 
-    self.segment = [FSTFastingSegmentControl new];
+    self.segment = [[FSTFastingSegmentControl alloc] init];
     self.segment.userInteractionEnabled = NO;
 
-    self.topBar = [FSTFastingTopBar new];
+    self.topBar = [[FSTFastingTopBar alloc] init];
     self.topBar.leftButton    = shareButton;
     self.topBar.rightButtons  = @[waterButton];
     self.topBar.centerContent = self.segment;
@@ -262,7 +262,7 @@ static const CGFloat kTopBarHeight = 80;
 
 - (void)showPhaseDialog {
     if (!self.cachedPhaseDialogIcon) return;  // refresh 尚未发生过的边缘场景
-    FSTModalDialogViewController *dialog = [FSTModalDialogViewController new];
+    FSTModalDialogViewController *dialog = [[FSTModalDialogViewController alloc] init];
     dialog.iconKind     = FSTModalDialogIconKindAssetImage;
     dialog.iconName     = self.cachedPhaseDialogIcon;
     dialog.titleText    = self.cachedPhaseDialogTitle;
@@ -282,7 +282,7 @@ static const CGFloat kTopBarHeight = 80;
     }
 
     __weak typeof(self) weakSelf = self;
-    FSTModalDialogViewController *dialog = [FSTModalDialogViewController new];
+    FSTModalDialogViewController *dialog = [[FSTModalDialogViewController alloc] init];
     dialog.iconKind         = FSTModalDialogIconKindSystemSymbol;
     dialog.iconName         = @"flag.fill";
     dialog.titleText        = @"Stop fasting?";
@@ -393,7 +393,7 @@ static const CGFloat kTopBarHeight = 80;
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
     NSDate *initialDate = sessionManager.activeStartDate ?: [NSDate date];
     __weak typeof(self) weakSelf = self;
-    FSTTimeEditorSheetViewController *sheet = [FSTTimeEditorSheetViewController new];
+    FSTTimeEditorSheetViewController *sheet = [[FSTTimeEditorSheetViewController alloc] init];
     sheet.titleText   = @"When to start fasting?";
     sheet.initialDate = initialDate;
     sheet.alignMode   = FSTTimeEditorAlignModeStartFast;

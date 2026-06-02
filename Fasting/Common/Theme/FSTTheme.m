@@ -50,7 +50,7 @@ NSString *FSTFormatTimeOnly(NSDate *date) {
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        formatter = [NSDateFormatter new];
+        formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"HH:mm";
         formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
     });
@@ -66,7 +66,7 @@ NSString *FSTFormatRecordDateLine(NSDate *date) {
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        formatter = [NSDateFormatter new];
+        formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"MMM d, hh:mm a";
         formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
     });
@@ -81,7 +81,7 @@ NSString *FSTFormatRelativeDay(NSDate *date) {
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        formatter = [NSDateFormatter new];
+        formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"MMM d";
         formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
     });

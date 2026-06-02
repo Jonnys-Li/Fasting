@@ -84,7 +84,7 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
     }
 
     __weak typeof(self) weakSelf = self;
-    self.planChipPillView = [FSTPlanChipPillView new];
+    self.planChipPillView = [[FSTPlanChipPillView alloc] init];
     self.planChipPillView.onTapped = ^{
         if (weakSelf.onChangePlanTapped) weakSelf.onChangePlanTapped();
     };

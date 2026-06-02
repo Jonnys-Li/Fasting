@@ -23,7 +23,7 @@
     static FSTSessionManager *manager;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        manager = [FSTSessionManager new];
+        manager = [[FSTSessionManager alloc] init];
     });
     return manager;
 }

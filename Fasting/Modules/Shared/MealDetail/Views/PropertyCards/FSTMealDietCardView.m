@@ -30,7 +30,7 @@
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Diet Type" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 
-    UIStackView *rowsStack = [UIStackView new];
+    UIStackView *rowsStack = [[UIStackView alloc] init];
     rowsStack.axis = UILayoutConstraintAxisVertical;
     rowsStack.spacing = 12;
     [self addSubview:rowsStack];
@@ -62,7 +62,7 @@
 }
 
 - (UIControl *)rowWithIcon:(NSString *)icon title:(NSString *)title subtitle:(NSString *)subtitle tag:(NSInteger)tag {
-    UIControl *row = [UIControl new];
+    UIControl *row = [[UIControl alloc] init];
     row.tag = tag;
     row.backgroundColor = [UIColor fst_inputBackground];
     row.layer.cornerRadius = FSTRadiusM;

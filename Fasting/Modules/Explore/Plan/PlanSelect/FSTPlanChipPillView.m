@@ -23,7 +23,7 @@
         self.clipsToBounds = YES;
         [self buildSubviews];
 
-        UIControl *tapControl = [UIControl new];
+        UIControl *tapControl = [[UIControl alloc] init];
         [tapControl addTarget:self action:@selector(handleTap) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:tapControl];
         [tapControl mas_makeConstraints:^(MASConstraintMaker *make) {

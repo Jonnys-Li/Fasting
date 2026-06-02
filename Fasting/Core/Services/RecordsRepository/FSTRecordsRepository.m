@@ -21,7 +21,7 @@ static NSString * const FSTMealRecordsKey = @"kFSTMealRecords";
     static FSTRecordsRepository *repository;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        repository = [FSTRecordsRepository new];
+        repository = [[FSTRecordsRepository alloc] init];
     });
     return repository;
 }

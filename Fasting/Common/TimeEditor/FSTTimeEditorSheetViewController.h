@@ -9,7 +9,7 @@
 //  [self fst_presentTimeEditorWithTitle:...] —— 该 Category 负责构造本 VC 并 present。
 //
 //  使用方式（按 R3：UIVC 配置走 property setter）：
-//     sheet = [FSTTimeEditorSheetViewController new];
+//     sheet = [[FSTTimeEditorSheetViewController alloc] init];
 //     sheet.titleText            = @"...";
 //     sheet.initialDate          = ...;
 //     sheet.alignChipText        = @"Align with 14-10";  // 可不设

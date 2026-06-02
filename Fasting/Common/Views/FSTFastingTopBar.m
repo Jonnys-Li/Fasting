@@ -30,7 +30,7 @@ static const CGFloat kButtonSpacing        = 12;
 }
 
 - (void)setupSubviews {
-    self.contentContainer = [UIView new];
+    self.contentContainer = [[UIView alloc] init];
     [self addSubview:self.contentContainer];
 }
 

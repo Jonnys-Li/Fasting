@@ -39,10 +39,10 @@ static const CGFloat kDotSize = 12;
                                        borderWidth:3
                                            bgColor:nil];
 
-    self.topLineView = [UIView new];
+    self.topLineView = [[UIView alloc] init];
     self.topLineView.backgroundColor = [UIColor fst_mealDiaryCardBorder];
 
-    self.bottomLineView = [UIView new];
+    self.bottomLineView = [[UIView alloc] init];
     self.bottomLineView.backgroundColor = [UIColor fst_mealDiaryCardBorder];
 
     self.timeLabel = [UILabel fst_labelWithText:@"" font:FSTFontBody() color:[UIColor fst_textSecondary]];
@@ -53,7 +53,7 @@ static const CGFloat kDotSize = 12;
     [self.editButton addTarget:self action:@selector(emitEditTapped)
               forControlEvents:UIControlEventTouchUpInside];
 
-    self.cardView = [UIControl new];
+    self.cardView = [[UIControl alloc] init];
     self.cardView.backgroundColor = [UIColor fst_mealDiaryCardBackground];
     self.cardView.layer.cornerRadius = FSTRadiusCard;
     self.cardView.layer.borderWidth = 1.0;
@@ -72,7 +72,7 @@ static const CGFloat kDotSize = 12;
     self.categoryChipLabel = [self pillLabelWithText:@"Meal"];
     self.dietChipLabel     = [self pillLabelWithText:@"Not sure"];
 
-    self.feelingImageView = [UIImageView new];
+    self.feelingImageView = [[UIImageView alloc] init];
     self.feelingImageView.contentMode = UIViewContentModeScaleAspectFit;
 
     [self fst_addSubviews:@[self.topLineView, self.bottomLineView, self.dotView,

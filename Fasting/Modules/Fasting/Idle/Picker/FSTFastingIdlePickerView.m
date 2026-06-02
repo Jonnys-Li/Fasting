@@ -45,7 +45,7 @@ static const CGFloat kListAspectOffset      = 48.0;
                                            alignment:NSTextAlignmentCenter];
     [self addSubview:self.subtitleLabel];
 
-    self.listView = [FSTPlanSelectListView new];
+    self.listView = [[FSTPlanSelectListView alloc] init];
     __weak typeof(self) weakSelf = self;
     self.listView.onPlanPicked = ^(FSTPlan *picked) {
         if (weakSelf.onPlanPicked) weakSelf.onPlanPicked(picked);

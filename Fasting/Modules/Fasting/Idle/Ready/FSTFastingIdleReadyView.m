@@ -70,17 +70,17 @@ static const CGFloat kBottomPadding = 118;
 
     self.eatingTitleLabel = [UILabel fst_labelWithText:@"Eating Time" font:FSTFontAvenirBold(22) color:[UIColor fst_textHeading] alignment:NSTextAlignmentCenter];
 
-    self.breakingFastCardView = [FSTBreakingFastCardView new];
+    self.breakingFastCardView = [[FSTBreakingFastCardView alloc] init];
     self.breakingFastCardView.onTapped = ^{
         if (weakSelf.onBreakingFastTapped) weakSelf.onBreakingFastTapped();
     };
 
-    self.readyRingView = [FSTFastingIdleReadyRingView new];
+    self.readyRingView = [[FSTFastingIdleReadyRingView alloc] init];
     self.readyRingView.onChangePlanTapped = ^{
         if (weakSelf.onChangePlanTapped) weakSelf.onChangePlanTapped();
     };
 
-    self.nextFastTimesRow = [FSTFastingTimesRow new];
+    self.nextFastTimesRow = [[FSTFastingTimesRow alloc] init];
     self.nextFastTimesRow.startCaption = @"Next fast starts";
     self.nextFastTimesRow.endCaption   = @"Next fast ends";
     self.nextFastTimesRow.onEditStartTapped = ^{

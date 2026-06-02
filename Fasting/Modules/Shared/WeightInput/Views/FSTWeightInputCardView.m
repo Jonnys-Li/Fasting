@@ -52,7 +52,7 @@
     UIView *underlineView = [UIView fst_separatorLineWithColor:[UIColor fst_separator]];
     UIControl *valueTapControl = [self buildValueTapZone];
 
-    self.unitToggleView = [FSTWeightUnitToggleView new];
+    self.unitToggleView = [[FSTWeightUnitToggleView alloc] init];
     self.unitToggleView.unit = self.initialUnit;
     __weak typeof(self) weakSelf = self;
     self.unitToggleView.onUnitChanged = ^(FSTWeightUnit unit) {
@@ -140,7 +140,7 @@
 
 /// 半透明绿色盒子，内含放大数字和单位后缀
 - (UIView *)buildValueBox {
-    UIView *valueBoxView = [UIView new];
+    UIView *valueBoxView = [[UIView alloc] init];
     [valueBoxView fst_applyTintedBoxWithColor:[UIColor fst_primaryGreen] alpha:0.22 radius:8];
     self.valueLabel = [UILabel fst_labelWithText:nil
                                             font:[UIFont monospacedDigitSystemFontOfSize:54 weight:UIFontWeightBold]
@@ -152,7 +152,7 @@
 
 /// 盒子四角的小绿点装饰
 - (UIView *)decoratorDot {
-    UIView *dotView = [UIView new];
+    UIView *dotView = [[UIView alloc] init];
     dotView.backgroundColor = [UIColor fst_primaryGreen];
     dotView.layer.cornerRadius = 6;
     return dotView;
@@ -160,11 +160,11 @@
 
 /// 透明点击区 + 隐藏文本框：点击数字呼出键盘
 - (UIControl *)buildValueTapZone {
-    UIControl *valueTapControl = [UIControl new];
+    UIControl *valueTapControl = [[UIControl alloc] init];
     valueTapControl.backgroundColor = [UIColor clearColor];
     [valueTapControl addTarget:self action:@selector(handleValueTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    self.hiddenTextField = [UITextField new];
+    self.hiddenTextField = [[UITextField alloc] init];
     self.hiddenTextField.keyboardType = UIKeyboardTypeDecimalPad;
     self.hiddenTextField.alpha = 0.0;
     self.hiddenTextField.delegate = self;

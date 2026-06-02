@@ -50,7 +50,7 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 
 - (instancetype)initWithMealRecord:(FSTMealRecord *)record returnsToTimelineTab:(BOOL)returnsToTimelineTab {
     if ((self = [super init])) {
-        _mealRecord = [record copy] ?: [FSTMealRecord new];
+        _mealRecord = [record copy] ?: [[FSTMealRecord alloc] init];
         _imagePath = record.imagePath ?: @"";
         _returnsToTimelineTab = returnsToTimelineTab;
         self.hidesBottomBarWhenPushed = YES;
@@ -66,13 +66,13 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 }
 
 - (void)installRootView {
-    self.timeCardView   = [FSTMealTimeCardView new];
-    self.slotCardView   = [FSTMealSlotCardView new];
-    self.dietCardView   = [FSTMealDietCardView new];
-    self.tasteCardView  = [FSTMealTasteCardView new];
-    self.detailCardView = [FSTMealDetailContentCardView new];
+    self.timeCardView   = [[FSTMealTimeCardView alloc] init];
+    self.slotCardView   = [[FSTMealSlotCardView alloc] init];
+    self.dietCardView   = [[FSTMealDietCardView alloc] init];
+    self.tasteCardView  = [[FSTMealTasteCardView alloc] init];
+    self.detailCardView = [[FSTMealDetailContentCardView alloc] init];
 
-    self.rootView = [FSTMealDetailRootView new];
+    self.rootView = [[FSTMealDetailRootView alloc] init];
     [self.view addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -110,7 +110,7 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 
 - (void)handleImageTapped {
     if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) return;
-    UIImagePickerController *picker = [UIImagePickerController new];
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     picker.delegate = self;
     [self presentViewController:picker animated:YES completion:nil];
@@ -133,7 +133,7 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 #pragma mark - 保存
 
 - (void)handleMealSaveTapped {
-    FSTMealRecord *record = self.mealRecord ?: [FSTMealRecord new];
+    FSTMealRecord *record = self.mealRecord ?: [[FSTMealRecord alloc] init];
     record.recordID = record.recordID.length ? record.recordID : [[NSUUID UUID] UUIDString];
     record.date              = self.timeCardView.date;
     record.mealCategory      = self.slotCardView.mealCategory;

@@ -47,12 +47,12 @@ static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
 #pragma mark - 视图组装
 
 - (void)setupSubviews {
-    self.scrollView = [UIScrollView new];
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
     [self addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
     self.headlineLabel = [UILabel fst_labelWithText:@"You're fasting!"
@@ -139,7 +139,7 @@ static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
 #pragma mark - Send feedback
 
 - (UIView *)buildFeedbackRow {
-    UIView *row = [UIView new];
+    UIView *row = [[UIView alloc] init];
     row.backgroundColor = [UIColor whiteColor];
     row.layer.cornerRadius = FSTRadiusL;
 

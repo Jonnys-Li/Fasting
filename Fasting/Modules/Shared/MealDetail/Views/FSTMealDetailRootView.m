@@ -64,16 +64,16 @@ static const CGFloat kSaveButtonRadius  = 30;
                                        alignment:NSTextAlignmentCenter];
     [self addSubview:self.titleLabel];
 
-    self.scrollView = [UIScrollView new];
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     [self addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
-    self.cardStack = [FSTVerticalCardStackView new];
+    self.cardStack = [[FSTVerticalCardStackView alloc] init];
     self.cardStack.cardSpacing   = kCardSpacing;
     self.cardStack.contentInsets = UIEdgeInsetsMake(0,
                                                     kCardSideInset,
@@ -81,7 +81,7 @@ static const CGFloat kSaveButtonRadius  = 30;
                                                     kCardSideInset);
     [self.contentView addSubview:self.cardStack];
 
-    self.bottomBar = [UIView new];
+    self.bottomBar = [[UIView alloc] init];
     self.bottomBar.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.92];
     [self addSubview:self.bottomBar];
 

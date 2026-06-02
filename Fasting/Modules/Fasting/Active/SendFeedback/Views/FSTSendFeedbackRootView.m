@@ -70,18 +70,18 @@ static const CGFloat kSubmitRadius = 28;
 }
 
 - (void)buildScrollAndContent {
-    self.scrollView = [UIScrollView new];
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     [self addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
     self.envelopeLabel = [UILabel fst_labelWithText:@"\U0001F4E9" font:FSTFontRegular(60) color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
     self.titleLabel    = [UILabel fst_labelWithText:@"How can we help you?" font:FSTFontTitle() color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
-    self.chipContainer = [UIView new];
+    self.chipContainer = [[UIView alloc] init];
     self.moreLabel     = [UILabel fst_labelWithText:@"Tell us more (optional)" font:FSTFontBold(18) color:[UIColor blackColor]];
 
     self.textViewContainer = [UIView fst_containerWithBackground:[UIColor fst_inputBackground] radius:16];
@@ -94,7 +94,7 @@ static const CGFloat kSubmitRadius = 28;
     [self.addPictureButton setImage:[UIImage fst_originalImageNamed:@"feedback_add_picture"] forState:UIControlStateNormal];
     [self.addPictureButton addTarget:self action:@selector(handleAddPictureTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    self.pickedImageView = [UIImageView new];
+    self.pickedImageView = [[UIImageView alloc] init];
     self.pickedImageView.contentMode = UIViewContentModeScaleAspectFill;
     self.pickedImageView.layer.cornerRadius = FSTRadiusS;
     self.pickedImageView.layer.masksToBounds = YES;
@@ -118,7 +118,7 @@ static const CGFloat kSubmitRadius = 28;
 - (void)buildChipsInContainer:(UIView *)container {
     UIView *previousRow = nil;
     for (NSInteger row = 0; row < 3; row++) {
-        UIView *rowView = [UIView new];
+        UIView *rowView = [[UIView alloc] init];
         [container addSubview:rowView];
 
         NSInteger leftIdx = row * 2;
@@ -146,7 +146,7 @@ static const CGFloat kSubmitRadius = 28;
 }
 
 - (UIView *)buildChipWithTitle:(NSString *)title index:(NSInteger)index {
-    UIControl *chip = [UIControl new];
+    UIControl *chip = [[UIControl alloc] init];
     chip.backgroundColor = [UIColor fst_chipBackground];
     chip.layer.cornerRadius = kChipRadius;
     chip.layer.borderWidth = 1.5;

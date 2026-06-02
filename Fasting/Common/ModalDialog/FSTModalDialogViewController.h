@@ -9,7 +9,7 @@
 //    用户点按钮触发回调，弹窗会自动 dismiss。
 //
 //  使用方式（按 R3：UIVC 配置走 property setter）：
-//     dialog = [FSTModalDialogViewController new];
+//     dialog = [[FSTModalDialogViewController alloc] init];
 //     dialog.iconKind     = FSTModalDialogIconKindAssetImage;
 //     dialog.iconName     = @"breaking_fast_food";
 //     dialog.titleText    = @"Breaking fast";

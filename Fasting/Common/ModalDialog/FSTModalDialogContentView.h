@@ -6,7 +6,7 @@
 //  由 FSTModalDialogViewController 创建并放入 cardContainer 内；
 //  VC 负责 dismiss 与回调分发，本视图只负责 UI 创建与约束。
 //
-//  使用方式：[FSTModalDialogContentView new]，然后 set 各文案/图标属性。
+//  使用方式：[[FSTModalDialogContentView alloc] init]，然后 set 各文案/图标属性。
 //  iconSystemName 与 iconImageName 互斥：imageName 优先，两个都没有则不显示图标。
 //  secondaryTitle 为空时次按钮自动隐藏。
 //

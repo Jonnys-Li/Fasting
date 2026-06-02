@@ -27,7 +27,7 @@
 }
 
 + (instancetype)fst_labelWithText:(NSString *)text font:(UIFont *)font color:(UIColor *)color {
-    UILabel *label = [UILabel new];
+    UILabel *label = [[UILabel alloc] init];
     label.text = text;
     label.font = font;
     label.textColor = color;

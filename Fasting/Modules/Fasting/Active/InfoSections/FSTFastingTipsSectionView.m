@@ -86,7 +86,7 @@ static NSString * const FSTFastingTipsExpandedText =
 #pragma mark - Section header
 
 - (UIView *)buildSectionHeader {
-    UIView *header = [UIView new];
+    UIView *header = [[UIView alloc] init];
 
     UIImageView *smiley = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_section_smiley"]];
     smiley.contentMode = UIViewContentModeScaleAspectFit;
@@ -119,11 +119,11 @@ static NSString * const FSTFastingTipsExpandedText =
     UIImageView *bg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_lemon_bg"]];
     bg.contentMode = UIViewContentModeScaleAspectFit;
 
-    UILabel *title = [UILabel new];
+    UILabel *title = [[UILabel alloc] init];
     title.attributedText = [self cellTitleAttributedString:@"Can I drink lemon water?"];
     title.numberOfLines = 1;
 
-    UILabel *body = [UILabel new];
+    UILabel *body = [[UILabel alloc] init];
     body.numberOfLines = 0;
     body.attributedText = [self lemonBodyAttributedString:
         @"Yes, you can. Lemon is rich in vitamin C. A glass of lemon water just contains about 6 calories.\n\n"
@@ -167,20 +167,20 @@ static NSString * const FSTFastingTipsExpandedText =
 #pragma mark - Stage card
 
 - (UIView *)buildStageCard {
-    UIView *card = [UIView new];
+    UIView *card = [[UIView alloc] init];
     card.layer.cornerRadius = FSTRadiusCard;
     card.layer.masksToBounds = YES;
     _stageCard = card;
 
-    UIImageView *bg = [UIImageView new];
+    UIImageView *bg = [[UIImageView alloc] init];
     bg.contentMode = UIViewContentModeScaleAspectFit;
     _stageBgIcon = bg;
 
-    UILabel *title = [UILabel new];
+    UILabel *title = [[UILabel alloc] init];
     title.numberOfLines = 1;
     _stageTitleLabel = title;
 
-    UILabel *body = [UILabel new];
+    UILabel *body = [[UILabel alloc] init];
     body.numberOfLines = 0;
     _stageBodyLabel = body;
 
@@ -216,7 +216,7 @@ static NSString * const FSTFastingTipsExpandedText =
     UIImageView *bg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_question_bg"]];
     bg.contentMode = UIViewContentModeScaleAspectFit;
 
-    UILabel *title = [UILabel new];
+    UILabel *title = [[UILabel alloc] init];
     title.attributedText = [self cellTitleAttributedString:@"Fasting tips"];
 
     UIImageView *chevron = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_chevron"]];
@@ -224,7 +224,7 @@ static NSString * const FSTFastingTipsExpandedText =
     chevron.transform = CGAffineTransformMakeRotation(M_PI);  // 折叠态默认朝下
     _qaChevron = chevron;
 
-    UILabel *body = [UILabel new];
+    UILabel *body = [[UILabel alloc] init];
     body.numberOfLines = 0;
     body.attributedText = [self bodyAttributedString:FSTFastingTipsPreviewText];
     _qaBodyLabel = body;
@@ -302,7 +302,7 @@ static NSString * const FSTFastingTipsExpandedText =
 #pragma mark - Helpers
 
 - (NSAttributedString *)cellTitleAttributedString:(NSString *)text {
-    NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
+    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
     style.lineHeightMultiple = 1.1;
     return [[NSAttributedString alloc] initWithString:text
                                            attributes:@{NSFontAttributeName: FSTFontAvenirDemiBold(20),
@@ -319,7 +319,7 @@ static NSString * const FSTFastingTipsExpandedText =
 }
 
 - (NSAttributedString *)bodyAttributedStringWithText:(NSString *)text font:(UIFont *)font lineSpacing:(CGFloat)lineSpacing {
-    NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
+    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
     style.lineSpacing = lineSpacing;
     return [[NSAttributedString alloc] initWithString:text
                                            attributes:@{NSFontAttributeName: font,

@@ -30,7 +30,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.inputCardView = [FSTWeightInputCardView new];
+    self.inputCardView = [[FSTWeightInputCardView alloc] init];
     self.inputCardView.initialUnit = [FSTSessionManager sharedManager].preferredWeightUnit;
     self.inputCardView.weightKg = self.weightKg;
     __weak typeof(self) weakSelf = self;

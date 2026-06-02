@@ -81,13 +81,13 @@
 }
 
 - (void)installRootView {
-    self.headerView      = [FSTAddRecordHeaderView new];
-    self.timeCardView    = [FSTAddRecordTimeCardView new];
-    self.weightCardView  = [FSTAddRecordWeightCardView new];
-    self.feelingCardView = [FSTAddRecordFeelingCardView new];
-    self.noteCardView    = [FSTAddRecordNoteCardView new];
+    self.headerView      = [[FSTAddRecordHeaderView alloc] init];
+    self.timeCardView    = [[FSTAddRecordTimeCardView alloc] init];
+    self.weightCardView  = [[FSTAddRecordWeightCardView alloc] init];
+    self.feelingCardView = [[FSTAddRecordFeelingCardView alloc] init];
+    self.noteCardView    = [[FSTAddRecordNoteCardView alloc] init];
 
-    self.rootView = [FSTAddRecordRootView new];
+    self.rootView = [[FSTAddRecordRootView alloc] init];
     [self.view addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);

@@ -27,7 +27,7 @@ static NSString * const kPlaceholder = @"Anything you share helps us make fastin
 }
 
 - (void)installRootView {
-    self.textView = [UITextView new];
+    self.textView = [[UITextView alloc] init];
     self.textView.backgroundColor = [UIColor clearColor];
     self.textView.font = FSTFontRegular(16);
     self.textView.textColor = [UIColor blackColor];
@@ -40,7 +40,7 @@ static NSString * const kPlaceholder = @"Anything you share helps us make fastin
                                              alignment:NSTextAlignmentLeft
                                          numberOfLines:0];
 
-    self.rootView = [FSTSendFeedbackRootView new];
+    self.rootView = [[FSTSendFeedbackRootView alloc] init];
     [self.view addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);

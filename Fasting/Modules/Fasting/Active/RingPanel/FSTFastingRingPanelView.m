@@ -124,7 +124,7 @@ static const CGFloat kFlameSize           = 52;  // 与 @3x 源图 1x 原生尺�
     self.percentLabel      = [UILabel fst_centerLabelWithFont:FSTFontRegular(18)
                                                         color:[UIColor fst_textSecondary]];
 
-    self.planChipView = [FSTPlanChipPillView new];
+    self.planChipView = [[FSTPlanChipPillView alloc] init];
     __weak typeof(self) weakSelf = self;
     self.planChipView.onTapped = ^{
         if (weakSelf.onPlanChipTapped) weakSelf.onPlanChipTapped();

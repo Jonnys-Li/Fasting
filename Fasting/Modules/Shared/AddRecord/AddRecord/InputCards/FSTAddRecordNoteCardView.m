@@ -26,7 +26,7 @@
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Notes" font:FSTFontSubhead() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 
-    self.textView = [UITextView new];
+    self.textView = [[UITextView alloc] init];
     self.textView.font = FSTFontRegular(17);
     self.textView.textColor = [UIColor fst_textPrimary];
     self.textView.backgroundColor = [UIColor fst_inputBackground];

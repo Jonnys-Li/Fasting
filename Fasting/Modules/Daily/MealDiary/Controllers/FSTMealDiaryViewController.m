@@ -45,13 +45,13 @@
 }
 
 - (void)installRootView {
-    self.topBarView = [FSTMealDiaryTopBarView new];
+    self.topBarView = [[FSTMealDiaryTopBarView alloc] init];
 
-    self.timelineStack = [UIStackView new];
+    self.timelineStack = [[UIStackView alloc] init];
     self.timelineStack.axis = UILayoutConstraintAxisVertical;
     self.timelineStack.spacing = 0;
 
-    self.rootView = [FSTMealDiaryRootView new];
+    self.rootView = [[FSTMealDiaryRootView alloc] init];
     [self.view addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -119,7 +119,7 @@
     __weak typeof(self) weakSelf = self;
     for (NSUInteger i = 0; i < self.dayRecords.count; i++) {
         FSTMealRecord *record = self.dayRecords[i];
-        FSTMealDiaryEntryRowView *rowView = [FSTMealDiaryEntryRowView new];
+        FSTMealDiaryEntryRowView *rowView = [[FSTMealDiaryEntryRowView alloc] init];
         rowView.category   = record.mealCategory ?: @"Meal";
         rowView.dietType   = record.dietType ?: @"Not sure";
         rowView.tasteLevel = record.tasteLevel;

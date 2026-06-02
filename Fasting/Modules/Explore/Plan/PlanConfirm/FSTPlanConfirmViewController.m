@@ -44,9 +44,9 @@
                                             font:FSTFontBold(34)
                                            color:[UIColor fst_textPrimary]
                                        alignment:NSTextAlignmentCenter];
-    self.timelineView = [FSTPlanConfirmTimelineView new];
+    self.timelineView = [[FSTPlanConfirmTimelineView alloc] init];
 
-    self.rootView = [FSTPlanConfirmRootView new];
+    self.rootView = [[FSTPlanConfirmRootView alloc] init];
     [self.view addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -122,7 +122,7 @@
         return;
     }
 
-    FSTActiveFastingViewController *activeFastingViewController = [FSTActiveFastingViewController new];
+    FSTActiveFastingViewController *activeFastingViewController = [[FSTActiveFastingViewController alloc] init];
     [self.navigationController pushViewController:activeFastingViewController animated:YES];
 }
 

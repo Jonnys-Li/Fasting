@@ -44,15 +44,15 @@ static const CGFloat kButtonTopInset     = 16;
 #pragma mark - 视图组装
 
 - (void)setupSubviews {
-    self.scrollView = [UIScrollView new];
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
     [self addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
-    self.cardStack = [FSTVerticalCardStackView new];
+    self.cardStack = [[FSTVerticalCardStackView alloc] init];
     self.cardStack.cardSpacing   = kCardSpacing;
     self.cardStack.contentInsets = UIEdgeInsetsMake(0,
                                                     kCardSideInset,
@@ -60,7 +60,7 @@ static const CGFloat kButtonTopInset     = 16;
                                                     kCardSideInset);
     [self.contentView addSubview:self.cardStack];
 
-    self.bottomBar = [UIView new];
+    self.bottomBar = [[UIView alloc] init];
     self.bottomBar.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.96];
     [self addSubview:self.bottomBar];
 

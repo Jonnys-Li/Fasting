@@ -13,7 +13,7 @@ static const NSInteger kDefaultFeelingLevel = 1;
 @implementation FSTFastingRecord (Persistence)
 
 + (instancetype)fst_recordWithDictionary:(NSDictionary *)dictionary {
-    FSTFastingRecord *record = [FSTFastingRecord new];
+    FSTFastingRecord *record = [[FSTFastingRecord alloc] init];
     record.recordID     = dictionary[@"recordID"] ?: [[NSUUID UUID] UUIDString];
     record.planName     = dictionary[@"planName"] ?: @"";
     record.fastingHours = [dictionary[@"fastingHours"] integerValue];

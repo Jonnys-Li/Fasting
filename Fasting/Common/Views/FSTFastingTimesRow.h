@@ -8,7 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 通用"两列时间行"：左 Start / 右 Ends，每列 caption 在上、time + pencil 在下。
-/// 使用方式：[FSTFastingTimesRow new]，先 set startCaption/endCaption（其它属性可选），
+/// 使用方式：[[FSTFastingTimesRow alloc] init]，先 set startCaption/endCaption（其它属性可选），
 /// 然后再 set startText/endText 显示时间。pencil 默认可见，editable=NO 可隐藏。
 @interface FSTFastingTimesRow : UIView
 

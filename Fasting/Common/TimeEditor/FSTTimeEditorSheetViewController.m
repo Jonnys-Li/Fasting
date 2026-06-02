@@ -43,7 +43,7 @@ static const CGFloat kCornerRadius = 22.0;
 #pragma mark - Content View
 
 - (void)buildContentView {
-    self.contentView = [FSTTimeEditorSheetContentView new];
+    self.contentView = [[FSTTimeEditorSheetContentView alloc] init];
     self.contentView.titleText     = self.titleText;
     self.contentView.alignChipText = self.alignChipText;
     [self.cardContainer addSubview:self.contentView];

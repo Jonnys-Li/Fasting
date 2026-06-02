@@ -35,9 +35,9 @@ static const CGFloat kPickerRadius = 16;
 #pragma mark - 视图组装
 
 - (void)buildSubviews {
-    UIView *headerRow = [UIView new];
+    UIView *headerRow = [[UIView alloc] init];
 
-    self.dot = [UIView new];
+    self.dot = [[UIView alloc] init];
     self.dot.layer.cornerRadius = kDotSize / 2.0;
 
     self.titleLabel = [UILabel fst_labelWithText:nil font:FSTFontMedium(16) color:[UIColor blackColor]];
@@ -48,7 +48,7 @@ static const CGFloat kPickerRadius = 16;
 
     [headerRow fst_addSubviews:@[self.dot, self.titleLabel, self.dateLabel, pencil]];
 
-    self.picker = [UIDatePicker new];
+    self.picker = [[UIDatePicker alloc] init];
     self.picker.datePickerMode = UIDatePickerModeDateAndTime;
     self.picker.preferredDatePickerStyle = UIDatePickerStyleWheels;
     self.picker.backgroundColor = [UIColor fst_inputBackground];

@@ -25,12 +25,12 @@
 #pragma mark - 视图组装
 
 - (void)setupSubviews {
-    self.scrollView = [UIScrollView new];
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
     [self addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
     self.confirmButton = [UIButton fst_pillButtonWithTitle:@"Confirm" style:FSTPillButtonStyleYellow];
