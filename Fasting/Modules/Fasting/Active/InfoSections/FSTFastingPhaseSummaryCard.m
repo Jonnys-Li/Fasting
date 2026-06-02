@@ -27,38 +27,38 @@
 }
 
 - (void)buildSubviews {
-    _stageIconView = [[UIImageView alloc] init];
-    _stageIconView.contentMode = UIViewContentModeScaleAspectFit;
-    [self addSubview:_stageIconView];
+    self.stageIconView = [[UIImageView alloc] init];
+    self.stageIconView.contentMode = UIViewContentModeScaleAspectFit;
+    [self addSubview:self.stageIconView];
 
-    _levelLabel = [[UILabel alloc] init];
-    _levelLabel.textAlignment = NSTextAlignmentLeft;
-    [self addSubview:_levelLabel];
+    self.levelLabel = [[UILabel alloc] init];
+    self.levelLabel.textAlignment = NSTextAlignmentLeft;
+    [self addSubview:self.levelLabel];
 
-    _titleLabel = [[UILabel alloc] init];
-    [self addSubview:_titleLabel];
+    self.titleLabel = [[UILabel alloc] init];
+    [self addSubview:self.titleLabel];
 
-    _chevronIconView = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.right"]];
-    _chevronIconView.tintColor = [UIColor fst_eatingTimeGreen];
-    _chevronIconView.contentMode = UIViewContentModeScaleAspectFit;
-    [self addSubview:_chevronIconView];
+    self.chevronIconView = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.right"]];
+    self.chevronIconView.tintColor = [UIColor fst_eatingTimeGreen];
+    self.chevronIconView.contentMode = UIViewContentModeScaleAspectFit;
+    [self addSubview:self.chevronIconView];
 
-    [_stageIconView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.stageIconView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self).offset(10);
         make.centerY.equalTo(self);
         make.size.mas_equalTo(CGSizeMake(36, 36));
     }];
-    [_titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.stageIconView.mas_right).offset(12);
         make.top.equalTo(self).offset(10);
         make.right.lessThanOrEqualTo(self.chevronIconView.mas_left).offset(-8);
     }];
-    [_levelLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.levelLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.titleLabel);
         make.top.equalTo(self.titleLabel.mas_bottom).offset(3);
         make.right.lessThanOrEqualTo(self.chevronIconView.mas_left).offset(-8);
     }];
-    [_chevronIconView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.chevronIconView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self).offset(-13);
         make.centerY.equalTo(self);
         make.size.mas_equalTo(CGSizeMake(14, 20));

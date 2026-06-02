@@ -28,14 +28,14 @@
 }
 
 - (void)configureDefaults {
-    _dismissOnBackdropTap = YES;
-    _containerStyle = FSTBaseModalContainerStyleCenteredCard;
-    _backdropAlpha = 0.4;
-    _backdropColor = [UIColor blackColor];
-    _containerCornerRadius = 24;
-    _containerClipsToBounds = YES;
-    _containerHorizontalInset = 28;
-    _containerVerticalOffset = 0;
+    self.dismissOnBackdropTap = YES;
+    self.containerStyle = FSTBaseModalContainerStyleCenteredCard;
+    self.backdropAlpha = 0.4;
+    self.backdropColor = [UIColor blackColor];
+    self.containerCornerRadius = 24;
+    self.containerClipsToBounds = YES;
+    self.containerHorizontalInset = 28;
+    self.containerVerticalOffset = 0;
     self.modalPresentationStyle = UIModalPresentationOverFullScreen;
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 }
