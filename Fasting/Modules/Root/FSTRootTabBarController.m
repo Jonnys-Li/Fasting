@@ -92,7 +92,8 @@ shouldSelectViewController:(UIViewController *)viewController {
     NSInteger targetIndex = [tabBarController.viewControllers indexOfObject:viewController];
     if (targetIndex == FSTTabIndexExplore) {
         UIViewController *presenter = tabBarController.selectedViewController ?: tabBarController;
-        [FSTAppRouter presentPlanPickerFrom:presenter onPick:nil];
+        // Explore tap → 完整 Plan 浏览流：picker → push PlanConfirm（与 IdleVC handlePlanTapped 路由对齐）。
+        [FSTAppRouter presentPlanBrowserFrom:presenter];
         return NO;  // 不真正切到 Explore tab，保留当前 tab 高亮
     }
     return YES;

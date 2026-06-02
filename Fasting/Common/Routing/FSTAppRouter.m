@@ -11,6 +11,7 @@
 #import "FSTMealDiaryViewController.h"
 #import "FSTMealDetailViewController.h"
 #import "FSTPlanSelectViewController.h"
+#import "FSTPlanConfirmViewController.h"
 #import "FSTSendFeedbackViewController.h"
 #import "FSTShareCardViewController.h"
 #import "FSTWeightInputViewController.h"
@@ -39,6 +40,28 @@
     picker.modalPresentationStyle = UIModalPresentationFullScreen;
     picker.onPlanPicked = onPick;
     [vc presentViewController:picker animated:YES completion:nil];
+}
+
++ (void)presentPlanBrowserFrom:(UIViewController *)vc {
+    FSTPlanSelectViewController *picker = [[FSTPlanSelectViewController alloc] init];
+    picker.dismissesOnPlanPicked = NO;  // 不 dismiss；改为内嵌 nav 上 push PlanConfirm
+
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:picker];
+    nav.modalPresentationStyle = UIModalPresentationFullScreen;
+    nav.navigationBarHidden = YES;
+
+    __weak UINavigationController *weakNav = nav;
+    picker.onPlanPicked = ^(FSTPlan *plan) {
+        FSTPlanConfirmViewController *confirm = [[FSTPlanConfirmViewController alloc] initWithPlan:plan];
+        // Start Fasting 后已写入 session（startFastingWithPlan / markScheduledReady），
+        // dismiss 模态由这里收尾；主 app 的 IdleVC viewWillAppear 自动 push ActiveFasting。
+        confirm.onFastingStarted = ^{
+            [weakNav dismissViewControllerAnimated:YES completion:nil];
+        };
+        [weakNav pushViewController:confirm animated:YES];
+    };
+
+    [vc presentViewController:nav animated:YES completion:nil];
 }
 
 + (void)pushActiveFastingFrom:(UIViewController *)vc promptForStartTime:(BOOL)prompt {

@@ -15,15 +15,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class FSTFastingTipsSectionView;
+
 @interface FSTActiveFastingRootView : UIView
 
 /// 把 VC 创建的 5 个核心子视图 mount 到 contentView 并锁定彼此的纵向约束。
+/// Feedback 行由 RootView 自管（不由 VC 传入）。
 /// 须在 RootView 加入 superview 后调一次。
 - (void)mountPhaseCard:(UIControl *)phaseCard
              ringPanel:(UIView *)ringPanel
               timesRow:(UIView *)timesRow
             stopButton:(UIButton *)stopButton
-           tipsSection:(UIView *)tipsSection;
+           tipsSection:(FSTFastingTipsSectionView *)tipsSection;
 
 /// 把内部 scrollView 的 top 锚到 topBar 之下（topBar 由 VC 直接 install 到 VC.view，
 /// 不在 RootView 内部）。须在 topBar 装好后调一次。
