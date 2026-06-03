@@ -348,6 +348,119 @@ self.scrollView = [[UIScrollView alloc] init];
 
 带参 init 形式不受影响：`[[FSTPlanConfirmViewController alloc] initWithPlan:plan]` 写法不变。
 
+### R8. `layoutSubviews` 只做布局，禁止在其中刷新数据 / 做一次性配置
+
+`layoutSubviews` 每次 bounds 变化都会被调用，只允许做「依赖最终 bounds 的布局」——CALayer.frame、贝塞尔路径、marker 锚点等（例：`FSTRingProgressView` / `FSTFastingRingPanelView` 在此更新环形 layer，是正确用法）。数据驱动的尺寸（按宽高比排布的图片列表等）用 Auto Layout 约束表达，让约束自然解析。
+
+判定 smell：`layoutSubviews` 里出现 `reloadData` / 数据赋值 / 用 width-size 缓存标志（`lastLaidOutWidth` 之类）去 gate 一次刷新。
+
+**❌ 不要这么写：**
+
+```objc
+@property (nonatomic, assign) CGFloat lastLaidOutWidth;
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    CGFloat width = CGRectGetWidth(self.tableView.bounds);
+    if (fabs(width - self.lastLaidOutWidth) > 0.5) {
+        self.lastLaidOutWidth = width;
+        [self.tableView reloadData];   // ❌ 在 layoutSubviews 里刷数据
+    }
+}
+```
+
+**✅ 正确做法：** 用约束表达尺寸（如 `make.height.equalTo(imageView.mas_width).multipliedBy(aspect)`），删掉 `layoutSubviews` 与缓存宽度标志，让 Auto Layout 自己解析。
+
+### R9. 用 enum / type / index 表达身份与分支，禁止拿字符串 name / 控件 title 做判断
+
+展示文案（model 的 `name`、按钮的 `title`、label 的 `text`）会改、会本地化，不该承担「身份」职责。模型层加 `NS_ENUM` type 字段；视图选中态用 `selectedIndex` / 持有选中引用 / `button.tag`。
+
+判定 smell：`plan.name isEqualToString:` 区分方案、`button.currentTitle isEqualToString:` 判断选中、`label.text` 反推状态。
+
+**❌ 不要这么写：**
+
+```objc
+for (FSTPlan *plan in [self defaultDailyPlans]) {
+    if ([plan.name isEqualToString:name]) return plan;   // ❌ 拿展示名当身份
+}
+
+if ([chip.currentTitle isEqualToString:selectedTitle]) { // ❌ 拿 title 当选中态
+    [self applySelectedStyle:chip];
+}
+```
+
+**✅ 正确写法：**
+
+```objc
+typedef NS_ENUM(NSInteger, FSTPlanType) { FSTPlanTypeCustom = 0, FSTPlanType1410, FSTPlanType168, /* … */ };
+
+if (plan.type == storedType) return plan;        // ✅ 按 type 匹配
+if (chip == self.selectedChip) { … }             // ✅ 按状态/引用判断选中
+```
+
+（R6 用 enum 合并 init 是本规则的特例；R9 上位到「一切身份 / 状态判断」。）
+
+### R10. UIView / UIControl 子类重写 `initWithFrame:`，禁止重写无参 `-init`；初始化顺序「数据 → 子视图 → 布局/刷新」
+
+两条：
+
+1. **重写 `initWithFrame:`，不要重写 `-init`。** `initWithFrame:` 是 UIView/UIControl 的 designated initializer。`[[Foo alloc] init]` 会自动路由到 `initWithFrame:CGRectZero`，所以 caller 写法不变（仍按 R7 用 `alloc/init`）。只重写 `-init` 时，一旦有人显式带 frame 创建就会漏掉装配，是脆弱写法。
+2. **init 内部顺序：** 先备好数据 / 常量 → 再 `alloc` + `addSubview` 建子视图 → 最后 Masonry 布局 + 首次刷新。不要把「准备数据」散落到建视图、布局之后。
+
+**❌ 不要这么写：**
+
+```objc
+- (instancetype)init {                       // ❌ UIView 子类重写无参 init
+    if ((self = [super init])) {
+        [self buildSubviews];
+    }
+    return self;
+}
+```
+
+**✅ 正确写法：**
+
+```objc
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
+        [self prepareData];      // 数据
+        [self setupSubviews];    // 子视图
+        [self setupConstraints]; // 布局/刷新
+    }
+    return self;
+}
+```
+
+（与 R3 关系：R3 给的 UIView 模板正是 `initWithFrame:`；R10 把「必须 `initWithFrame:`、禁用 `-init`」显式化，并补充初始化顺序约束。UIViewController / 服务 / 单例的无参 `-init` 不受影响。）
+
+### R11. 没有 cornerRadius、内容不溢出，就不要设 `clipsToBounds` / `masksToBounds`
+
+要圆角就 `cornerRadius` + 裁剪**配套**设；不要圆角就两个都别加。给 `ScaleAspectFit` 的 `UIImageView` 单设 `clipsToBounds = YES` 却不设 `cornerRadius`——内容既不溢出、又没有圆角可裁——是「裁了个寂寞」，还可能盖掉资源本身自带的圆角。
+
+**❌ 不要这么写：**
+
+```objc
+imageView.contentMode = UIViewContentModeScaleAspectFit;
+imageView.clipsToBounds = YES;               // ❌ 没设 cornerRadius，纯多余
+```
+
+**✅ 正确写法：** 不需要圆角就删掉 `clipsToBounds`；需要圆角则
+
+```objc
+imageView.layer.cornerRadius = FSTRadiusCard;
+imageView.clipsToBounds = YES;               // ✅ 与 cornerRadius 配套
+```
+
+### R12. 避免不必要的嵌套滚动视图
+
+`UIScrollView` 里再塞 `UITableView` / `UICollectionView` / `UIScrollView`（哪怕内层 `scrollEnabled = NO`）就是 smell。静态、数量固定的内容用 `UIStackView` 承载；整页滚动只保留一层 scroll。嵌套滚动除了徒增手势 / 复用 / 高度计算复杂度，还常逼出 `layoutSubviews` 里手动 reload（见 R8）。
+
+**❌ 不要这么写：** 外层竖直 `UIScrollView` → `contentView` → 一个 `scrollEnabled = NO` 的 `UITableView`（4 个固定 cell）。
+
+**✅ 正确做法：** 外层 `UIScrollView` → `contentView` → `UIStackView`（4 个 image view，用宽高比约束撑高）。单一滚动层。
+
+（注：本规则只针对「滚动视图嵌套」这一窄问题，不重提此前被回退的 RootView / 容器 autolayout 范式。）
+
 ---
 
 ## When adding files
