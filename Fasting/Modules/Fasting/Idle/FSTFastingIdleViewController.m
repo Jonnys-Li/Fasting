@@ -100,7 +100,16 @@ static const CGFloat kResetCornerRadius = 19;
     [self tearDownCurrentContent];
 
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    self.showingReadyState = (!sessionManager.hasActiveFasting && sessionManager.currentPlan != nil);
+    FSTRecordsRepository *recordsRepository = [FSTRecordsRepository sharedRepository];
+    // 兜底：currentPlan 残留但无任何 history / 预约 时回到 Picker，避免落到 "Eating Time" 误导首次用户。
+    BOOL hasFastingHistory = recordsRepository.latestFastingEndDate != nil;
+    BOOL hasMealHistory    = recordsRepository.latestMealDate      != nil;
+    BOOL hasScheduledFast  = sessionManager.scheduledReadySource != FSTScheduledReadySourceNone;
+    BOOL hasMeaningfulState = hasFastingHistory || hasMealHistory || hasScheduledFast;
+
+    self.showingReadyState = (!sessionManager.hasActiveFasting
+                              && sessionManager.currentPlan != nil
+                              && hasMeaningfulState);
     if (self.showingReadyState) {
         [self installReadyState];
         [self refreshReadyState];
@@ -233,6 +242,13 @@ static const CGFloat kResetCornerRadius = 19;
     self.readyView.onAddRecordTapped = ^{
         [weakSelf handleAddRecordTapped];
     };
+    self.readyView.onSendFeedbackTapped = ^{
+        [weakSelf handleSendFeedbackTapped];
+    };
+}
+
+- (void)handleSendFeedbackTapped {
+    [FSTAppRouter pushFeedbackFrom:self];
 }
 
 #pragma mark - 导航按钮工厂
@@ -324,6 +340,9 @@ static const CGFloat kResetCornerRadius = 19;
     self.readyView.primaryActionMode     = scheduledCountdown ? FSTDailyPlanReadyPrimaryActionAbortPlan
                                                               : FSTDailyPlanReadyPrimaryActionStartFasting;
     [self.readyView applyReadyToStartLayout:compactLayout];
+    // Stage 文案：scheduledCountdown=Prepare；EatingWindow + ReadyToStartFasting 都映射 After。
+    FSTTipsFastingStage tipsStage = scheduledCountdown ? FSTTipsFastingStagePrepare : FSTTipsFastingStageAfter;
+    [self.readyView applyTipsStage:tipsStage];
 }
 
 /// ScheduledCountdown 圆环进度：从 anchorDate 到 startDate 的线性比例。

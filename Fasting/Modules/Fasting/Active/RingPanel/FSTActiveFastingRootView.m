@@ -4,6 +4,8 @@
 //
 
 #import "FSTActiveFastingRootView.h"
+#import "FSTFastingFeedbackRow.h"
+#import "FSTFastingTipsSectionView.h"
 #import "FSTTheme.h"
 
 #pragma mark - Layout constants
@@ -30,7 +32,8 @@ static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, strong) UILabel *headlineLabel;
-@property (nonatomic, strong) UIView *feedbackRow;
+@property (nonatomic, strong) FSTFastingTipsSectionView *tipsSection;
+@property (nonatomic, strong) FSTFastingFeedbackRow *feedbackRow;
 @end
 
 @implementation FSTActiveFastingRootView
@@ -83,7 +86,8 @@ static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
              ringPanel:(UIView *)ringPanel
               timesRow:(UIView *)timesRow
             stopButton:(UIButton *)stopButton
-           tipsSection:(UIView *)tipsSection {
+           tipsSection:(FSTFastingTipsSectionView *)tipsSection {
+    self.tipsSection = tipsSection;
     [self.contentView addSubview:phaseCard];
     [self.contentView addSubview:ringPanel];
     [self.contentView addSubview:timesRow];
@@ -118,7 +122,11 @@ static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
     }];
 
     // Send feedback 行 — 独立于 Tips 白色卡片之外，由 RootView 自管。
-    self.feedbackRow = [self buildFeedbackRow];
+    self.feedbackRow = [[FSTFastingFeedbackRow alloc] init];
+    __weak typeof(self) weakSelf = self;
+    self.feedbackRow.onTapped = ^{
+        if (weakSelf.onSendFeedbackTapped) weakSelf.onSendFeedbackTapped();
+    };
     [self.contentView addSubview:self.feedbackRow];
     [self.feedbackRow mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(tipsSection.mas_bottom).offset(20);
@@ -127,6 +135,32 @@ static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
         make.height.mas_equalTo(56);
         make.bottom.equalTo(self.contentView).offset(-kTipsBottomPadding);
     }];
+
+    // Tips QA 折叠卡展开后把 tipsSection 底部滚到可见区底部（Bug 3）。
+    tipsSection.onExpansionChanged = ^(BOOL expanded) {
+        if (expanded) [weakSelf scrollToShowTipsSection];
+    };
+}
+
+#pragma mark - Scroll helpers
+
+/// 调用上下文：必须在 tipsSection.onExpansionChanged 回调中（即外层 UIView animateWithDuration 块内）
+/// 执行 —— 这样 contentOffset 变更会被外层动画捕获，与"展开"动画同步呈现（一步动作）。
+/// 单独调用此方法不会动画（contentOffset 同步赋值）。
+- (void)scrollToShowTipsSection {
+    if (!self.tipsSection) return;
+    UIScrollView *sv = self.scrollView;
+    [sv layoutIfNeeded];
+    CGRect frame = [self.tipsSection convertRect:self.tipsSection.bounds toView:sv];
+    CGFloat tipsBottom = CGRectGetMaxY(frame);
+    // 让 tipsSection 底部 == scrollView 可见区底部（扣除 adjustedContentInset.bottom，因为
+    // tab bar / safe area 会遮住底部那一截）。
+    CGFloat bottomInset = sv.adjustedContentInset.bottom;
+    CGFloat newOffsetY = tipsBottom - sv.bounds.size.height + bottomInset;
+    CGFloat maxOffsetY = MAX(0, sv.contentSize.height - sv.bounds.size.height + bottomInset);
+    newOffsetY = MIN(maxOffsetY, MAX(0, newOffsetY));
+    if (fabs(newOffsetY - sv.contentOffset.y) < 0.5) return;
+    sv.contentOffset = CGPointMake(sv.contentOffset.x, newOffsetY);
 }
 
 - (void)anchorContentBelowTopBar:(UIView *)topBar {
@@ -134,44 +168,6 @@ static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
         make.top.equalTo(topBar.mas_bottom);
         make.left.right.bottom.equalTo(self);
     }];
-}
-
-#pragma mark - Send feedback
-
-- (UIView *)buildFeedbackRow {
-    UIView *row = [[UIView alloc] init];
-    row.backgroundColor = [UIColor whiteColor];
-    row.layer.cornerRadius = FSTRadiusL;
-
-    UILabel *emojiLabel = [UILabel fst_labelWithText:@"\U0001F4E9" font:FSTFontRegular(28) color:[UIColor blackColor]];
-    UILabel *textLabel = [UILabel fst_labelWithText:@"Send feedback" font:FSTFontMedium(17) color:[UIColor blackColor]];
-
-    UIImageView *chevron = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"feedback_chevron"]];
-    chevron.contentMode = UIViewContentModeScaleAspectFit;
-
-    [row fst_addSubviews:@[emojiLabel, textLabel, chevron]];
-
-    [emojiLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(row).offset(16);
-        make.centerY.equalTo(row);
-    }];
-    [textLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(emojiLabel.mas_right).offset(10);
-        make.centerY.equalTo(row);
-    }];
-    [chevron mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(row).offset(-16);
-        make.centerY.equalTo(row);
-        make.size.mas_equalTo(CGSizeMake(8, 14));
-    }];
-
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleFeedbackTapped)];
-    [row addGestureRecognizer:tap];
-    return row;
-}
-
-- (void)handleFeedbackTapped {
-    if (self.onSendFeedbackTapped) self.onSendFeedbackTapped();
 }
 
 @end

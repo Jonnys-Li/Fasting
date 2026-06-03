@@ -6,6 +6,8 @@
 #import "FSTFastingIdleReadyView.h"
 #import "FSTBreakingFastCardView.h"
 #import "FSTFastingTimesRow.h"
+#import "FSTFastingTipsSectionView.h"
+#import "FSTFastingFeedbackRow.h"
 #import "FSTTheme.h"
 
 #pragma mark - Layout constants
@@ -38,6 +40,11 @@ static const CGFloat kAddRecordTopOffset = 20;
 static const CGFloat kAddRecordHeight    = 56;
 static const CGFloat kAddRecordRadius    = 22;
 
+// Stage card + feedback row（与 Active 端 BottomSection 视觉对齐）
+static const CGFloat kStageCardTopOffset    = 20;
+static const CGFloat kFeedbackRowTopOffset  = 18;
+static const CGFloat kFeedbackRowHeight     = 56;
+
 // Bottom
 static const CGFloat kBottomPadding = 118;
 
@@ -49,6 +56,8 @@ static const CGFloat kBottomPadding = 118;
 @property (nonatomic, strong) UIButton *startFastingButton;
 @property (nonatomic, strong) UIButton *logMealButton;
 @property (nonatomic, strong) UIView *addRecordRow;
+@property (nonatomic, strong) FSTFastingTipsSectionView *tipsSection;
+@property (nonatomic, strong) FSTFastingFeedbackRow *feedbackRow;
 @property (nonatomic, assign) BOOL readyToStartLayoutApplied;
 @end
 
@@ -98,8 +107,18 @@ static const CGFloat kBottomPadding = 118;
 
     self.addRecordRow = [self buildAddRecordRow];
 
+    // Tips 卡（compact 模式：保留 header + lemon + stage，去掉 QA 折叠卡）。
+    self.tipsSection = [[FSTFastingTipsSectionView alloc] init];
+    self.tipsSection.compact = YES;
+
+    self.feedbackRow = [[FSTFastingFeedbackRow alloc] init];
+    self.feedbackRow.onTapped = ^{
+        if (weakSelf.onSendFeedbackTapped) weakSelf.onSendFeedbackTapped();
+    };
+
     [self fst_addSubviews:@[self.eatingTitleLabel, self.breakingFastCardView, self.readyRingView,
-                            self.nextFastTimesRow, self.startFastingButton, self.logMealButton, self.addRecordRow]];
+                            self.nextFastTimesRow, self.startFastingButton, self.logMealButton, self.addRecordRow,
+                            self.tipsSection, self.feedbackRow]];
 }
 
 #pragma mark - 约束
@@ -139,6 +158,15 @@ static const CGFloat kBottomPadding = 118;
         make.top.equalTo(self.logMealButton.mas_bottom).offset(kAddRecordTopOffset);
         make.left.right.equalTo(self).inset(FSTSpacingCardHorizontal);
         make.height.mas_equalTo(kAddRecordHeight);
+    }];
+    [self.tipsSection mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.addRecordRow.mas_bottom).offset(kStageCardTopOffset);
+        make.left.right.equalTo(self).inset(FSTSpacingCardHorizontal);
+    }];
+    [self.feedbackRow mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.tipsSection.mas_bottom).offset(kFeedbackRowTopOffset);
+        make.left.right.equalTo(self).inset(FSTSpacingCardHorizontal);
+        make.height.mas_equalTo(kFeedbackRowHeight);
         make.bottom.equalTo(self).offset(-kBottomPadding);
     }];
 }
@@ -195,6 +223,10 @@ static const CGFloat kBottomPadding = 118;
 - (void)setPrimaryActionMode:(FSTDailyPlanReadyPrimaryActionMode)primaryActionMode {
     _primaryActionMode = primaryActionMode;
     [self refreshPrimaryActionButton];
+}
+
+- (void)applyTipsStage:(FSTTipsFastingStage)stage {
+    [self.tipsSection configureForStage:stage];
 }
 
 - (void)refreshPrimaryActionButton {

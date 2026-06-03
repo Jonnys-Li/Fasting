@@ -4,6 +4,7 @@
 //
 
 #import "FSTFastingTipsSectionView.h"
+#import "FSTFastingStageCard.h"
 #import "FSTTheme.h"
 
 static const CGFloat FSTTipsSectionHInset = 18;
@@ -26,11 +27,9 @@ static NSString * const FSTFastingTipsExpandedText =
 @"are severe and interrupt you from finishing regular daily tasks, you should stop fasting immediately and seek medical advice.";
 
 @interface FSTFastingTipsSectionView ()
-// Stage card 切换需要持有的子视图
-@property (nonatomic, strong) UIView *stageCard;
-@property (nonatomic, strong) UIImageView *stageBgIcon;
-@property (nonatomic, strong) UILabel *stageTitleLabel;
-@property (nonatomic, strong) UILabel *stageBodyLabel;
+// Sub-cards（compact 切换需要 lemonCard 作 stageCard.top 锚点）。
+@property (nonatomic, strong) UIView *lemonCard;
+@property (nonatomic, strong) FSTFastingStageCard *stageCard;
 // Fasting tips card 折叠状态
 @property (nonatomic, strong) UIView *qaCard;
 @property (nonatomic, strong) UIImageView *qaChevron;
@@ -53,10 +52,10 @@ static NSString * const FSTFastingTipsExpandedText =
 
 - (void)buildSubviews {
     UIView *header     = [self buildSectionHeader];
-    UIView *lemonCard  = [self buildLemonCard];
-    [self buildStageCard];  // 内部 self.stageCard / stageBgIcon / stageTitleLabel / stageBodyLabel 自赋值
-    [self buildQACard];     // 内部 self.qaCard / qaChevron / qaBodyLabel 自赋值
-    [self fst_addSubviews:@[header, lemonCard, self.stageCard, self.qaCard]];
+    self.lemonCard     = [self buildLemonCard];
+    self.stageCard     = [[FSTFastingStageCard alloc] init];
+    [self buildQACard];     // 内部自赋 self.qaCard / qaChevron / qaBodyLabel
+    [self fst_addSubviews:@[header, self.lemonCard, self.stageCard, self.qaCard]];
 
     [header mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(FSTTipsSectionVInset);
@@ -64,13 +63,28 @@ static NSString * const FSTFastingTipsExpandedText =
         make.right.equalTo(self).offset(-FSTTipsSectionHInset);
         make.height.mas_equalTo(28);
     }];
-    [self pinCard:lemonCard belowAnchor:header.mas_bottom];
-    [self pinCard:self.stageCard belowAnchor:lemonCard.mas_bottom];
-    [self.qaCard mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stageCard.mas_bottom).offset(18);
+    [self pinCard:self.lemonCard belowAnchor:header.mas_bottom];
+    // stageCard 与 qaCard 的约束由 -applyConstraintsForCompact: 统一管理（支持 compact 双向切换）。
+    [self applyConstraintsForCompact:NO];
+}
+
+- (void)applyConstraintsForCompact:(BOOL)compact {
+    [self.stageCard mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.lemonCard.mas_bottom).offset(18);
         make.left.equalTo(self).offset(FSTTipsSectionHInset);
         make.right.equalTo(self).offset(-FSTTipsSectionHInset);
-        make.bottom.equalTo(self).offset(-FSTTipsSectionVInset);
+        if (compact) make.bottom.equalTo(self).offset(-FSTTipsSectionVInset);
+    }];
+    [self.qaCard mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self).offset(FSTTipsSectionHInset);
+        make.right.equalTo(self).offset(-FSTTipsSectionHInset);
+        if (compact) {
+            make.top.equalTo(self.stageCard.mas_bottom);
+            make.height.mas_equalTo(0);
+        } else {
+            make.top.equalTo(self.stageCard.mas_bottom).offset(18);
+            make.bottom.equalTo(self).offset(-FSTTipsSectionVInset);
+        }
     }];
 }
 
@@ -164,43 +178,6 @@ static NSString * const FSTFastingTipsExpandedText =
     if (self.onDrinkNowTapped) self.onDrinkNowTapped();
 }
 
-#pragma mark - Stage card
-
-- (void)buildStageCard {
-    self.stageCard = [[UIView alloc] init];
-    self.stageCard.layer.cornerRadius = FSTRadiusCard;
-    self.stageCard.layer.masksToBounds = YES;
-
-    self.stageBgIcon = [[UIImageView alloc] init];
-    self.stageBgIcon.contentMode = UIViewContentModeScaleAspectFit;
-
-    self.stageTitleLabel = [[UILabel alloc] init];
-    self.stageTitleLabel.numberOfLines = 1;
-
-    self.stageBodyLabel = [[UILabel alloc] init];
-    self.stageBodyLabel.numberOfLines = 0;
-
-    [self.stageCard fst_addSubviews:@[self.stageBgIcon, self.stageTitleLabel, self.stageBodyLabel]];
-
-    [self.stageBgIcon mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.stageCard).offset(-8);
-        make.bottom.equalTo(self.stageCard).offset(-10);
-        make.size.mas_equalTo(CGSizeMake(87, 85));
-    }];
-    [self.stageTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stageCard).offset(24);
-        make.left.equalTo(self.stageCard).offset(FSTTipsCardInset);
-        make.right.equalTo(self.stageCard).offset(-FSTTipsCardInset);
-        make.height.mas_equalTo(30);
-    }];
-    [self.stageBodyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stageTitleLabel.mas_bottom).offset(14);
-        make.left.equalTo(self.stageCard).offset(FSTTipsCardInset);
-        make.right.equalTo(self.stageCard).offset(-FSTTipsCardInset);
-        make.bottom.equalTo(self.stageCard).offset(-24);
-    }];
-}
-
 #pragma mark - QA (Fasting tips) card
 
 - (void)buildQACard {
@@ -257,37 +234,26 @@ static NSString * const FSTFastingTipsExpandedText =
         self.qaChevron.transform = self.qaExpanded ? CGAffineTransformIdentity : CGAffineTransformMakeRotation(M_PI);
         [self layoutIfNeeded];
         [self.superview layoutIfNeeded];
+        // 在同一动画上下文中调 onExpansionChanged，让 RootView 同步改 contentOffset，
+        // "展开 + 滚动"视觉同步（一步动作，不是先展开再滚屏）。
+        if (self.onExpansionChanged) self.onExpansionChanged(self.qaExpanded);
     }];
 }
 
 #pragma mark - Public stage configuration
 
-/// 阶段配置数据：bg color / bg icon name (nil 隐藏) / title / body。
-/// 三种 stage 用同一张 stageCard，只改这 4 个字段。
+/// 透传到内嵌 stageCard。
 - (void)configureForStage:(FSTTipsFastingStage)stage {
-    UIColor *bgColor;
-    NSString *iconName;
-    NSString *title;
-    NSString *body;
-    switch (stage) {
-        case FSTTipsFastingStageDuring:
-            bgColor  = [UIColor fst_stageGreen];
-            iconName = @"tips_fork_ring_during";
-            title    = @"During fasting";
-            body     = @"💧 Drink water or herbal tea to stay hydrated.\n🍪 Keep your mind off food.\n🚫 Avoid high-intensity workouts.";
-            break;
-        case FSTTipsFastingStageAfter:
-            bgColor  = [UIColor fst_stageOrange];
-            iconName = @"tips_fork_ring_after";
-            title    = @"After fasting";
-            body     = @"🚫 Avoid overeating.\n🥗 Eat high-protein foods and vegetables.\n🛌 Take a break if you feel unwell.";
-            break;
-    }
-    self.stageCard.backgroundColor = bgColor;
-    self.stageBgIcon.hidden = (iconName == nil);
-    self.stageBgIcon.image = iconName ? [UIImage imageNamed:iconName] : nil;
-    self.stageTitleLabel.attributedText = [self cellTitleAttributedString:title];
-    self.stageBodyLabel.attributedText  = [self bodyAttributedString:body];
+    [self.stageCard configureForStage:stage];
+}
+
+#pragma mark - Compact mode
+
+- (void)setCompact:(BOOL)compact {
+    if (_compact == compact) return;
+    _compact = compact;
+    self.qaCard.hidden = compact;
+    [self applyConstraintsForCompact:compact];
 }
 
 #pragma mark - Helpers
