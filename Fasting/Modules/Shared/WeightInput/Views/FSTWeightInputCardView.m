@@ -16,8 +16,8 @@
 
 @implementation FSTWeightInputCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _weightKg = 70.0;
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = FSTRadiusL;

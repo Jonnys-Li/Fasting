@@ -12,8 +12,8 @@
 
 @implementation FSTMealTasteCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _tasteLevel = 1;
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = 20;

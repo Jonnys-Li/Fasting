@@ -15,8 +15,8 @@
 
 @implementation FSTWeightUnitToggleView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _unit = FSTWeightUnitKg;
         self.backgroundColor = [UIColor fst_ringTrack];
         self.layer.cornerRadius = 20;

@@ -13,8 +13,8 @@
 
 @implementation FSTMealDietCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _dietType = @"Not sure";
         _dietNames = @[@"Keto", @"Low-carb", @"Mixed", @"High-carb", @"Not sure"];
         [self fst_applyMealCardStyle];

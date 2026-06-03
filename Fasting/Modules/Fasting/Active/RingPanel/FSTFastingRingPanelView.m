@@ -33,8 +33,8 @@ static const CGFloat kFlameSize           = 52;  // 与 @3x 源图 1x 原生尺�
 
 @implementation FSTFastingRingPanelView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         [self buildSubviews];
     }
     return self;

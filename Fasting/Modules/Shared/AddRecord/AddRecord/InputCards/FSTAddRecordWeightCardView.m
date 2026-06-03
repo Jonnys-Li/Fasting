@@ -16,8 +16,8 @@
 
 @implementation FSTAddRecordWeightCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _initialWeightKg = FSTDefaultInitialWeightKg;
         _targetWeightKg = FSTDefaultTargetWeightKg;
         [self buildSubviews];

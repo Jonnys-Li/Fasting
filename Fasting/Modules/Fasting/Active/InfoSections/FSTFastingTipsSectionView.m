@@ -40,8 +40,8 @@ static NSString * const FSTFastingTipsExpandedText =
 
 @implementation FSTFastingTipsSectionView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = FSTRadiusL;
         self.layer.masksToBounds = YES;

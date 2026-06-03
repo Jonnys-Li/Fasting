@@ -30,8 +30,8 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
 
 @implementation FSTFastingIdleReadyRingView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _presentationState = FSTDailyPlanReadyRingPresentationEatingWindow;
         [self buildSubviews];
         [self refreshDisplay];

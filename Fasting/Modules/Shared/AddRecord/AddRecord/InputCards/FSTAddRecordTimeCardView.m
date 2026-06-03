@@ -21,8 +21,8 @@
 
 @implementation FSTAddRecordTimeCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         [self buildSubviews];
         [self refreshValues];
     }

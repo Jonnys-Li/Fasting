@@ -12,8 +12,8 @@
 
 @implementation FSTMealSlotCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _mealCategory = @"Meal";
         [self fst_applyMealCardStyle];
         [self buildSubviews];

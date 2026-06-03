@@ -15,8 +15,8 @@
 
 @implementation FSTFastingPhaseSummaryCard
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = FSTRadiusS;
         self.clipsToBounds = YES;

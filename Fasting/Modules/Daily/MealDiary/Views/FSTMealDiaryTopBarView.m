@@ -12,8 +12,8 @@
 
 @implementation FSTMealDiaryTopBarView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _selectedDate = [NSDate date];
         self.backgroundColor = [UIColor whiteColor];
         [self buildSubviews];

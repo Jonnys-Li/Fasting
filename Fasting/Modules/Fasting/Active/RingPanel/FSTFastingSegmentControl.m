@@ -15,8 +15,8 @@
 
 @implementation FSTFastingSegmentControl
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor fst_segmentBackground];
         self.layer.cornerRadius = FSTRadiusChip;
         [self buildSubviews];

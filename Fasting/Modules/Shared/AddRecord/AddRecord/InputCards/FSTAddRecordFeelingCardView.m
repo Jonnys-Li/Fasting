@@ -13,8 +13,8 @@
 
 @implementation FSTAddRecordFeelingCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _feelingLevel = 1;
         [self buildSubviews];
         [self refreshSelection];
