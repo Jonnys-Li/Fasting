@@ -13,8 +13,8 @@
 
 @implementation FSTMealDetailContentCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         [self fst_applyMealCardStyle];
         [self buildSubviews];
         [self refresh];
@@ -36,7 +36,7 @@
 
     self.imageStatusLabel = [UILabel fst_labelWithText:nil font:FSTFontRegular(16) color:[UIColor fst_textSecondary]];
 
-    self.detailTextView = [UITextView new];
+    self.detailTextView = [[UITextView alloc] init];
     self.detailTextView.backgroundColor = [UIColor fst_inputBackground];
     self.detailTextView.layer.cornerRadius = FSTRadiusS;
     self.detailTextView.font = FSTFontRegular(16);

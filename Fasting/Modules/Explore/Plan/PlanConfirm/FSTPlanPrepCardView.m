@@ -7,8 +7,8 @@
 
 @implementation FSTPlanPrepCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor fst_stageBlue];
         self.layer.cornerRadius = FSTRadiusCard;
         [self buildSubviews];
@@ -17,8 +17,8 @@
 }
 
 - (void)buildSubviews {
-    UILabel *titleLabel = [UILabel new];
-    NSMutableParagraphStyle *titleStyle = [NSMutableParagraphStyle new];
+    UILabel *titleLabel = [[UILabel alloc] init];
+    NSMutableParagraphStyle *titleStyle = [[NSMutableParagraphStyle alloc] init];
     titleStyle.lineHeightMultiple = 1.1;
     titleLabel.attributedText = [[NSAttributedString alloc] initWithString:@"Prepare for fasting"
                                                                attributes:@{
@@ -27,9 +27,9 @@
         NSParagraphStyleAttributeName: titleStyle,
     }];
 
-    UILabel *bodyLabel = [UILabel new];
+    UILabel *bodyLabel = [[UILabel alloc] init];
     bodyLabel.numberOfLines = 0;
-    NSMutableParagraphStyle *bodyStyle = [NSMutableParagraphStyle new];
+    NSMutableParagraphStyle *bodyStyle = [[NSMutableParagraphStyle alloc] init];
     bodyStyle.lineSpacing = 6;
     bodyLabel.attributedText = [[NSAttributedString alloc] initWithString:
         @"\U0001F969 Eat protein-rich foods, such as meat, fish, tofu and nuts.\n"

@@ -22,8 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 右侧 dateLabel 的文字。VC 通过 NSDateFormatter 格式化后赋值。
 @property (nonatomic, copy, nullable) NSString *dateText;
 
-/// 暴露给 VC 直接配置初始 date / min / max；onDateChanged 已内部接好。
-@property (nonatomic, strong, readonly) UIDatePicker *picker;
+/// picker 当前选中的日期；读写穿透到内部 UIDatePicker.date。
+/// VC 通过该属性同步 model → picker，避免 self.timeRow.picker.date 这种三级链式访问。
+@property (nonatomic, strong, nullable) NSDate *pickerDate;
 
 /// picker 数值变更回调。参数为最新的 NSDate。
 @property (nonatomic, copy, nullable) void (^onDateChanged)(NSDate *date);

@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "FSTFastingIdleReadyRingView.h"
+#import "FSTFastingTipsSectionView.h"  // FSTTipsFastingStage enum
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -62,6 +63,9 @@ typedef NS_ENUM(NSInteger, FSTDailyPlanReadyPrimaryActionMode) {
 /// 切换"可开始断食"子状态布局（隐藏 breaking fast 卡 + 圆环上移）。
 - (void)applyReadyToStartLayout:(BOOL)readyToStart;
 
+/// 底部 stage 卡按子状态切换文案 / 配色（Scheduled=Prepare，其余=After）。
+- (void)applyTipsStage:(FSTTipsFastingStage)stage;
+
 #pragma mark - 事件回调
 
 @property (nonatomic, copy, nullable) void (^onBreakingFastTapped)(void);
@@ -72,6 +76,7 @@ typedef NS_ENUM(NSInteger, FSTDailyPlanReadyPrimaryActionMode) {
 @property (nonatomic, copy, nullable) void (^onAbortPlanTapped)(void);
 @property (nonatomic, copy, nullable) void (^onLogMealTapped)(void);
 @property (nonatomic, copy, nullable) void (^onAddRecordTapped)(void);
+@property (nonatomic, copy, nullable) void (^onSendFeedbackTapped)(void);
 
 @end
 

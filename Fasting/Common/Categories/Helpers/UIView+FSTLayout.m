@@ -28,7 +28,7 @@
 }
 
 + (instancetype)fst_containerWithBackground:(UIColor *)bg radius:(CGFloat)radius {
-    UIView *view = [self new];
+    UIView *view = [[self alloc] init];
     view.backgroundColor = bg;
     view.layer.cornerRadius = radius;
     return view;
@@ -38,7 +38,7 @@
                             borderColor:(nullable UIColor *)borderColor
                             borderWidth:(CGFloat)borderWidth
                                 bgColor:(nullable UIColor *)bgColor {
-    UIView *dot = [self new];
+    UIView *dot = [[self alloc] init];
     dot.layer.cornerRadius = size / 2.0;
     dot.layer.borderWidth = borderWidth;
     if (borderColor) dot.layer.borderColor = borderColor.CGColor;
@@ -48,7 +48,7 @@
 }
 
 + (instancetype)fst_separatorLineWithColor:(UIColor *)color {
-    UIView *line = [self new];
+    UIView *line = [[self alloc] init];
     line.backgroundColor = color;
     return line;
 }

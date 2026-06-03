@@ -25,6 +25,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)presentPlanPickerFrom:(UIViewController *)vc
                        onPick:(void (^_Nullable)(FSTPlan *plan))onPick;
 
+/// "浏览 Plan" 完整流：picker 套 nav controller 包，点 plan card 后 push PlanConfirm；
+/// PlanConfirm 内点 Start Fasting 触发 startFastingWithPlan 后 dismiss 模态，
+/// 主 app 的 IdleVC 在 viewWillAppear 自动重定向到 ActiveFasting。
+/// Explore tab tap 走这条入口（与"plan card 普通路由"链路对齐）。
++ (void)presentPlanBrowserFrom:(UIViewController *)vc;
+
 + (void)pushActiveFastingFrom:(UIViewController *)vc promptForStartTime:(BOOL)prompt;
 + (void)pushActiveFastingFrom:(UIViewController *)vc
            promptForStartTime:(BOOL)prompt

@@ -40,6 +40,7 @@ static const CGFloat kResetButtonHeight = 38;
 static const CGFloat kResetCornerRadius = 19;
 
 @interface FSTFastingIdleViewController ()
+@property (nonatomic, strong) FSTFastingIdleRootView *rootView;
 @property (nonatomic, strong, nullable) FSTFastingTopBar *topBar;
 @property (nonatomic, strong, nullable) FSTFastingIdlePickerView *pickerView;
 @property (nonatomic, strong, nullable) FSTFastingIdleReadyView *readyView;
@@ -50,16 +51,13 @@ static const CGFloat kResetCornerRadius = 19;
 
 #pragma mark - 生命周期
 
-- (void)loadView {
-    self.view = [FSTFastingIdleRootView new];
-}
-
-- (FSTFastingIdleRootView *)rootView {
-    return (FSTFastingIdleRootView *)self.view;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.rootView = [[FSTFastingIdleRootView alloc] init];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
     [self reloadRootContent];
 }
 
@@ -102,7 +100,16 @@ static const CGFloat kResetCornerRadius = 19;
     [self tearDownCurrentContent];
 
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    self.showingReadyState = (!sessionManager.hasActiveFasting && sessionManager.currentPlan != nil);
+    FSTRecordsRepository *recordsRepository = [FSTRecordsRepository sharedRepository];
+    // 兜底：currentPlan 残留但无任何 history / 预约 时回到 Picker，避免落到 "Eating Time" 误导首次用户。
+    BOOL hasFastingHistory = recordsRepository.latestFastingEndDate != nil;
+    BOOL hasMealHistory    = recordsRepository.latestMealDate      != nil;
+    BOOL hasScheduledFast  = sessionManager.scheduledReadySource != FSTScheduledReadySourceNone;
+    BOOL hasMeaningfulState = hasFastingHistory || hasMealHistory || hasScheduledFast;
+
+    self.showingReadyState = (!sessionManager.hasActiveFasting
+                              && sessionManager.currentPlan != nil
+                              && hasMeaningfulState);
     if (self.showingReadyState) {
         [self installReadyState];
         [self refreshReadyState];
@@ -125,7 +132,7 @@ static const CGFloat kResetCornerRadius = 19;
 - (void)installPickerState {
     [self installPickerTopBar];
 
-    self.pickerView = [FSTFastingIdlePickerView new];
+    self.pickerView = [[FSTFastingIdlePickerView alloc] init];
     __weak typeof(self) weakSelf = self;
     self.pickerView.onPlanPicked = ^(FSTPlan *picked) {
         [weakSelf handlePlanTapped:picked];
@@ -138,10 +145,9 @@ static const CGFloat kResetCornerRadius = 19;
 
     UIButton *waterButton = [self makeWaterButton];
 
-    self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:nil
-                                                  rightButtons:@[waterButton]
-                                                 centerContent:nil
-                                                 contentHeight:kTopBarHeightPicker];
+    self.topBar = [[FSTFastingTopBar alloc] init];
+    self.topBar.rightButtons  = @[waterButton];
+    self.topBar.contentHeight = kTopBarHeightPicker;
     [self.topBar installInViewController:self];
     [self.rootView anchorContentBelowTopBar:self.topBar];
 
@@ -161,7 +167,7 @@ static const CGFloat kResetCornerRadius = 19;
 - (void)installReadyState {
     [self installReadyTopBar];
 
-    self.readyView = [FSTFastingIdleReadyView new];
+    self.readyView = [[FSTFastingIdleReadyView alloc] init];
     [self bindReadyViewCallbacks];
     self.rootView.bodyView = self.readyView;
 
@@ -176,7 +182,7 @@ static const CGFloat kResetCornerRadius = 19;
     resetButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
     resetButton.contentVerticalAlignment   = UIControlContentVerticalAlignmentCenter;
 
-    NSMutableParagraphStyle *resetParagraphStyle = [NSMutableParagraphStyle new];
+    NSMutableParagraphStyle *resetParagraphStyle = [[NSMutableParagraphStyle alloc] init];
     resetParagraphStyle.alignment         = NSTextAlignmentCenter;
     resetParagraphStyle.minimumLineHeight = 22;
     resetParagraphStyle.maximumLineHeight = 22;
@@ -192,10 +198,10 @@ static const CGFloat kResetCornerRadius = 19;
     UIButton *waterButton = [self makeWaterButton];
     UIButton *bellButton  = [self makeBellButton];
 
-    self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:resetButton
-                                                  rightButtons:@[waterButton, bellButton]
-                                                 centerContent:nil
-                                                 contentHeight:kTopBarHeightReady];
+    self.topBar = [[FSTFastingTopBar alloc] init];
+    self.topBar.leftButton    = resetButton;
+    self.topBar.rightButtons  = @[waterButton, bellButton];
+    self.topBar.contentHeight = kTopBarHeightReady;
     [self.topBar installInViewController:self];
     [self.rootView anchorContentBelowTopBar:self.topBar];
 
@@ -212,16 +218,37 @@ static const CGFloat kResetCornerRadius = 19;
 
 - (void)bindReadyViewCallbacks {
     __weak typeof(self) weakSelf = self;
-    self.readyView.onBreakingFastTapped      = ^{
+    self.readyView.onBreakingFastTapped = ^{
         [weakSelf handleBreakingFastTapped];
     };
-    self.readyView.onChangePlanTapped        = ^{ [weakSelf handleSoftChangePlanTapped]; };
-    self.readyView.onEditNextFastStartTapped = ^{ [weakSelf handleEditNextFastStartTapped]; };
-    self.readyView.onEditNextFastEndTapped   = ^{ [weakSelf handleEditNextFastEndTapped]; };
-    self.readyView.onStartFastingTapped      = ^{ [weakSelf handleReadyStartTapped]; };
-    self.readyView.onAbortPlanTapped         = ^{ [weakSelf handleAbortScheduledReadyTapped]; };
-    self.readyView.onLogMealTapped           = ^{ [weakSelf handleAteTapped]; };
-    self.readyView.onAddRecordTapped         = ^{ [weakSelf handleAddRecordTapped]; };
+    self.readyView.onChangePlanTapped = ^{
+        [weakSelf handleSoftChangePlanTapped];
+    };
+    self.readyView.onEditNextFastStartTapped = ^{
+        [weakSelf handleEditNextFastStartTapped];
+    };
+    self.readyView.onEditNextFastEndTapped = ^{
+        [weakSelf handleEditNextFastEndTapped];
+    };
+    self.readyView.onStartFastingTapped = ^{
+        [weakSelf handleReadyStartTapped];
+    };
+    self.readyView.onAbortPlanTapped = ^{
+        [weakSelf handleAbortScheduledReadyTapped];
+    };
+    self.readyView.onLogMealTapped = ^{
+        [weakSelf handleAteTapped];
+    };
+    self.readyView.onAddRecordTapped = ^{
+        [weakSelf handleAddRecordTapped];
+    };
+    self.readyView.onSendFeedbackTapped = ^{
+        [weakSelf handleSendFeedbackTapped];
+    };
+}
+
+- (void)handleSendFeedbackTapped {
+    [FSTAppRouter pushFeedbackFrom:self];
 }
 
 #pragma mark - 导航按钮工厂
@@ -313,6 +340,9 @@ static const CGFloat kResetCornerRadius = 19;
     self.readyView.primaryActionMode     = scheduledCountdown ? FSTDailyPlanReadyPrimaryActionAbortPlan
                                                               : FSTDailyPlanReadyPrimaryActionStartFasting;
     [self.readyView applyReadyToStartLayout:compactLayout];
+    // Stage 文案：scheduledCountdown=Prepare；EatingWindow + ReadyToStartFasting 都映射 After。
+    FSTTipsFastingStage tipsStage = scheduledCountdown ? FSTTipsFastingStagePrepare : FSTTipsFastingStageAfter;
+    [self.readyView applyTipsStage:tipsStage];
 }
 
 /// ScheduledCountdown 圆环进度：从 anchorDate 到 startDate 的线性比例。
@@ -406,14 +436,12 @@ static const CGFloat kResetCornerRadius = 19;
 - (void)handleBreakingFastTapped {
     // 复用 FSTModalDialogViewController（与 ActiveFasting 的 phaseDialog 同款居中卡片），
     // 图标用现成的 breaking_fast_food 资源（FSTBreakingFastCardView 也在用）。
-    FSTModalDialogViewController *dialog =
-        [[FSTModalDialogViewController alloc] initWithIconImageName:@"breaking_fast_food"
-                                                              title:@"Breaking fast"
-                                                            message:@"Your fast is over. It's time to replenish with light, nutritious food."
-                                                       primaryTitle:@"Got it"
-                                                     secondaryTitle:nil
-                                                     primaryHandler:nil
-                                                   secondaryHandler:nil];
+    FSTModalDialogViewController *dialog = [[FSTModalDialogViewController alloc] init];
+    dialog.iconKind     = FSTModalDialogIconKindAssetImage;
+    dialog.iconName     = @"breaking_fast_food";
+    dialog.titleText    = @"Breaking fast";
+    dialog.message      = @"Your fast is over. It's time to replenish with light, nutritious food.";
+    dialog.primaryTitle = @"Got it";
     [self presentViewController:dialog animated:YES completion:nil];
 }
 

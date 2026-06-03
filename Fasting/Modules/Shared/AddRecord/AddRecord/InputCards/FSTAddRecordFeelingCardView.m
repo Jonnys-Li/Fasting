@@ -13,8 +13,8 @@
 
 @implementation FSTAddRecordFeelingCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _feelingLevel = 1;
         [self buildSubviews];
         [self refreshSelection];
@@ -32,7 +32,7 @@
     UILabel *titleLabel = [UILabel fst_labelWithText:@"How did it feel?" font:FSTFontSubhead() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 
-    UIStackView *buttonsStack = [UIStackView new];
+    UIStackView *buttonsStack = [[UIStackView alloc] init];
     buttonsStack.axis = UILayoutConstraintAxisHorizontal;
     buttonsStack.distribution = UIStackViewDistributionFillEqually;
     buttonsStack.spacing = 8;
@@ -60,7 +60,7 @@
 }
 
 - (UIControl *)feelingButtonWithImageName:(NSString *)imageName title:(NSString *)title index:(NSInteger)index {
-    UIControl *button = [UIControl new];
+    UIControl *button = [[UIControl alloc] init];
     button.tag = index;
     [button addTarget:self action:@selector(handleFeelingTapped:) forControlEvents:UIControlEventTouchUpInside];
 

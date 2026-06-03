@@ -3,55 +3,35 @@
 //  Fasting
 //
 //  活跃断食页的根视图：滚动容器 + headline + 血糖阶段卡 + 圆环面板 +
-//  可编辑时间行 + 中止按钮 + tips section。
+//  可编辑时间行 + 中止按钮 + tips section + send feedback 行。
+//
+//  因为 FSTFastingTopBar 需要直接 install 到 VC.view 顶层（使用 safeArea 锚点），
+//  所以本视图不包含 topBar；VC 在 install topBar 之后调 -anchorContentBelowTopBar: 把
+//  scrollView 顶部锚到 topBar 之下。
+//  phaseCard / ringPanel / timesRow / stopButton / tipsSection 由 VC 创建后通过 mount API 推入。
 //
 
 #import <UIKit/UIKit.h>
 
-@class FSTFastingPhaseSummaryCard;
-@class FSTFastingRingPanelView;
-@class FSTFastingTimesRow;
-@class FSTFastingTipsSectionView;
-
 NS_ASSUME_NONNULL_BEGIN
 
-/// 活跃断食页根视图。承担除 topBar 之外的全部 UI 与约束。
-///
-/// 因为 FSTFastingTopBar 需要直接 install 到 VC.view 顶层（使用 safeArea 锚点），
-/// 所以本视图不包含 topBar；VC 创建并 install topBar 之后，需要把 self.scrollView.top
-/// 约束到 topBar.mas_bottom（其余三边由本视图内部约束）。
+@class FSTFastingTipsSectionView;
+
 @interface FSTActiveFastingRootView : UIView
 
-/// 滚动容器。VC 在 topBar install 完毕后需要补一条 `top.equalTo(topBar.mas_bottom)` 约束。
-@property (nonatomic, strong, readonly) UIScrollView *scrollView;
-@property (nonatomic, strong, readonly) UIView *contentView;
+/// 把 VC 创建的 5 个核心子视图 mount 到 contentView 并锁定彼此的纵向约束。
+/// Feedback 行由 RootView 自管（不由 VC 传入）。
+/// 须在 RootView 加入 superview 后调一次。
+- (void)mountPhaseCard:(UIControl *)phaseCard
+             ringPanel:(UIView *)ringPanel
+              timesRow:(UIView *)timesRow
+            stopButton:(UIButton *)stopButton
+           tipsSection:(FSTFastingTipsSectionView *)tipsSection;
 
-/// "You're fasting!" 标题。
-@property (nonatomic, strong, readonly) UILabel *headlineLabel;
+/// 把内部 scrollView 的 top 锚到 topBar 之下（topBar 由 VC 直接 install 到 VC.view，
+/// 不在 RootView 内部）。须在 topBar 装好后调一次。
+- (void)anchorContentBelowTopBar:(UIView *)topBar;
 
-/// 血糖阶段摘要卡，可点击进详情页。
-@property (nonatomic, strong, readonly) FSTFastingPhaseSummaryCard *phaseCard;
-
-/// 中央圆环面板（含 timerText / endText / planName / progress / displayMode 等 setter）。
-@property (nonatomic, strong, readonly) FSTFastingRingPanelView *ringPanel;
-
-/// 圆环下方的可编辑时间行（绿色高亮 Start）。
-@property (nonatomic, strong, readonly) FSTFastingTimesRow *timesRow;
-
-/// 中止按钮（END FASTING / COMPLETE FASTING 两种样式）。
-@property (nonatomic, strong, readonly) UIButton *stopButton;
-
-/// 底部贴士区（Drink now / 阶段提示）。
-@property (nonatomic, strong, readonly) FSTFastingTipsSectionView *tipsSection;
-
-#pragma mark - 事件回调
-
-@property (nonatomic, copy, nullable) void (^onPhaseCardTapped)(void);
-@property (nonatomic, copy, nullable) void (^onRingModeTapped)(void);
-@property (nonatomic, copy, nullable) void (^onPlanChipTapped)(void);
-@property (nonatomic, copy, nullable) void (^onEditStartTapped)(void);
-@property (nonatomic, copy, nullable) void (^onEditEndTapped)(void);
-@property (nonatomic, copy, nullable) void (^onStopTapped)(void);
 @property (nonatomic, copy, nullable) void (^onDrinkNowTapped)(void);
 @property (nonatomic, copy, nullable) void (^onSendFeedbackTapped)(void);
 

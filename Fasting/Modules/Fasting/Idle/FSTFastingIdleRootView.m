@@ -26,12 +26,12 @@
 /// 滚动容器：contentView edges 贴 scrollView 且等宽（竖直滚动）。
 /// scrollView 的四边留给 -anchorContentBelowTopBar: 在 topBar install 后补上。
 - (void)buildScrollContainer {
-    self.scrollView = [UIScrollView new];
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
     [self addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {

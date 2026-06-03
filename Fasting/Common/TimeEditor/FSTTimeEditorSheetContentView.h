@@ -6,6 +6,9 @@
 //  由 FSTTimeEditorSheetViewController 创建并放入 cardContainer 内；
 //  VC 负责状态逻辑（align 应用与否、clamp date），本视图只负责 UI 创建与约束。
 //
+//  使用方式：[[FSTTimeEditorSheetContentView alloc] init]，set titleText / alignChipText 等属性。
+//  alignChipText 为 nil 或空串时不创建 align 芯片，布局更紧凑（picker 更短、顶部留白更小）。
+//
 
 #import <UIKit/UIKit.h>
 
@@ -13,18 +16,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FSTTimeEditorSheetContentView : UIView
 
-/// 唯一指定初始化。alignChipText 为 nil 时不创建 align 芯片，布局更紧凑。
-- (instancetype)initWithTitle:(NSString *)title
-                alignChipText:(nullable NSString *)alignChipText NS_DESIGNATED_INITIALIZER;
+/// 顶部标题。
+@property (nonatomic, copy, nullable) NSString *titleText;
 
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
-- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+/// Align 芯片文案。nil/空 = 不显示芯片，picker 上移并缩短。一般在首次属性赋值后不再改。
+@property (nonatomic, copy, nullable) NSString *alignChipText;
 
 /// 滚轮日期选择器 — VC 读取/设置 date、minimumDate、maximumDate。
 @property (nonatomic, strong, readonly) UIDatePicker *datePicker;
 
-/// Align 芯片控件，alignChipText 为 nil 时此属性为 nil。
+/// Align 芯片控件，alignChipText 未设时此属性为 nil。
 @property (nonatomic, strong, readonly, nullable) UIControl *alignControl;
 
 /// 关闭按钮点击回调。

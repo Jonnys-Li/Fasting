@@ -37,7 +37,7 @@ static const NSInteger kDifficultyMediumThreshold = 18;
 @implementation FSTMealRecord
 
 - (id)copyWithZone:(NSZone *)zone {
-    FSTMealRecord *copy = [FSTMealRecord new];
+    FSTMealRecord *copy = [[FSTMealRecord alloc] init];
     copy.recordID          = self.recordID;
     copy.date              = self.date;
     copy.mealCategory      = self.mealCategory;

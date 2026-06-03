@@ -15,8 +15,8 @@
 
 @implementation FSTMealTimeCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _date = [NSDate date];
         [self fst_applyMealCardStyle];
         [self buildSubviews];
@@ -40,7 +40,7 @@
     tapGesture.cancelsTouchesInView = NO;
     [self addGestureRecognizer:tapGesture];
 
-    self.datePicker = [UIDatePicker new];
+    self.datePicker = [[UIDatePicker alloc] init];
     self.datePicker.datePickerMode = UIDatePickerModeDateAndTime;
     self.datePicker.date = self.date;
     self.datePicker.clipsToBounds = YES;

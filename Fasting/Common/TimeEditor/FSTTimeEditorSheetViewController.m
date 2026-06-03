@@ -10,16 +10,6 @@
 static const CGFloat kCornerRadius = 22.0;
 
 @interface FSTTimeEditorSheetViewController ()
-@property (nonatomic, copy) NSString *titleText;
-@property (nonatomic, strong) NSDate *initialDate;
-@property (nonatomic, strong, nullable) NSDate *minimumDate;
-@property (nonatomic, strong, nullable) NSDate *maximumDate;
-@property (nonatomic, copy, nullable) NSString *alignChipText;
-@property (nonatomic, assign) NSTimeInterval alignDurationSeconds;
-@property (nonatomic, assign) FSTTimeEditorAlignMode alignMode;
-@property (nonatomic, strong, nullable) NSDate *alignReferenceDate;
-@property (nonatomic, copy) FSTTimeEditorCommitHandler onCommit;
-
 // 内部状态机（同 demo1）：
 //   alignApplied — chip 刚被点过、picker 已被对齐；保存时此标志同步传给上游。
 //   pickerWasChanged — 用户至少滚动过 picker 一次（EndFast 模式用来决定 chip 何时启用）。
@@ -31,32 +21,17 @@ static const CGFloat kCornerRadius = 22.0;
 
 @implementation FSTTimeEditorSheetViewController
 
-- (instancetype)initWithTitle:(NSString *)title
-                  initialDate:(NSDate *)initialDate
-                  minimumDate:(nullable NSDate *)minimumDate
-                  maximumDate:(nullable NSDate *)maximumDate
-                alignChipText:(nullable NSString *)alignChipText
-         alignDurationSeconds:(NSTimeInterval)alignDurationSeconds
-                    alignMode:(FSTTimeEditorAlignMode)alignMode
-           alignReferenceDate:(nullable NSDate *)alignReferenceDate
-                     onCommit:(FSTTimeEditorCommitHandler)onCommit {
-    if ((self = [super initWithNibName:nil bundle:nil])) {
-        _titleText = [title copy];
-        _initialDate = initialDate ?: [NSDate date];
-        _minimumDate = minimumDate;
-        _maximumDate = maximumDate;
-        _alignChipText = [alignChipText copy];
-        _alignDurationSeconds = MAX(alignDurationSeconds, 60.0);  // 至少 1 分钟，防退化
-        _alignMode = alignMode;
-        _alignReferenceDate = alignReferenceDate;
-        _onCommit = [onCommit copy];
-        _alignApplied = NO;
-        _pickerWasChanged = NO;
+- (instancetype)init {
+    if ((self = [super init])) {
         self.containerStyle = FSTBaseModalContainerStyleBottomSheet;
         self.backdropAlpha = 0.42;
         self.containerCornerRadius = kCornerRadius;
     }
     return self;
+}
+
+- (void)setAlignDurationSeconds:(NSTimeInterval)alignDurationSeconds {
+    _alignDurationSeconds = MAX(alignDurationSeconds, 60.0);  // 至少 1 分钟，防退化
 }
 
 - (void)viewDidLoad {
@@ -68,8 +43,9 @@ static const CGFloat kCornerRadius = 22.0;
 #pragma mark - Content View
 
 - (void)buildContentView {
-    self.contentView = [[FSTTimeEditorSheetContentView alloc] initWithTitle:self.titleText
-                                                             alignChipText:self.alignChipText];
+    self.contentView = [[FSTTimeEditorSheetContentView alloc] init];
+    self.contentView.titleText     = self.titleText;
+    self.contentView.alignChipText = self.alignChipText;
     [self.cardContainer addSubview:self.contentView];
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.cardContainer);
@@ -80,10 +56,18 @@ static const CGFloat kCornerRadius = 22.0;
     self.contentView.datePicker.maximumDate = self.maximumDate;
 
     __weak typeof(self) weakSelf = self;
-    self.contentView.onCloseTapped       = ^{ [weakSelf handleCloseTapped]; };
-    self.contentView.onSaveTapped        = ^{ [weakSelf handleSaveTapped]; };
-    self.contentView.onAlignToggled      = ^{ [weakSelf handleAlignTapped]; };
-    self.contentView.onPickerValueChanged = ^{ [weakSelf handlePickerValueChanged]; };
+    self.contentView.onCloseTapped = ^{
+        [weakSelf handleCloseTapped];
+    };
+    self.contentView.onSaveTapped = ^{
+        [weakSelf handleSaveTapped];
+    };
+    self.contentView.onAlignToggled = ^{
+        [weakSelf handleAlignTapped];
+    };
+    self.contentView.onPickerValueChanged = ^{
+        [weakSelf handlePickerValueChanged];
+    };
 }
 
 #pragma mark - State

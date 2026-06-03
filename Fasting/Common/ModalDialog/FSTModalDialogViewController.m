@@ -8,71 +8,13 @@
 #import "FSTTheme.h"
 
 @interface FSTModalDialogViewController ()
-@property (nonatomic, copy, nullable) NSString *iconSystemName;
-@property (nonatomic, copy, nullable) NSString *iconImageName;
-@property (nonatomic, copy) NSString *dialogTitle;
-@property (nonatomic, copy) NSString *message;
-@property (nonatomic, copy) NSString *primaryTitle;
-@property (nonatomic, copy, nullable) NSString *secondaryTitle;
-@property (nonatomic, copy, nullable) FSTModalDialogActionHandler primaryHandler;
-@property (nonatomic, copy, nullable) FSTModalDialogActionHandler secondaryHandler;
-
 @property (nonatomic, strong) FSTModalDialogContentView *contentView;
 @end
 
 @implementation FSTModalDialogViewController
 
-- (instancetype)initWithIconSystemName:(nullable NSString *)systemName
-                                  title:(NSString *)title
-                                message:(NSString *)message
-                           primaryTitle:(NSString *)primaryTitle
-                         secondaryTitle:(nullable NSString *)secondaryTitle
-                         primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
-                       secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler {
-    return [self initWithIconSystemName:systemName
-                          iconImageName:nil
-                                  title:title
-                                message:message
-                           primaryTitle:primaryTitle
-                         secondaryTitle:secondaryTitle
-                         primaryHandler:primaryHandler
-                       secondaryHandler:secondaryHandler];
-}
-
-- (instancetype)initWithIconImageName:(nullable NSString *)imageName
-                                 title:(NSString *)title
-                               message:(NSString *)message
-                          primaryTitle:(NSString *)primaryTitle
-                        secondaryTitle:(nullable NSString *)secondaryTitle
-                        primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
-                      secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler {
-    return [self initWithIconSystemName:nil
-                          iconImageName:imageName
-                                  title:title
-                                message:message
-                           primaryTitle:primaryTitle
-                         secondaryTitle:secondaryTitle
-                         primaryHandler:primaryHandler
-                       secondaryHandler:secondaryHandler];
-}
-
-- (instancetype)initWithIconSystemName:(nullable NSString *)systemName
-                         iconImageName:(nullable NSString *)imageName
-                                 title:(NSString *)title
-                               message:(NSString *)message
-                          primaryTitle:(NSString *)primaryTitle
-                        secondaryTitle:(nullable NSString *)secondaryTitle
-                        primaryHandler:(nullable FSTModalDialogActionHandler)primaryHandler
-                      secondaryHandler:(nullable FSTModalDialogActionHandler)secondaryHandler {
+- (instancetype)init {
     if ((self = [super init])) {
-        _iconSystemName = [systemName copy];
-        _iconImageName = [imageName copy];
-        _dialogTitle = [title copy];
-        _message = [message copy];
-        _primaryTitle = [primaryTitle copy];
-        _secondaryTitle = [secondaryTitle copy];
-        _primaryHandler = [primaryHandler copy];
-        _secondaryHandler = [secondaryHandler copy];
         self.containerStyle = FSTBaseModalContainerStyleCenteredCard;
         self.containerHorizontalInset = 36.0;
         self.containerCornerRadius = 24.0;
@@ -90,21 +32,28 @@
 #pragma mark - Content View
 
 - (void)buildContentView {
-    self.contentView = [[FSTModalDialogContentView alloc] initWithIconSystemName:self.iconSystemName
-                                                                  iconImageName:self.iconImageName
-                                                                          title:self.dialogTitle
-                                                                        message:self.message
-                                                                   primaryTitle:self.primaryTitle
-                                                                 secondaryTitle:self.secondaryTitle];
+    self.contentView = [[FSTModalDialogContentView alloc] init];
+    self.contentView.iconSystemName = (self.iconKind == FSTModalDialogIconKindSystemSymbol) ? self.iconName : nil;
+    self.contentView.iconImageName  = (self.iconKind == FSTModalDialogIconKindAssetImage)   ? self.iconName : nil;
+    self.contentView.titleText      = self.titleText;
+    self.contentView.message        = self.message;
+    self.contentView.primaryTitle   = self.primaryTitle;
+    self.contentView.secondaryTitle = self.secondaryTitle;
     [self.cardContainer addSubview:self.contentView];
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.cardContainer);
     }];
 
     __weak typeof(self) weakSelf = self;
-    self.contentView.onCloseTapped     = ^{ [weakSelf handleCloseTapped]; };
-    self.contentView.onPrimaryTapped   = ^{ [weakSelf handlePrimaryTapped]; };
-    self.contentView.onSecondaryTapped = ^{ [weakSelf handleSecondaryTapped]; };
+    self.contentView.onCloseTapped = ^{
+        [weakSelf handleCloseTapped];
+    };
+    self.contentView.onPrimaryTapped = ^{
+        [weakSelf handlePrimaryTapped];
+    };
+    self.contentView.onSecondaryTapped = ^{
+        [weakSelf handleSecondaryTapped];
+    };
 }
 
 #pragma mark - Events

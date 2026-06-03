@@ -16,6 +16,10 @@
 #import "FSTTheme.h"
 
 @interface FSTMealDiaryViewController ()
+@property (nonatomic, strong) FSTMealDiaryRootView *rootView;
+@property (nonatomic, strong) FSTMealDiaryTopBarView *topBarView;
+@property (nonatomic, strong) UIStackView *timelineStack;
+
 @property (nonatomic, strong) NSDate *selectedDate;
 @property (nonatomic, strong) NSArray<FSTMealRecord *> *dayRecords;
 @end
@@ -29,27 +33,44 @@
     return self;
 }
 
-- (void)loadView {
-    self.view = [FSTMealDiaryRootView new];
-}
-
-- (FSTMealDiaryRootView *)rootView {
-    return (FSTMealDiaryRootView *)self.view;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    __weak typeof(self) weakSelf = self;
-    self.rootView.topBarView.selectedDate = self.selectedDate;
-    self.rootView.topBarView.onBackTapped = ^{ [weakSelf.navigationController popViewControllerAnimated:YES]; };
-    self.rootView.topBarView.onDateChipTapped = ^{ [weakSelf showDatePicker]; };
-    self.rootView.onConfirmTapped = ^{ [weakSelf handleConfirmTapped]; };
+    [self installRootView];
+    [self bindCallbacks];
 
     [self reloadDayRecords];
     [self rebuildTimeline];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleRecordsChanged) name:FSTRecordsDidChangeNotification object:nil];
+}
+
+- (void)installRootView {
+    self.topBarView = [[FSTMealDiaryTopBarView alloc] init];
+
+    self.timelineStack = [[UIStackView alloc] init];
+    self.timelineStack.axis = UILayoutConstraintAxisVertical;
+    self.timelineStack.spacing = 0;
+
+    self.rootView = [[FSTMealDiaryRootView alloc] init];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.rootView mountTopBarView:self.topBarView timelineStack:self.timelineStack];
+}
+
+- (void)bindCallbacks {
+    __weak typeof(self) weakSelf = self;
+    self.topBarView.selectedDate = self.selectedDate;
+    self.topBarView.onBackTapped = ^{
+        [weakSelf.navigationController popViewControllerAnimated:YES];
+    };
+    self.topBarView.onDateChipTapped = ^{
+        [weakSelf showDatePicker];
+    };
+    self.rootView.onConfirmTapped = ^{
+        [weakSelf handleConfirmTapped];
+    };
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -73,7 +94,7 @@
         return [rhs.date compare:lhs.date];
     }];
     self.dayRecords = matchedRecords;
-    self.rootView.topBarView.selectedDate = self.selectedDate;
+    self.topBarView.selectedDate = self.selectedDate;
 }
 
 - (void)handleRecordsChanged {
@@ -85,25 +106,24 @@
 
 /// 清空时间轴，按 dayRecords 重新生成行。空数据展示占位。
 - (void)rebuildTimeline {
-    UIStackView *stack = self.rootView.timelineStack;
-    for (UIView *subview in stack.arrangedSubviews) {
-        [stack removeArrangedSubview:subview];
+    for (UIView *subview in self.timelineStack.arrangedSubviews) {
+        [self.timelineStack removeArrangedSubview:subview];
         [subview removeFromSuperview];
     }
     if (self.dayRecords.count == 0) {
         UILabel *emptyLabel = [UILabel fst_bodyLabelWithText:@"No meal records today"];
         emptyLabel.textAlignment = NSTextAlignmentCenter;
-        [stack addArrangedSubview:emptyLabel];
+        [self.timelineStack addArrangedSubview:emptyLabel];
         return;
     }
     __weak typeof(self) weakSelf = self;
     for (NSUInteger i = 0; i < self.dayRecords.count; i++) {
         FSTMealRecord *record = self.dayRecords[i];
-        FSTMealDiaryEntryRowView *rowView = [[FSTMealDiaryEntryRowView alloc]
-            initWithCategory:record.mealCategory ?: @"Meal"
-                    dietType:record.dietType ?: @"Not sure"
-                  tasteLevel:record.tasteLevel
-                    dateText:FSTFormatRelativeDateTime(record.date ?: [NSDate date])];
+        FSTMealDiaryEntryRowView *rowView = [[FSTMealDiaryEntryRowView alloc] init];
+        rowView.category   = record.mealCategory ?: @"Meal";
+        rowView.dietType   = record.dietType ?: @"Not sure";
+        rowView.tasteLevel = record.tasteLevel;
+        rowView.dateText   = FSTFormatRelativeDateTime(record.date ?: [NSDate date]);
         rowView.onCardTapped = ^{
             [weakSelf openMealRecord:record];
         };
@@ -111,7 +131,7 @@
             [weakSelf openMealRecord:record];
         };
         rowView.hidesTopLine = (i == 0);
-        [stack addArrangedSubview:rowView];
+        [self.timelineStack addArrangedSubview:rowView];
     }
 }
 

@@ -21,8 +21,8 @@
 
 @implementation FSTAddRecordTimeCardView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         [self buildSubviews];
         [self refreshValues];
     }
@@ -91,7 +91,7 @@
 
 /// 一条时间行（圆点 + 标题 + 值 + 铅笔），点击切换对应 picker。
 - (UIView *)timeRowWithTitle:(NSString *)title isStart:(BOOL)isStart {
-    UIView *rowView = [UIView new];
+    UIView *rowView = [[UIView alloc] init];
     rowView.tag = isStart ? 1 : 2;
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleRowTapped:)];
     [rowView addGestureRecognizer:tapGesture];
@@ -133,7 +133,7 @@
 }
 
 - (UIDatePicker *)makeDatePickerWithDate:(NSDate *)date action:(SEL)action {
-    UIDatePicker *datePicker = [UIDatePicker new];
+    UIDatePicker *datePicker = [[UIDatePicker alloc] init];
     datePicker.datePickerMode = UIDatePickerModeDateAndTime;
     datePicker.date = date ?: [NSDate date];
     if (@available(iOS 13.4, *)) datePicker.preferredDatePickerStyle = UIDatePickerStyleWheels;

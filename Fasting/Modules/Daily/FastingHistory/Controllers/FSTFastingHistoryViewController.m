@@ -14,7 +14,11 @@
 #import "FSTRecordsRepository.h"
 #import "FSTTheme.h"
 
+static const CGFloat kRowHeight = 264;
+
 @interface FSTFastingHistoryViewController () <UITableViewDataSource, UITableViewDelegate>
+@property (nonatomic, strong) FSTFastingHistoryRootView *rootView;
+@property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray<FSTFastingRecord *> *records;
 @end
 
@@ -27,22 +31,37 @@
     return self;
 }
 
-- (void)loadView {
-    self.view = [FSTFastingHistoryRootView new];
-}
-
-- (FSTFastingHistoryRootView *)rootView {
-    return (FSTFastingHistoryRootView *)self.view;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.rootView.tableView.dataSource = self;
-    self.rootView.tableView.delegate   = self;
-    __weak typeof(self) weakSelf = self;
-    self.rootView.onBackTapped = ^{ [weakSelf.navigationController popViewControllerAnimated:YES]; };
+    [self installRootView];
+    [self bindCallbacks];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadRecords) name:FSTRecordsDidChangeNotification object:nil];
     [self reloadRecords];
+}
+
+- (void)installRootView {
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.separatorStyle  = UITableViewCellSeparatorStyleNone;
+    self.tableView.rowHeight       = kRowHeight;
+    self.tableView.contentInset    = UIEdgeInsetsMake(0, 0, 24, 0);
+    [self.tableView registerClass:[FSTFastingCardCell class] forCellReuseIdentifier:@"card"];
+    self.tableView.dataSource = self;
+    self.tableView.delegate   = self;
+
+    self.rootView = [[FSTFastingHistoryRootView alloc] init];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.rootView mountTableView:self.tableView];
+}
+
+- (void)bindCallbacks {
+    __weak typeof(self) weakSelf = self;
+    self.rootView.onBackTapped = ^{
+        [weakSelf.navigationController popViewControllerAnimated:YES];
+    };
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -52,14 +71,14 @@
 
 - (void)reloadRecords {
     self.records = [[FSTRecordsRepository sharedRepository] allRecords];
-    [self.rootView.tableView reloadData];
+    [self.tableView reloadData];
     [self refreshDateHeader];
 }
 
 /// 顶部「相对日期」label 跟随当前最上方可见 record 的最新日期切换文案
 /// （Today / Yesterday / Tomorrow / May 12 等）。
 - (void)refreshDateHeader {
-    NSIndexPath *topVisible = self.rootView.tableView.indexPathsForVisibleRows.firstObject;
+    NSIndexPath *topVisible = self.tableView.indexPathsForVisibleRows.firstObject;
     if (!topVisible || topVisible.row >= (NSInteger)self.records.count) {
         self.rootView.todayText = @"Today";
         return;

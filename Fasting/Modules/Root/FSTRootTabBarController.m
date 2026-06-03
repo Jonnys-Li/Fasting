@@ -28,14 +28,14 @@ static const NSTimeInterval kTabChromeSuppressionDelay = 0.12;
     UIImage *exploreUnselected = [UIImage fst_originalImageNamed:@"tab_explore"];
     UIImage *exploreSelected   = [UIImage fst_originalImageNamed:@"tab_explore_selected"];
 
-    FSTTimelineViewController *timelineViewController = [FSTTimelineViewController new];
+    FSTTimelineViewController *timelineViewController = [[FSTTimelineViewController alloc] init];
     UINavigationController *timelineNavigationController = [[UINavigationController alloc] initWithRootViewController:timelineViewController];
     timelineNavigationController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Daily"
                                                                             image:dailyUnselected
                                                                     selectedImage:dailySelected];
     timelineNavigationController.tabBarItem.imageInsets = UIEdgeInsetsMake(-8, 0, 4, 0);
 
-    FSTFastingIdleViewController *dailyPlanViewController = [FSTFastingIdleViewController new];
+    FSTFastingIdleViewController *dailyPlanViewController = [[FSTFastingIdleViewController alloc] init];
     UINavigationController *fastingNavigationController = [[UINavigationController alloc] initWithRootViewController:dailyPlanViewController];
     fastingNavigationController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Fasting"
                                                                            image:fastingUnselected
@@ -43,7 +43,7 @@ static const NSTimeInterval kTabChromeSuppressionDelay = 0.12;
     fastingNavigationController.tabBarItem.imageInsets = UIEdgeInsetsMake(-6, 0, 2, 0);
 
     // Explore: 占位 controller，仅承载 tabBarItem；点击时由 delegate 拦截改为 modal 弹出 Choose Plan。
-    UIViewController *explorePlaceholder = [UIViewController new];
+    UIViewController *explorePlaceholder = [[UIViewController alloc] init];
     explorePlaceholder.view.backgroundColor = [UIColor fst_pageBackground];
     explorePlaceholder.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Explore"
                                                                   image:exploreUnselected
@@ -64,7 +64,7 @@ static const NSTimeInterval kTabChromeSuppressionDelay = 0.12;
     self.tabBar.layer.shadowRadius = 22;
 
     if (@available(iOS 13.0, *)) {
-        UITabBarAppearance *appearance = [UITabBarAppearance new];
+        UITabBarAppearance *appearance = [[UITabBarAppearance alloc] init];
         [appearance configureWithDefaultBackground];
         appearance.backgroundColor = [UIColor whiteColor];
         appearance.shadowColor = [UIColor clearColor];
@@ -92,7 +92,8 @@ shouldSelectViewController:(UIViewController *)viewController {
     NSInteger targetIndex = [tabBarController.viewControllers indexOfObject:viewController];
     if (targetIndex == FSTTabIndexExplore) {
         UIViewController *presenter = tabBarController.selectedViewController ?: tabBarController;
-        [FSTAppRouter presentPlanPickerFrom:presenter onPick:nil];
+        // Explore tap → 完整 Plan 浏览流：picker → push PlanConfirm（与 IdleVC handlePlanTapped 路由对齐）。
+        [FSTAppRouter presentPlanBrowserFrom:presenter];
         return NO;  // 不真正切到 Explore tab，保留当前 tab 高亮
     }
     return YES;

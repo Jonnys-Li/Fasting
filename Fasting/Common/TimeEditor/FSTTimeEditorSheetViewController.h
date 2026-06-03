@@ -8,6 +8,17 @@
 //  调用入口：业务侧不直接 alloc/init 这个类，而是用 UIViewController+FSTTimeEditor 上的方法
 //  [self fst_presentTimeEditorWithTitle:...] —— 该 Category 负责构造本 VC 并 present。
 //
+//  使用方式（按 R3：UIVC 配置走 property setter）：
+//     sheet = [[FSTTimeEditorSheetViewController alloc] init];
+//     sheet.titleText            = @"...";
+//     sheet.initialDate          = ...;
+//     sheet.alignChipText        = @"Align with 14-10";  // 可不设
+//     sheet.alignMode            = FSTTimeEditorAlignModeStartFast;
+//     sheet.alignDurationSeconds = ...;                  // chip 模式下必设
+//     sheet.alignReferenceDate   = ...;                  // EndFast / ReferencePlusDuration 必设
+//     sheet.onCommit             = ^(NSDate *p, BOOL a) { ... };
+//     [self presentViewController:sheet animated:YES completion:nil];
+//
 //  Align chip 交互（参照 demo1 的 FastingTimeEditorSheetViewController 设计）：
 //    - 不是 toggle，而是一次性 Apply。点击后 picker 跳到对齐时间，chip 变灰禁用。
 //    - 用户滚动 picker 后 chip 重新亮起（视 mode 决定）。
@@ -39,29 +50,38 @@ typedef void (^FSTTimeEditorCommitHandler)(NSDate *pickedDate, BOOL aligned);
 
 @interface FSTTimeEditorSheetViewController : FSTBaseModalViewController
 
-/// 唯一指定初始化方法（标记为 NS_DESIGNATED_INITIALIZER）。
-/// @param title                 sheet 顶部大标题。
-/// @param initialDate           picker 初始定位时间。
-/// @param minimumDate           picker 允许的最早时间，nil 不限。
-/// @param maximumDate           picker 允许的最晚时间，nil 不限。
-/// @param alignChipText         顶部 chip 文案（如 "Align with 14-10"）。nil/空 表示不显示 chip。
-/// @param alignDurationSeconds  对齐时长（如 plan.fastingHours * 3600）。
-/// @param alignMode             对齐模式，决定 chip 启用条件与 targetDate 算法。
-/// @param alignReferenceDate    EndFast / ReferencePlusDuration 模式下的参考时刻；StartFast 模式忽略。
-/// @param onCommit              保存回调；aligned=YES 表示按对齐分支保存。
-- (instancetype)initWithTitle:(NSString *)title
-                  initialDate:(NSDate *)initialDate
-                  minimumDate:(nullable NSDate *)minimumDate
-                  maximumDate:(nullable NSDate *)maximumDate
-                alignChipText:(nullable NSString *)alignChipText
-         alignDurationSeconds:(NSTimeInterval)alignDurationSeconds
-                    alignMode:(FSTTimeEditorAlignMode)alignMode
-           alignReferenceDate:(nullable NSDate *)alignReferenceDate
-                     onCommit:(FSTTimeEditorCommitHandler)onCommit NS_DESIGNATED_INITIALIZER;
+#pragma mark - 显示配置
 
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
-- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+/// sheet 顶部大标题。
+@property (nonatomic, copy, nullable) NSString *titleText;
+
+/// picker 初始定位时间。nil 时使用 [NSDate date]。
+@property (nonatomic, strong, nullable) NSDate *initialDate;
+
+/// picker 允许的最早时间，nil 不限。
+@property (nonatomic, strong, nullable) NSDate *minimumDate;
+
+/// picker 允许的最晚时间，nil 不限。
+@property (nonatomic, strong, nullable) NSDate *maximumDate;
+
+#pragma mark - Align chip 配置（chip 文案设为非空才会显示）
+
+/// 顶部 chip 文案（如 "Align with 14-10"）。nil/空 表示不显示 chip。
+@property (nonatomic, copy, nullable) NSString *alignChipText;
+
+/// 对齐时长（如 plan.fastingHours * 3600）。chip 显示时必设；为防退化最小取 60 秒。
+@property (nonatomic, assign) NSTimeInterval alignDurationSeconds;
+
+/// 对齐模式，决定 chip 启用条件与 targetDate 算法。
+@property (nonatomic, assign) FSTTimeEditorAlignMode alignMode;
+
+/// EndFast / ReferencePlusDuration 模式下的参考时刻；StartFast 模式忽略。
+@property (nonatomic, strong, nullable) NSDate *alignReferenceDate;
+
+#pragma mark - 提交回调
+
+/// 保存回调；aligned=YES 表示按对齐分支保存。
+@property (nonatomic, copy, nullable) FSTTimeEditorCommitHandler onCommit;
 
 @end
 

@@ -4,46 +4,36 @@
 //
 
 #import "FSTActiveFastingRootView.h"
-#import "FSTFastingPhaseSummaryCard.h"
-#import "FSTFastingRingPanelView.h"
-#import "FSTFastingTimesRow.h"
+#import "FSTFastingFeedbackRow.h"
 #import "FSTFastingTipsSectionView.h"
 #import "FSTTheme.h"
 
 #pragma mark - Layout constants
 
-// Headline
 static const CGFloat kHeadlineTopOffset = 8;
 static const CGFloat kHeadlineWidth     = 155;
 static const CGFloat kHeadlineHeight    = 30;
 
-// PhaseCard
 static const CGFloat kPhaseCardTopOffset = 24;
 static const CGFloat kPhaseCardHeight    = 56;
 
-// RingPanel
 static const CGFloat kRingPanelTopOffset = 38;
 
-// TimesRow / StopButton（共享底部内容宽度）
 static const CGFloat kBottomContentWidth   = 318;
 static const CGFloat kTimesRowVisualOffset = -12;
 static const CGFloat kTimesRowHeight       = 51;
 static const CGFloat kStopTopOffset        = 24;
 
-// Tips / Feedback
 static const CGFloat kTipsTopOffset     = 28;
 static const CGFloat kTipsSideInset     = 20;
 static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
 
 @interface FSTActiveFastingRootView ()
-@property (nonatomic, strong, readwrite) UIScrollView *scrollView;
-@property (nonatomic, strong, readwrite) UIView *contentView;
-@property (nonatomic, strong, readwrite) UILabel *headlineLabel;
-@property (nonatomic, strong, readwrite) FSTFastingPhaseSummaryCard *phaseCard;
-@property (nonatomic, strong, readwrite) FSTFastingRingPanelView *ringPanel;
-@property (nonatomic, strong, readwrite) FSTFastingTimesRow *timesRow;
-@property (nonatomic, strong, readwrite) UIButton *stopButton;
-@property (nonatomic, strong, readwrite) FSTFastingTipsSectionView *tipsSection;
+@property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) UIView *contentView;
+@property (nonatomic, strong) UILabel *headlineLabel;
+@property (nonatomic, strong) FSTFastingTipsSectionView *tipsSection;
+@property (nonatomic, strong) FSTFastingFeedbackRow *feedbackRow;
 @end
 
 @implementation FSTActiveFastingRootView
@@ -51,27 +41,31 @@ static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor fst_pageBackground];
-        [self buildScrollContainer];
-        [self buildHeaderAndPhase];
-        [self buildRingPanel];
-        [self buildTimesRowAndStop];
-        [self buildTipsSection];
+        [self setupSubviews];
+        [self setupConstraints];
     }
     return self;
 }
 
 #pragma mark - 视图组装
 
-/// 滚动容器：scrollView 的 left/right/bottom 锚到 self；top 由 VC 在 topBar install 完毕后补上。
-- (void)buildScrollContainer {
-    self.scrollView = [UIScrollView new];
+- (void)setupSubviews {
+    self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
     [self addSubview:self.scrollView];
 
-    self.contentView = [UIView new];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
+    self.headlineLabel = [UILabel fst_labelWithText:@"You're fasting!"
+                                                font:FSTFontAvenirBold(22)
+                                               color:[UIColor fst_textHeading]
+                                           alignment:NSTextAlignmentCenter];
+    [self.contentView addSubview:self.headlineLabel];
+}
+
+- (void)setupConstraints {
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.scrollView);
         make.width.equalTo(self.scrollView);
@@ -79,154 +73,101 @@ static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
     [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.equalTo(self);
     }];
-}
-
-- (void)buildHeaderAndPhase {
-    self.headlineLabel = [UILabel fst_labelWithText:@"You're fasting!"
-                                                font:FSTFontAvenirBold(22)
-                                               color:[UIColor fst_textHeading]
-                                           alignment:NSTextAlignmentCenter];
-
-    self.phaseCard = [FSTFastingPhaseSummaryCard new];
-    [self.phaseCard addTarget:self action:@selector(handlePhaseCardTapped) forControlEvents:UIControlEventTouchUpInside];
-
-    [self.contentView fst_addSubviews:@[self.headlineLabel, self.phaseCard]];
-
     [self.headlineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView).offset(kHeadlineTopOffset);
         make.centerX.equalTo(self.contentView);
         make.size.mas_equalTo(CGSizeMake(kHeadlineWidth, kHeadlineHeight));
     }];
-    [self.phaseCard mas_makeConstraints:^(MASConstraintMaker *make) {
+}
+
+#pragma mark - Mount API
+
+- (void)mountPhaseCard:(UIControl *)phaseCard
+             ringPanel:(UIView *)ringPanel
+              timesRow:(UIView *)timesRow
+            stopButton:(UIButton *)stopButton
+           tipsSection:(FSTFastingTipsSectionView *)tipsSection {
+    self.tipsSection = tipsSection;
+    [self.contentView addSubview:phaseCard];
+    [self.contentView addSubview:ringPanel];
+    [self.contentView addSubview:timesRow];
+    [self.contentView addSubview:stopButton];
+    [self.contentView addSubview:tipsSection];
+
+    [phaseCard mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.headlineLabel.mas_bottom).offset(kPhaseCardTopOffset);
         make.left.right.equalTo(self.contentView).inset(FSTSpacingCardHorizontal);
         make.height.equalTo(@(kPhaseCardHeight));
     }];
-}
-
-- (void)buildRingPanel {
-    __weak typeof(self) weakSelf = self;
-
-    self.ringPanel = [FSTFastingRingPanelView new];
-    self.ringPanel.onModeTapped = ^{
-        if (weakSelf.onRingModeTapped) weakSelf.onRingModeTapped();
-    };
-    self.ringPanel.onPlanChipTapped = ^{
-        if (weakSelf.onPlanChipTapped) weakSelf.onPlanChipTapped();
-    };
-    [self.contentView addSubview:self.ringPanel];
-
-    [self.ringPanel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.phaseCard.mas_bottom).offset(kRingPanelTopOffset);
+    [ringPanel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(phaseCard.mas_bottom).offset(kRingPanelTopOffset);
         make.left.right.equalTo(self.contentView);
     }];
-}
-
-- (void)buildTimesRowAndStop {
-    __weak typeof(self) weakSelf = self;
-
-    self.timesRow = [[FSTFastingTimesRow alloc] initWithStartCaption:@"Fast starts"
-                                                          endCaption:@"Fast ends"
-                                                            editable:YES
-                                                 startHighlightColor:nil];
-    self.timesRow.onEditStartTapped = ^{
-        if (weakSelf.onEditStartTapped) weakSelf.onEditStartTapped();
-    };
-    self.timesRow.onEditEndTapped = ^{
-        if (weakSelf.onEditEndTapped) weakSelf.onEditEndTapped();
-    };
-    [self.contentView addSubview:self.timesRow];
-
-    self.stopButton = [UIButton fst_pillButtonWithTitle:@"END FASTING" style:FSTPillButtonStyleInactive];
-    [self.stopButton addTarget:self action:@selector(handleStopTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.contentView addSubview:self.stopButton];
-
-    [self.timesRow mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.ringPanel.mas_bottom).offset(kTimesRowVisualOffset);
+    [timesRow mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(ringPanel.mas_bottom).offset(kTimesRowVisualOffset);
         make.centerX.equalTo(self.contentView);
         make.width.equalTo(@(kBottomContentWidth));
         make.height.equalTo(@(kTimesRowHeight));
     }];
-    [self.stopButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.timesRow.mas_bottom).offset(kStopTopOffset);
+    [stopButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(timesRow.mas_bottom).offset(kStopTopOffset);
         make.centerX.equalTo(self.contentView);
         make.width.equalTo(@(kBottomContentWidth));
         make.height.equalTo(@(FSTControlHeightStandard));
     }];
-}
-
-- (void)buildTipsSection {
-    __weak typeof(self) weakSelf = self;
-
-    self.tipsSection = [FSTFastingTipsSectionView new];
-    self.tipsSection.onDrinkNowTapped = ^{
-        if (weakSelf.onDrinkNowTapped) weakSelf.onDrinkNowTapped();
-    };
-    [self.contentView addSubview:self.tipsSection];
-    [self.tipsSection mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stopButton.mas_bottom).offset(kTipsTopOffset);
+    [tipsSection mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(stopButton.mas_bottom).offset(kTipsTopOffset);
         make.left.equalTo(self.contentView).offset(kTipsSideInset);
         make.right.equalTo(self.contentView).offset(-kTipsSideInset);
     }];
 
-    // Send feedback 行 — 独立于 Tips 白色卡片之外
-    UIView *feedbackRow = [self buildFeedbackRow];
-    [self.contentView addSubview:feedbackRow];
-    [feedbackRow mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.tipsSection.mas_bottom).offset(20);
+    // Send feedback 行 — 独立于 Tips 白色卡片之外，由 RootView 自管。
+    self.feedbackRow = [[FSTFastingFeedbackRow alloc] init];
+    __weak typeof(self) weakSelf = self;
+    self.feedbackRow.onTapped = ^{
+        if (weakSelf.onSendFeedbackTapped) weakSelf.onSendFeedbackTapped();
+    };
+    [self.contentView addSubview:self.feedbackRow];
+    [self.feedbackRow mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(tipsSection.mas_bottom).offset(20);
         make.left.equalTo(self.contentView).offset(kTipsSideInset);
         make.right.equalTo(self.contentView).offset(-kTipsSideInset);
         make.height.mas_equalTo(56);
         make.bottom.equalTo(self.contentView).offset(-kTipsBottomPadding);
     }];
+
+    // Tips QA 折叠卡展开后把 tipsSection 底部滚到可见区底部（Bug 3）。
+    tipsSection.onExpansionChanged = ^(BOOL expanded) {
+        if (expanded) [weakSelf scrollToShowTipsSection];
+    };
 }
 
-#pragma mark - Send feedback
+#pragma mark - Scroll helpers
 
-- (UIView *)buildFeedbackRow {
-    UIView *row = [UIView new];
-    row.backgroundColor = [UIColor whiteColor];
-    row.layer.cornerRadius = FSTRadiusL;
+/// 调用上下文：必须在 tipsSection.onExpansionChanged 回调中（即外层 UIView animateWithDuration 块内）
+/// 执行 —— 这样 contentOffset 变更会被外层动画捕获，与"展开"动画同步呈现（一步动作）。
+/// 单独调用此方法不会动画（contentOffset 同步赋值）。
+- (void)scrollToShowTipsSection {
+    if (!self.tipsSection) return;
+    UIScrollView *sv = self.scrollView;
+    [sv layoutIfNeeded];
+    CGRect frame = [self.tipsSection convertRect:self.tipsSection.bounds toView:sv];
+    CGFloat tipsBottom = CGRectGetMaxY(frame);
+    // 让 tipsSection 底部 == scrollView 可见区底部（扣除 adjustedContentInset.bottom，因为
+    // tab bar / safe area 会遮住底部那一截）。
+    CGFloat bottomInset = sv.adjustedContentInset.bottom;
+    CGFloat newOffsetY = tipsBottom - sv.bounds.size.height + bottomInset;
+    CGFloat maxOffsetY = MAX(0, sv.contentSize.height - sv.bounds.size.height + bottomInset);
+    newOffsetY = MIN(maxOffsetY, MAX(0, newOffsetY));
+    if (fabs(newOffsetY - sv.contentOffset.y) < 0.5) return;
+    sv.contentOffset = CGPointMake(sv.contentOffset.x, newOffsetY);
+}
 
-    UILabel *emojiLabel = [UILabel fst_labelWithText:@"\U0001F4E9" font:FSTFontRegular(28) color:[UIColor blackColor]];
-    UILabel *textLabel = [UILabel fst_labelWithText:@"Send feedback" font:FSTFontMedium(17) color:[UIColor blackColor]];
-
-    UIImageView *chevron = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"feedback_chevron"]];
-    chevron.contentMode = UIViewContentModeScaleAspectFit;
-
-    [row fst_addSubviews:@[emojiLabel, textLabel, chevron]];
-
-    [emojiLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(row).offset(16);
-        make.centerY.equalTo(row);
+- (void)anchorContentBelowTopBar:(UIView *)topBar {
+    [self.scrollView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(topBar.mas_bottom);
+        make.left.right.bottom.equalTo(self);
     }];
-    [textLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(emojiLabel.mas_right).offset(10);
-        make.centerY.equalTo(row);
-    }];
-    [chevron mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(row).offset(-16);
-        make.centerY.equalTo(row);
-        make.size.mas_equalTo(CGSizeMake(8, 14));
-    }];
-
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleFeedbackTapped)];
-    [row addGestureRecognizer:tap];
-    return row;
-}
-
-- (void)handleFeedbackTapped {
-    if (self.onSendFeedbackTapped) self.onSendFeedbackTapped();
-}
-
-#pragma mark - 事件
-
-- (void)handlePhaseCardTapped {
-    if (self.onPhaseCardTapped) self.onPhaseCardTapped();
-}
-
-- (void)handleStopTapped {
-    if (self.onStopTapped) self.onStopTapped();
 }
 
 @end

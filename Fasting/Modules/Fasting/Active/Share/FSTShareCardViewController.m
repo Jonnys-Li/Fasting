@@ -64,7 +64,7 @@ static const CGFloat kButtonSpacing      = 16;
 }
 
 - (UIView *)buildBrandRow {
-    UIView *row = [UIView new];
+    UIView *row = [[UIView alloc] init];
 
     UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"share_app_icon"]];
     iconView.contentMode = UIViewContentModeScaleAspectFit;

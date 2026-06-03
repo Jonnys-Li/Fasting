@@ -15,10 +15,15 @@ static const CGFloat kCloseSize = 34.0;
 static const CGFloat kPickerHeightSimple  = 245.0;
 static const CGFloat kPickerHeightAligned = 305.0;
 
-// Save button
+// Picker 顶部偏移（无 chip 略大，有 chip 略小）
+static const CGFloat kPickerTopOffsetSimple  = 28.0;
+static const CGFloat kPickerTopOffsetAligned = 22.0;
 
 @interface FSTTimeEditorSheetContentView ()
+@property (nonatomic, strong) UIButton *closeButton;
+@property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong, readwrite) UIDatePicker *datePicker;
+@property (nonatomic, strong) UIButton *saveButton;
 @property (nonatomic, strong, readwrite, nullable) UIControl *alignControl;
 @property (nonatomic, strong, nullable) UIImageView *alignIconView;
 @property (nonatomic, strong, nullable) UILabel *alignLabel;
@@ -26,90 +31,65 @@ static const CGFloat kPickerHeightAligned = 305.0;
 
 @implementation FSTTimeEditorSheetContentView
 
-#pragma mark - 初始化
-
-- (instancetype)initWithTitle:(NSString *)title
-                alignChipText:(nullable NSString *)alignChipText {
-    if ((self = [super initWithFrame:CGRectZero])) {
-        [self buildSubviewsWithTitle:title alignChipText:alignChipText];
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        [self setupSubviews];
+        [self setupConstraints];
     }
     return self;
 }
 
 #pragma mark - 视图组装
 
-- (void)buildSubviewsWithTitle:(NSString *)title
-                 alignChipText:(nullable NSString *)alignChipText {
-
-    // — Close button
-    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+- (void)setupSubviews {
+    self.closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     UIImage *closeImage = [UIImage fst_originalImageNamed:@"time_editor_close"];
-    [closeButton setImage:closeImage forState:UIControlStateNormal];
-    closeButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
-    [closeButton addTarget:self action:@selector(handleCloseTapped)
-          forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:closeButton];
+    [self.closeButton setImage:closeImage forState:UIControlStateNormal];
+    self.closeButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.closeButton addTarget:self action:@selector(handleCloseTapped)
+               forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:self.closeButton];
 
-    // — Title label
-    UILabel *titleLabel = [UILabel fst_labelWithText:title
-                                                font:FSTFontAvenirDemiBold(24)
-                                               color:[UIColor fst_textHeading]
-                                           alignment:NSTextAlignmentCenter];
-    titleLabel.adjustsFontSizeToFitWidth = YES;
-    titleLabel.minimumScaleFactor = 0.76;
-    [self addSubview:titleLabel];
+    self.titleLabel = [UILabel fst_labelWithText:@""
+                                            font:FSTFontAvenirDemiBold(24)
+                                           color:[UIColor fst_textHeading]
+                                       alignment:NSTextAlignmentCenter];
+    self.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.titleLabel.minimumScaleFactor = 0.76;
+    [self addSubview:self.titleLabel];
 
-    // — Date picker
-    self.datePicker = [UIDatePicker new];
+    self.datePicker = [[UIDatePicker alloc] init];
     self.datePicker.datePickerMode = UIDatePickerModeDateAndTime;
     if (@available(iOS 13.4, *)) {
         self.datePicker.preferredDatePickerStyle = UIDatePickerStyleWheels;
     }
-    [self.datePicker addTarget:self action:@selector(handlePickerValueChanged) forControlEvents:UIControlEventValueChanged];
+    [self.datePicker addTarget:self action:@selector(handlePickerValueChanged)
+              forControlEvents:UIControlEventValueChanged];
     [self addSubview:self.datePicker];
 
-    // — Optional align chip
-    BOOL hasAlignChip = alignChipText.length > 0;
-    UIView *pickerTopAnchor = titleLabel;
-    CGFloat pickerTopOffset = hasAlignChip ? 22.0 : 28.0;
-    CGFloat pickerHeight = hasAlignChip ? kPickerHeightAligned
-                                        : kPickerHeightSimple;
-    if (hasAlignChip) {
-        self.alignControl = [self buildAlignControlWithText:alignChipText];
-        [self addSubview:self.alignControl];
-        pickerTopAnchor = self.alignControl;
-    }
+    self.saveButton = [UIButton fst_pillButtonWithTitle:@"Save" style:FSTPillButtonStyleSheetSave];
+    [self.saveButton addTarget:self action:@selector(handleSaveTapped)
+              forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:self.saveButton];
+}
 
-    // — Save button
-    UIButton *saveButton = [UIButton fst_pillButtonWithTitle:@"Save" style:FSTPillButtonStyleSheetSave];
-    [saveButton addTarget:self action:@selector(handleSaveTapped)
-         forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:saveButton];
-
-    // — Constraints
-    [closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+- (void)setupConstraints {
+    [self.closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(34);
         make.right.equalTo(self).offset(-30);
         make.size.mas_equalTo(CGSizeMake(kCloseSize, kCloseSize));
     }];
-    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(82);
         make.left.right.equalTo(self).inset(48);
         make.height.equalTo(@32);
     }];
-    if (self.alignControl) {
-        [self.alignControl mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(titleLabel.mas_bottom).offset(20);
-            make.centerX.equalTo(self);
-            make.height.equalTo(@34);
-        }];
-    }
     [self.datePicker mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(pickerTopAnchor.mas_bottom).offset(pickerTopOffset);
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(kPickerTopOffsetSimple);
         make.left.right.equalTo(self).inset(26);
-        make.height.equalTo(@(pickerHeight));
+        make.height.equalTo(@(kPickerHeightSimple));
     }];
-    [saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.datePicker.mas_bottom).offset(36);
         make.left.right.equalTo(self).inset(32);
         make.height.equalTo(@(FSTControlHeightStandard));
@@ -117,8 +97,35 @@ static const CGFloat kPickerHeightAligned = 305.0;
     }];
 }
 
-- (UIControl *)buildAlignControlWithText:(NSString *)text {
-    UIControl *control = [UIControl new];
+#pragma mark - 属性同步
+
+- (void)setTitleText:(NSString *)titleText {
+    _titleText = [titleText copy];
+    self.titleLabel.text = titleText;
+}
+
+- (void)setAlignChipText:(NSString *)alignChipText {
+    _alignChipText = [alignChipText copy];
+    if (alignChipText.length > 0) {
+        if (!self.alignControl) {
+            [self installAlignChip];
+        }
+        self.alignLabel.text = alignChipText;
+    } else if (self.alignControl) {
+        [self.alignControl removeFromSuperview];
+        self.alignControl = nil;
+        self.alignIconView = nil;
+        self.alignLabel = nil;
+        [self.datePicker mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.titleLabel.mas_bottom).offset(kPickerTopOffsetSimple);
+            make.left.right.equalTo(self).inset(26);
+            make.height.equalTo(@(kPickerHeightSimple));
+        }];
+    }
+}
+
+- (void)installAlignChip {
+    UIControl *control = [[UIControl alloc] init];
     control.layer.cornerRadius = FSTRadiusChip;
     [control addTarget:self action:@selector(handleAlignToggled)
       forControlEvents:UIControlEventTouchUpInside];
@@ -127,12 +134,14 @@ static const CGFloat kPickerHeightAligned = 305.0;
         [UIImage fst_originalImageNamed:@"time_align_clock"]];
     self.alignIconView.contentMode = UIViewContentModeScaleAspectFit;
 
-    self.alignLabel = [UILabel fst_labelWithText:text
+    self.alignLabel = [UILabel fst_labelWithText:@""
                                             font:FSTFontAvenirDemiBold(16)
                                            color:[UIColor fst_textPrimary]
                                        alignment:NSTextAlignmentCenter];
 
     [control fst_addSubviews:@[self.alignIconView, self.alignLabel]];
+    [self addSubview:control];
+    self.alignControl = control;
 
     [self.alignIconView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(control).offset(14);
@@ -144,7 +153,16 @@ static const CGFloat kPickerHeightAligned = 305.0;
         make.right.equalTo(control).offset(-14);
         make.centerY.equalTo(control);
     }];
-    return control;
+    [self.alignControl mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(20);
+        make.centerX.equalTo(self);
+        make.height.equalTo(@34);
+    }];
+    [self.datePicker mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.alignControl.mas_bottom).offset(kPickerTopOffsetAligned);
+        make.left.right.equalTo(self).inset(26);
+        make.height.equalTo(@(kPickerHeightAligned));
+    }];
 }
 
 #pragma mark - 公开方法

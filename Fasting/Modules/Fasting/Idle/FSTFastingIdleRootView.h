@@ -3,7 +3,7 @@
 //  Fasting
 //
 //  Plan 首页（idle 态）的滚动容器壳：持有 scrollView + contentView，并在
-//  picker / ready 两种 body 视图之间切换。VC 通过 loadView 装载本视图。
+//  picker / ready 两种 body 视图之间切换。VC 在 viewDidLoad 里 alloc 后 addSubview 到 self.view。
 //  topBar 仍由 VC 在 self.view 顶层 install（safeArea 锚），故每次切状态、
 //  重建 topBar 后，VC 调 -anchorContentBelowTopBar: 把内容顶到 topBar 之下。
 //

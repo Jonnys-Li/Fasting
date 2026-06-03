@@ -33,16 +33,16 @@
                              alignMode:(FSTTimeEditorAlignMode)alignMode
                     alignReferenceDate:(nullable NSDate *)alignReferenceDate
                               onCommit:(void (^)(NSDate *pickedDate, BOOL aligned))onCommit {
-    FSTTimeEditorSheetViewController *sheet =
-        [[FSTTimeEditorSheetViewController alloc] initWithTitle:title
-                                                    initialDate:initialDate ?: [NSDate date]
-                                                    minimumDate:minimumDate
-                                                    maximumDate:maximumDate
-                                                  alignChipText:alignChipText
-                                           alignDurationSeconds:alignDurationSeconds
-                                                      alignMode:alignMode
-                                             alignReferenceDate:alignReferenceDate
-                                                       onCommit:onCommit];
+    FSTTimeEditorSheetViewController *sheet = [[FSTTimeEditorSheetViewController alloc] init];
+    sheet.titleText            = title;
+    sheet.initialDate          = initialDate ?: [NSDate date];
+    sheet.minimumDate          = minimumDate;
+    sheet.maximumDate          = maximumDate;
+    sheet.alignChipText        = alignChipText;
+    sheet.alignDurationSeconds = alignDurationSeconds;
+    sheet.alignMode            = alignMode;
+    sheet.alignReferenceDate   = alignReferenceDate;
+    sheet.onCommit             = onCommit;
     [self presentViewController:sheet animated:YES completion:nil];
 }
 

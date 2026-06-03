@@ -27,135 +27,163 @@ static const CGFloat kButtonHInset  = 32.0;
 static const CGFloat kButtonSpacing = 18.0;   // 双按钮间距
 static const CGFloat kBottomInset   = 36.0;
 
+@interface FSTModalDialogContentView ()
+@property (nonatomic, strong) UIView *iconBackground;
+@property (nonatomic, strong) UIImageView *iconView;
+@property (nonatomic, strong) UIButton *closeButton;
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *messageLabel;
+@property (nonatomic, strong) UIStackView *buttonStack;
+@property (nonatomic, strong) UIButton *secondaryButton;
+@property (nonatomic, strong) UIButton *primaryButton;
+@end
+
 @implementation FSTModalDialogContentView
 
-#pragma mark - 初始化
-
-- (instancetype)initWithIconSystemName:(nullable NSString *)systemName
-                         iconImageName:(nullable NSString *)imageName
-                                 title:(NSString *)title
-                               message:(NSString *)message
-                          primaryTitle:(NSString *)primaryTitle
-                        secondaryTitle:(nullable NSString *)secondaryTitle {
-    if ((self = [super initWithFrame:CGRectZero])) {
-        [self buildSubviewsWithIconSystemName:systemName
-                                iconImageName:imageName
-                                        title:title
-                                      message:message
-                                 primaryTitle:primaryTitle
-                               secondaryTitle:secondaryTitle];
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        [self setupSubviews];
+        [self setupConstraints];
     }
     return self;
 }
 
 #pragma mark - 视图组装
 
-- (void)buildSubviewsWithIconSystemName:(nullable NSString *)systemName
-                          iconImageName:(nullable NSString *)imageName
-                                  title:(NSString *)title
-                                message:(NSString *)message
-                           primaryTitle:(NSString *)primaryTitle
-                         secondaryTitle:(nullable NSString *)secondaryTitle {
+- (void)setupSubviews {
+    self.iconBackground = [[UIView alloc] init];
+    self.iconBackground.backgroundColor = [UIColor fst_dialogIconBackground];
+    self.iconBackground.layer.cornerRadius = kIconSize / 2.0;
+    self.iconBackground.layer.masksToBounds = YES;
+    [self addSubview:self.iconBackground];
 
-    // — Icon background circle
-    UIView *iconBackground = [UIView new];
-    iconBackground.backgroundColor = [UIColor fst_dialogIconBackground];
-    iconBackground.layer.cornerRadius = kIconSize / 2.0;
-    iconBackground.layer.masksToBounds = YES;
-    [self addSubview:iconBackground];
+    self.iconView = [[UIImageView alloc] init];
+    self.iconView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.iconBackground addSubview:self.iconView];
 
-    UIImageView *iconView = [UIImageView new];
-    iconView.contentMode = UIViewContentModeScaleAspectFit;
-    if (imageName.length > 0) {
-        iconView.image = [UIImage imageNamed:imageName];
-    } else if (systemName.length > 0) {
-        UIImageSymbolConfiguration *configuration =
-            [UIImageSymbolConfiguration configurationWithPointSize:36
-                                                            weight:UIImageSymbolWeightMedium];
-        iconView.image = [UIImage systemImageNamed:systemName withConfiguration:configuration];
-        iconView.tintColor = [UIColor fst_dialogIconTint];
-    }
-    [iconBackground addSubview:iconView];
-
-    // — Close button
-    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    closeButton.backgroundColor = [UIColor fst_dialogCloseBackground];
-    closeButton.layer.cornerRadius = kCloseSize / 2.0;
+    self.closeButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    self.closeButton.backgroundColor = [UIColor fst_dialogCloseBackground];
+    self.closeButton.layer.cornerRadius = kCloseSize / 2.0;
     UIImageSymbolConfiguration *closeConfiguration =
         [UIImageSymbolConfiguration configurationWithPointSize:19
                                                         weight:UIImageSymbolWeightBold];
-    [closeButton setImage:[UIImage systemImageNamed:@"xmark" withConfiguration:closeConfiguration]
-                 forState:UIControlStateNormal];
-    closeButton.tintColor = [UIColor fst_dialogCloseTint];
-    [closeButton addTarget:self action:@selector(handleCloseTapped)
-          forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:closeButton];
+    [self.closeButton setImage:[UIImage systemImageNamed:@"xmark" withConfiguration:closeConfiguration]
+                      forState:UIControlStateNormal];
+    self.closeButton.tintColor = [UIColor fst_dialogCloseTint];
+    [self.closeButton addTarget:self action:@selector(handleCloseTapped)
+               forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:self.closeButton];
 
-    // — Title label
-    UILabel *titleLabel = [UILabel fst_centerLabelWithFont:FSTFontBold(24)
-                                                     color:[UIColor fst_dialogTitle]];
-    titleLabel.text = title;
-    titleLabel.numberOfLines = 2;
-    titleLabel.adjustsFontSizeToFitWidth = YES;
-    titleLabel.minimumScaleFactor = 0.78;
-    [self addSubview:titleLabel];
+    self.titleLabel = [UILabel fst_centerLabelWithFont:FSTFontBold(24)
+                                                 color:[UIColor fst_dialogTitle]];
+    self.titleLabel.numberOfLines = 2;
+    self.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.titleLabel.minimumScaleFactor = 0.78;
+    [self addSubview:self.titleLabel];
 
-    // — Message label
-    UILabel *messageLabel = [UILabel fst_centerLabelWithFont:FSTFontSemibold(18)
-                                                       color:[UIColor fst_textSecondary]];
-    messageLabel.text = message;
-    messageLabel.numberOfLines = 0;
-    [self addSubview:messageLabel];
+    self.messageLabel = [UILabel fst_centerLabelWithFont:FSTFontSemibold(18)
+                                                   color:[UIColor fst_textSecondary]];
+    self.messageLabel.numberOfLines = 0;
+    [self addSubview:self.messageLabel];
 
-    // — Button stack
-    UIStackView *buttonStack = [UIStackView new];
-    buttonStack.axis = UILayoutConstraintAxisHorizontal;
-    buttonStack.alignment = UIStackViewAlignmentFill;
-    buttonStack.distribution = UIStackViewDistributionFillEqually;
-    buttonStack.spacing = secondaryTitle.length > 0 ? kButtonSpacing : 0.0;
-    [self addSubview:buttonStack];
+    self.buttonStack = [[UIStackView alloc] init];
+    self.buttonStack.axis = UILayoutConstraintAxisHorizontal;
+    self.buttonStack.alignment = UIStackViewAlignmentFill;
+    self.buttonStack.distribution = UIStackViewDistributionFillEqually;
+    self.buttonStack.spacing = 0.0;
+    [self addSubview:self.buttonStack];
 
-    if (secondaryTitle.length > 0) {
-        UIButton *secondaryButton = [UIButton fst_pillButtonWithTitle:secondaryTitle style:FSTPillButtonStyleModalSecondary];
-        [secondaryButton addTarget:self action:@selector(handleSecondaryTapped)
-                  forControlEvents:UIControlEventTouchUpInside];
-        [buttonStack addArrangedSubview:secondaryButton];
-    }
+    self.secondaryButton = [UIButton fst_pillButtonWithTitle:@"" style:FSTPillButtonStyleModalSecondary];
+    [self.secondaryButton addTarget:self action:@selector(handleSecondaryTapped)
+                   forControlEvents:UIControlEventTouchUpInside];
+    self.secondaryButton.hidden = YES;
+    [self.buttonStack addArrangedSubview:self.secondaryButton];
 
-    UIButton *primaryButton = [UIButton fst_pillButtonWithTitle:primaryTitle style:FSTPillButtonStyleModalPrimary];
-    [primaryButton addTarget:self action:@selector(handlePrimaryTapped)
-            forControlEvents:UIControlEventTouchUpInside];
-    [buttonStack addArrangedSubview:primaryButton];
+    self.primaryButton = [UIButton fst_pillButtonWithTitle:@"" style:FSTPillButtonStyleModalPrimary];
+    [self.primaryButton addTarget:self action:@selector(handlePrimaryTapped)
+                 forControlEvents:UIControlEventTouchUpInside];
+    [self.buttonStack addArrangedSubview:self.primaryButton];
+}
 
-    // — Constraints
-    [iconBackground mas_makeConstraints:^(MASConstraintMaker *make) {
+- (void)setupConstraints {
+    [self.iconBackground mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self);
         make.top.equalTo(self).offset(-kIconSize / 2.0);
         make.size.mas_equalTo(CGSizeMake(kIconSize, kIconSize));
     }];
-    [iconView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.center.equalTo(iconBackground);
+    [self.iconView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(self.iconBackground);
         make.size.mas_equalTo(CGSizeMake(kIconGlyphSize, kIconGlyphSize));
     }];
-    [closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(kCloseInset);
         make.right.equalTo(self).offset(-kCloseInset);
         make.size.mas_equalTo(CGSizeMake(kCloseSize, kCloseSize));
     }];
-    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(kTitleTopOffset);
         make.left.right.equalTo(self).inset(kTitleHInset);
     }];
-    [messageLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(titleLabel.mas_bottom).offset(kMessageTopGap);
+    [self.messageLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(kMessageTopGap);
         make.left.right.equalTo(self).inset(kMessageHInset);
     }];
-    [buttonStack mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(messageLabel.mas_bottom).offset(kButtonTopGap);
+    [self.buttonStack mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.messageLabel.mas_bottom).offset(kButtonTopGap);
         make.left.right.equalTo(self).inset(kButtonHInset);
         make.height.equalTo(@(kButtonHeight));
         make.bottom.equalTo(self).offset(-kBottomInset);
     }];
+}
+
+#pragma mark - 属性同步
+
+- (void)setIconSystemName:(NSString *)iconSystemName {
+    _iconSystemName = [iconSystemName copy];
+    [self refreshIcon];
+}
+
+- (void)setIconImageName:(NSString *)iconImageName {
+    _iconImageName = [iconImageName copy];
+    [self refreshIcon];
+}
+
+- (void)refreshIcon {
+    if (self.iconImageName.length > 0) {
+        self.iconView.image = [UIImage imageNamed:self.iconImageName];
+        self.iconView.tintColor = nil;
+    } else if (self.iconSystemName.length > 0) {
+        UIImageSymbolConfiguration *configuration =
+            [UIImageSymbolConfiguration configurationWithPointSize:36
+                                                            weight:UIImageSymbolWeightMedium];
+        self.iconView.image = [UIImage systemImageNamed:self.iconSystemName withConfiguration:configuration];
+        self.iconView.tintColor = [UIColor fst_dialogIconTint];
+    } else {
+        self.iconView.image = nil;
+    }
+}
+
+- (void)setTitleText:(NSString *)titleText {
+    _titleText = [titleText copy];
+    self.titleLabel.text = titleText;
+}
+
+- (void)setMessage:(NSString *)message {
+    _message = [message copy];
+    self.messageLabel.text = message;
+}
+
+- (void)setPrimaryTitle:(NSString *)primaryTitle {
+    _primaryTitle = [primaryTitle copy];
+    [self.primaryButton setTitle:primaryTitle forState:UIControlStateNormal];
+}
+
+- (void)setSecondaryTitle:(NSString *)secondaryTitle {
+    _secondaryTitle = [secondaryTitle copy];
+    BOOL hasSecondary = secondaryTitle.length > 0;
+    [self.secondaryButton setTitle:secondaryTitle forState:UIControlStateNormal];
+    self.secondaryButton.hidden = !hasSecondary;
+    self.buttonStack.spacing = hasSecondary ? kButtonSpacing : 0.0;
 }
 
 #pragma mark - 事件

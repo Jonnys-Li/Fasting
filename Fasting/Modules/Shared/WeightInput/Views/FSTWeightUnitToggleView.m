@@ -15,8 +15,8 @@
 
 @implementation FSTWeightUnitToggleView
 
-- (instancetype)init {
-    if ((self = [super init])) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
         _unit = FSTWeightUnitKg;
         self.backgroundColor = [UIColor fst_ringTrack];
         self.layer.cornerRadius = 20;
@@ -34,16 +34,16 @@
 
 /// 构建：白滑块 + kg/lb 两个点击区。
 - (void)buildSubviews {
-    self.selectorView = [UIView new];
+    self.selectorView = [[UIView alloc] init];
     self.selectorView.backgroundColor = [UIColor fst_textPrimary];
     self.selectorView.layer.cornerRadius = FSTRadiusChip;
     [self addSubview:self.selectorView];
 
-    UIControl *kgChipControl = [UIControl new];
+    UIControl *kgChipControl = [[UIControl alloc] init];
     [kgChipControl addTarget:self action:@selector(handleKgChipTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:kgChipControl];
 
-    UIControl *lbChipControl = [UIControl new];
+    UIControl *lbChipControl = [[UIControl alloc] init];
     [lbChipControl addTarget:self action:@selector(handleLbChipTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:lbChipControl];
 

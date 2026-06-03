@@ -39,7 +39,7 @@ static NSString *const kKeyRecordID  = @"recordID";
 static NSString *const kKeyReturns   = @"returnsToTimeline";
 static NSString *const kKeyStartDate = @"startDate";
 static NSString *const kKeyEndDate   = @"endDate";
-static NSString *const kKeyPlanName  = @"planName";
+static NSString *const kKeyPlanType  = @"planType";
 
 // VC type tokens —— 调整时记得同步升级 FSTSceneRestorationSchemaVersion
 static NSString *const kTypeActiveFasting   = @"ActiveFasting";
@@ -100,7 +100,7 @@ static FSTMealRecord    *FSTLookupMealRecord(NSString *recordID);
     NSDictionary *userInfo = activity.userInfo;
     if (![userInfo[kKeyVersion] isEqual:@(FSTSceneRestorationSchemaVersion)]) return nil;
 
-    FSTRootTabBarController *tabBar = [FSTRootTabBarController new];
+    FSTRootTabBarController *tabBar = [[FSTRootTabBarController alloc] init];
     // 触发 viewDidLoad，让 RootTabBarController 把 3 个 tab（含 nav controllers）装好。
     (void)tabBar.view;
 
@@ -176,9 +176,9 @@ static NSDictionary *FSTRestorationTokenForViewController(UIViewController *vc) 
     }
     if ([vc isKindOfClass:[FSTPlanConfirmViewController class]]) {
         FSTPlanConfirmViewController *planConfirm = (FSTPlanConfirmViewController *)vc;
-        NSString *planName = planConfirm.plan.name;
-        if (!planName.length) return nil;
-        return @{kKeyType: kTypePlanConfirm, kKeyPlanName: planName};
+        FSTPlanType planType = planConfirm.plan.type;
+        if (planType == FSTPlanTypeCustom) return nil;  // 非内置方案不恢复
+        return @{kKeyType: kTypePlanConfirm, kKeyPlanType: @(planType)};
     }
     return nil;  // 其他（含各类 modal sheet）不在恢复 scope 内
 }
@@ -192,7 +192,7 @@ static UIViewController *FSTViewControllerForRestorationToken(NSDictionary *toke
     if ([type isEqualToString:kTypeActiveFasting]) {
         // 没有进行中的断食时恢复 ActiveFasting 没意义（页面会立刻 redirect 回 Plan）。
         if (![[FSTSessionManager sharedManager] hasActiveFasting]) return nil;
-        return [FSTActiveFastingViewController new];
+        return [[FSTActiveFastingViewController alloc] init];
     }
     if ([type isEqualToString:kTypeAddRecordEdit]) {
         FSTFastingRecord *record = FSTLookupFastingRecord(token[kKeyRecordID]);
@@ -206,13 +206,13 @@ static UIViewController *FSTViewControllerForRestorationToken(NSDictionary *toke
         return [[FSTAddRecordViewController alloc] initWithStartDate:startDate endDate:endDate];
     }
     if ([type isEqualToString:kTypeQuickAddRecord]) {
-        return [FSTQuickAddRecordViewController new];
+        return [[FSTQuickAddRecordViewController alloc] init];
     }
     if ([type isEqualToString:kTypeFastingHistory]) {
-        return [FSTFastingHistoryViewController new];
+        return [[FSTFastingHistoryViewController alloc] init];
     }
     if ([type isEqualToString:kTypeMealDiary]) {
-        return [FSTMealDiaryViewController new];
+        return [[FSTMealDiaryViewController alloc] init];
     }
     if ([type isEqualToString:kTypeMealDetail]) {
         FSTMealRecord *record = FSTLookupMealRecord(token[kKeyRecordID]);
@@ -222,14 +222,15 @@ static UIViewController *FSTViewControllerForRestorationToken(NSDictionary *toke
                                                   returnsToTimelineTab:returnsToTimeline];
     }
     if ([type isEqualToString:kTypeSendFeedback]) {
-        return [FSTSendFeedbackViewController new];
+        return [[FSTSendFeedbackViewController alloc] init];
     }
     if ([type isEqualToString:kTypePlanConfirm]) {
-        NSString *planName = token[kKeyPlanName];
-        if (![planName isKindOfClass:[NSString class]] || !planName.length) return nil;
+        NSNumber *planTypeNumber = token[kKeyPlanType];
+        if (![planTypeNumber isKindOfClass:[NSNumber class]]) return nil;
+        FSTPlanType planType = planTypeNumber.integerValue;
         FSTPlan *plan = nil;
         for (FSTPlan *candidate in [FSTPlan defaultDailyPlans]) {
-            if ([candidate.name isEqualToString:planName]) { plan = candidate; break; }
+            if (candidate.type == planType) { plan = candidate; break; }
         }
         if (!plan) return nil;
         return [[FSTPlanConfirmViewController alloc] initWithPlan:plan];

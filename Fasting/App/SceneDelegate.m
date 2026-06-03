@@ -33,7 +33,7 @@ willConnectToSession:(UISceneSession *)session
         // 完成 onboarding 才尝试恢复 nav 栈；onboarding 中段状态不恢复（重启重走引导）。
         FSTRootTabBarController *restored =
             [FSTSceneStateRestoration restoredRootTabBarFromActivity:session.stateRestorationActivity];
-        self.window.rootViewController = restored ?: [FSTRootTabBarController new];
+        self.window.rootViewController = restored ?: [[FSTRootTabBarController alloc] init];
     } else {
         [self installOnboardingPlanFlow];
     }
@@ -49,11 +49,11 @@ willConnectToSession:(UISceneSession *)session
 #pragma mark - Installers
 
 - (void)installRootTabBarController {
-    self.window.rootViewController = [FSTRootTabBarController new];
+    self.window.rootViewController = [[FSTRootTabBarController alloc] init];
 }
 
 - (void)installOnboardingPlanFlow {
-    FSTPlanSelectViewController *planSelectViewController = [FSTPlanSelectViewController new];
+    FSTPlanSelectViewController *planSelectViewController = [[FSTPlanSelectViewController alloc] init];
     planSelectViewController.showsCloseButton = NO;
     planSelectViewController.dismissesOnPlanPicked = NO;
 

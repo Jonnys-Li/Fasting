@@ -71,7 +71,7 @@ static const CGFloat kChipHeight   = 34;
     self.titleLabel    = [UILabel fst_labelWithText:@"Food Diary" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
     self.questionBadge = [self buildQuestionBadge];
 
-    self.chevronControl = [UIControl new];
+    self.chevronControl = [[UIControl alloc] init];
     UIImageView *chevronIcon = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.right" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:16 weight:UIImageSymbolWeightSemibold]]];
     chevronIcon.tintColor = [UIColor fst_textSecondary];
     chevronIcon.userInteractionEnabled = NO;
@@ -116,7 +116,7 @@ static const CGFloat kChipHeight   = 34;
 #pragma mark - 时间轴记录行
 
 - (void)buildEntryRow {
-    self.entryContainer = [UIView new];
+    self.entryContainer = [[UIView alloc] init];
     [self addSubview:self.entryContainer];
 
     // 时间轴圆点（边框 + 透明填充）
@@ -125,7 +125,7 @@ static const CGFloat kChipHeight   = 34;
                                        borderWidth:3
                                            bgColor:nil];
 
-    self.lineView = [UIView new];
+    self.lineView = [[UIView alloc] init];
     self.lineView.backgroundColor = [UIColor fst_mealDiaryCardBorder];
     self.timeLabel = [UILabel fst_labelWithText:nil font:FSTFontBody() color:[UIColor fst_textSecondary]];
 
@@ -144,7 +144,7 @@ static const CGFloat kChipHeight   = 34;
     self.dietChipLabel = [self buildChipLabel];
     self.dietChipLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
-    self.feelingImageView = [UIImageView new];
+    self.feelingImageView = [[UIImageView alloc] init];
     self.feelingImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.feelingImageView.userInteractionEnabled = NO;
 

@@ -18,7 +18,7 @@ FSTFastingRecord *FSTBuildFastingRecord(FSTFastingRecord *existing,
                                          NSString *note,
                                          BOOL appleHealthEnabled) {
     FSTSessionManager *sm = [FSTSessionManager sharedManager];
-    FSTFastingRecord *record = existing ?: [FSTFastingRecord new];
+    FSTFastingRecord *record = existing ?: [[FSTFastingRecord alloc] init];
     record.recordID     = record.recordID.length ? record.recordID : [[NSUUID UUID] UUIDString];
     record.planName     = record.planName.length ? record.planName : (sm.currentPlan.name ?: @"14-10");
     record.fastingHours = record.fastingHours > 0 ? record.fastingHours : sm.currentPlan.fastingHours;

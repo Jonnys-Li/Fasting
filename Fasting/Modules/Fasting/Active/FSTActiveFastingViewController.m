@@ -43,8 +43,13 @@ static const CGFloat kSegmentHeight = 34;
 static const CGFloat kTopBarHeight = 80;
 
 @interface FSTActiveFastingViewController ()
-@property (nonatomic, strong) FSTFastingTopBar *topBar;
 @property (nonatomic, strong) FSTActiveFastingRootView *rootView;
+@property (nonatomic, strong) FSTFastingPhaseSummaryCard *phaseCard;
+@property (nonatomic, strong) FSTFastingRingPanelView *ringPanel;
+@property (nonatomic, strong) FSTFastingTimesRow *timesRow;
+@property (nonatomic, strong) UIButton *stopButton;
+@property (nonatomic, strong) FSTFastingTipsSectionView *tipsSection;
+@property (nonatomic, strong) FSTFastingTopBar *topBar;
 @property (nonatomic, strong) FSTFastingSegmentControl *segment;
 @property (nonatomic, assign) FSTRingDisplayMode displayMode;
 @property (nonatomic, assign) BOOL initialStartTimePromptDisplayed;
@@ -59,17 +64,10 @@ static const CGFloat kTopBarHeight = 80;
 
 #pragma mark - 生命周期
 
-- (void)loadView {
-    self.view = [FSTActiveFastingRootView new];
-}
-
-- (FSTActiveFastingRootView *)rootView {
-    return (FSTActiveFastingRootView *)self.view;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.displayMode = FSTRingDisplayElapsed;
+    [self installRootView];
     [self installTopBar];
     [self bindRootViewCallbacks];
     [self refreshUI];
@@ -79,6 +77,27 @@ static const CGFloat kTopBarHeight = 80;
                                              selector:@selector(refreshUI)
                                                  name:UIApplicationWillEnterForegroundNotification
                                                object:nil];
+}
+
+- (void)installRootView {
+    self.phaseCard = [[FSTFastingPhaseSummaryCard alloc] init];
+    self.ringPanel = [[FSTFastingRingPanelView alloc] init];
+    self.timesRow  = [[FSTFastingTimesRow alloc] init];
+    self.timesRow.startCaption = @"Fast starts";
+    self.timesRow.endCaption   = @"Fast ends";
+    self.stopButton = [UIButton fst_pillButtonWithTitle:@"END FASTING" style:FSTPillButtonStyleInactive];
+    self.tipsSection = [[FSTFastingTipsSectionView alloc] init];
+
+    self.rootView = [[FSTActiveFastingRootView alloc] init];
+    [self.view addSubview:self.rootView];
+    [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.rootView mountPhaseCard:self.phaseCard
+                        ringPanel:self.ringPanel
+                         timesRow:self.timesRow
+                       stopButton:self.stopButton
+                      tipsSection:self.tipsSection];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -103,19 +122,16 @@ static const CGFloat kTopBarHeight = 80;
     UIButton *waterButton = [UIButton fst_navCircleButtonWithImageNamed:@"nav_water"
                                                                diameter:kNavButtonDiameter];
 
-    self.segment = [FSTFastingSegmentControl new];
+    self.segment = [[FSTFastingSegmentControl alloc] init];
     self.segment.userInteractionEnabled = NO;
 
-    self.topBar = [[FSTFastingTopBar alloc] initWithLeftButton:shareButton
-                                                  rightButtons:@[waterButton]
-                                                 centerContent:self.segment
-                                                 contentHeight:kTopBarHeight];
+    self.topBar = [[FSTFastingTopBar alloc] init];
+    self.topBar.leftButton    = shareButton;
+    self.topBar.rightButtons  = @[waterButton];
+    self.topBar.centerContent = self.segment;
+    self.topBar.contentHeight = kTopBarHeight;
     [self.topBar installInViewController:self];
-
-    // topBar 装好后补齐 rootView.scrollView 的顶部约束（RootView 内部仅约束了 left/right/bottom）
-    [self.rootView.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.topBar.mas_bottom);
-    }];
+    [self.rootView anchorContentBelowTopBar:self.topBar];
 
     [shareButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(kPlainIconSize, kPlainIconSize));
@@ -132,14 +148,24 @@ static const CGFloat kTopBarHeight = 80;
 
 - (void)bindRootViewCallbacks {
     __weak typeof(self) weakSelf = self;
-    FSTActiveFastingRootView *rootView = self.rootView;
-    rootView.onPhaseCardTapped = ^{ [weakSelf showPhaseDialog]; };
-    rootView.onRingModeTapped  = ^{ [weakSelf handleModeTapped]; };
-    rootView.onPlanChipTapped  = ^{ [weakSelf presentPlanPicker]; };
-    rootView.onEditStartTapped = ^{ [weakSelf handleEditActiveStartTapped]; };
-    rootView.onEditEndTapped   = ^{ [weakSelf handleEditActiveEndTapped]; };
-    rootView.onStopTapped      = ^{ [weakSelf handleStopTapped]; };
-    rootView.onSendFeedbackTapped = ^{ [weakSelf handleSendFeedbackTapped]; };
+    [self.phaseCard addTarget:self action:@selector(showPhaseDialog) forControlEvents:UIControlEventTouchUpInside];
+    [self.stopButton addTarget:self action:@selector(handleStopTapped) forControlEvents:UIControlEventTouchUpInside];
+
+    self.ringPanel.onModeTapped = ^{
+        [weakSelf handleModeTapped];
+    };
+    self.ringPanel.onPlanChipTapped = ^{
+        [weakSelf presentPlanPicker];
+    };
+    self.timesRow.onEditStartTapped = ^{
+        [weakSelf handleEditActiveStartTapped];
+    };
+    self.timesRow.onEditEndTapped = ^{
+        [weakSelf handleEditActiveEndTapped];
+    };
+    self.rootView.onSendFeedbackTapped = ^{
+        [weakSelf handleSendFeedbackTapped];
+    };
 }
 
 #pragma mark - 刷新
@@ -148,7 +174,7 @@ static const CGFloat kTopBarHeight = 80;
     [self refreshUI];
 }
 
-/// 每秒 / 每次通知触发：根据 sessionManager 当前状态推导整页 UI 数据并下发到 rootView 子视图。
+/// 每秒 / 每次通知触发：根据 sessionManager 当前状态推导整页 UI 数据并下发到子视图。
 /// 设计：本方法是状态判定的单一权威，VC 其他事件方法只读 cachedXxx 缓存（dialog 等异步路径）。
 - (void)refreshUI {
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
@@ -194,30 +220,29 @@ static const CGFloat kTopBarHeight = 80;
         timerText = FSTFormatHHMMSS(isRemainingMode ? remaining : safeElapsed);
     }
 
-    FSTActiveFastingRootView *rootView = self.rootView;
-    rootView.ringPanel.presentationState  = ringState;
-    rootView.ringPanel.timerCaption       = timerCaption;
-    rootView.ringPanel.timerText          = timerText;
-    rootView.ringPanel.overtimeDetailText = inOvertime ? [NSString stringWithFormat:@"Elapsed time (%ld%%)", (long)overtimePercent] : nil;
-    rootView.ringPanel.overtimeTotalText  = inOvertime ? FSTFormatHHMMSS(safeElapsed) : nil;
-    rootView.ringPanel.endText            = FSTFormatRelativeDateTime(endDate);
-    rootView.ringPanel.percentText        = [NSString stringWithFormat:@"%ld%%", (long)displayedPercent];
-    rootView.ringPanel.planName           = sessionManager.currentPlan.name ?: @"14-10";
-    rootView.ringPanel.progress           = targetReached ? 1.0 : clampedFraction;
-    rootView.ringPanel.flameProgress      = clampedFraction;
-    rootView.ringPanel.displayMode        = self.displayMode;
+    self.ringPanel.presentationState  = ringState;
+    self.ringPanel.timerCaption       = timerCaption;
+    self.ringPanel.timerText          = timerText;
+    self.ringPanel.overtimeDetailText = inOvertime ? [NSString stringWithFormat:@"Elapsed time (%ld%%)", (long)overtimePercent] : nil;
+    self.ringPanel.overtimeTotalText  = inOvertime ? FSTFormatHHMMSS(safeElapsed) : nil;
+    self.ringPanel.endText            = FSTFormatRelativeDateTime(endDate);
+    self.ringPanel.percentText        = [NSString stringWithFormat:@"%ld%%", (long)displayedPercent];
+    self.ringPanel.planName           = sessionManager.currentPlan.name ?: @"14-10";
+    self.ringPanel.progress           = targetReached ? 1.0 : clampedFraction;
+    self.ringPanel.flameProgress      = clampedFraction;
+    self.ringPanel.displayMode        = self.displayMode;
 
-    if (targetReached) [rootView.phaseCard configureForAutophagyState];
-    else               [rootView.phaseCard configureForBloodGlucoseStage];
-    [rootView.tipsSection configureForStage:targetReached ? FSTTipsFastingStageAfter : FSTTipsFastingStageDuring];
+    if (targetReached) [self.phaseCard configureForAutophagyState];
+    else               [self.phaseCard configureForBloodGlucoseStage];
+    [self.tipsSection configureForStage:targetReached ? FSTTipsFastingStageAfter : FSTTipsFastingStageDuring];
 
     // Stop button — 用户视角：未达标=END（灰底确认弹窗）vs 达标=COMPLETE（绿底直跳 AddRecord）。
-    rootView.stopButton.backgroundColor = targetReached ? [UIColor fst_eatingTimeGreen] : [UIColor fst_buttonInactive];
-    [rootView.stopButton setTitle:targetReached ? @"COMPLETE FASTING" : @"END FASTING" forState:UIControlStateNormal];
-    [rootView.stopButton setTitleColor:targetReached ? [UIColor whiteColor] : [UIColor fst_textHeading] forState:UIControlStateNormal];
+    self.stopButton.backgroundColor = targetReached ? [UIColor fst_eatingTimeGreen] : [UIColor fst_buttonInactive];
+    [self.stopButton setTitle:targetReached ? @"COMPLETE FASTING" : @"END FASTING" forState:UIControlStateNormal];
+    [self.stopButton setTitleColor:targetReached ? [UIColor whiteColor] : [UIColor fst_textHeading] forState:UIControlStateNormal];
 
-    rootView.timesRow.startText = FSTFormatRelativeDateTime(startDate);
-    rootView.timesRow.endText   = FSTFormatRelativeDateTime(endDate);
+    self.timesRow.startText = FSTFormatRelativeDateTime(startDate);
+    self.timesRow.endText   = FSTFormatRelativeDateTime(endDate);
 
     // 缓存 phase dialog / stop button 状态：dialog 弹出时直接读，不再算一次。
     self.cachedTargetReached      = targetReached;
@@ -237,14 +262,12 @@ static const CGFloat kTopBarHeight = 80;
 
 - (void)showPhaseDialog {
     if (!self.cachedPhaseDialogIcon) return;  // refresh 尚未发生过的边缘场景
-    FSTModalDialogViewController *dialog =
-        [[FSTModalDialogViewController alloc] initWithIconImageName:self.cachedPhaseDialogIcon
-                                                              title:self.cachedPhaseDialogTitle
-                                                            message:self.cachedPhaseDialogMessage
-                                                       primaryTitle:@"Got it"
-                                                     secondaryTitle:nil
-                                                     primaryHandler:nil
-                                                   secondaryHandler:nil];
+    FSTModalDialogViewController *dialog = [[FSTModalDialogViewController alloc] init];
+    dialog.iconKind     = FSTModalDialogIconKindAssetImage;
+    dialog.iconName     = self.cachedPhaseDialogIcon;
+    dialog.titleText    = self.cachedPhaseDialogTitle;
+    dialog.message      = self.cachedPhaseDialogMessage;
+    dialog.primaryTitle = @"Got it";
     [self presentViewController:dialog animated:YES completion:nil];
 }
 
@@ -259,16 +282,16 @@ static const CGFloat kTopBarHeight = 80;
     }
 
     __weak typeof(self) weakSelf = self;
-    FSTModalDialogViewController *dialog =
-        [[FSTModalDialogViewController alloc] initWithIconSystemName:@"flag.fill"
-                                                               title:@"Stop fasting?"
-                                                             message:@"Goal not yet reached. End early?"
-                                                        primaryTitle:@"No"
-                                                      secondaryTitle:@"Yes"
-                                                      primaryHandler:nil
-                                                    secondaryHandler:^{
+    FSTModalDialogViewController *dialog = [[FSTModalDialogViewController alloc] init];
+    dialog.iconKind         = FSTModalDialogIconKindSystemSymbol;
+    dialog.iconName         = @"flag.fill";
+    dialog.titleText        = @"Stop fasting?";
+    dialog.message          = @"Goal not yet reached. End early?";
+    dialog.primaryTitle     = @"No";
+    dialog.secondaryTitle   = @"Yes";
+    dialog.secondaryHandler = ^{
         [weakSelf proceedToFinishFasting];
-    }];
+    };
     [self presentViewController:dialog animated:YES completion:nil];
 }
 
@@ -292,7 +315,7 @@ static const CGFloat kTopBarHeight = 80;
 }
 
 - (void)handleShareTapped {
-    [FSTAppRouter presentShareFrom:self ringSnapshot:[self.rootView.ringPanel snapshotForSharing]];
+    [FSTAppRouter presentShareFrom:self ringSnapshot:[self.ringPanel snapshotForSharing]];
 }
 
 - (void)handleSendFeedbackTapped {
@@ -370,23 +393,18 @@ static const CGFloat kTopBarHeight = 80;
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
     NSDate *initialDate = sessionManager.activeStartDate ?: [NSDate date];
     __weak typeof(self) weakSelf = self;
-    FSTTimeEditorSheetViewController *sheet =
-        [[FSTTimeEditorSheetViewController alloc] initWithTitle:@"When to start fasting?"
-                                                    initialDate:initialDate
-                                                    minimumDate:nil
-                                                    maximumDate:nil
-                                                  alignChipText:nil
-                                           alignDurationSeconds:0
-                                                      alignMode:FSTTimeEditorAlignModeStartFast
-                                             alignReferenceDate:nil
-                                                       onCommit:^(NSDate *pickedDate, BOOL aligned) {
+    FSTTimeEditorSheetViewController *sheet = [[FSTTimeEditorSheetViewController alloc] init];
+    sheet.titleText   = @"When to start fasting?";
+    sheet.initialDate = initialDate;
+    sheet.alignMode   = FSTTimeEditorAlignModeStartFast;
+    sheet.onCommit = ^(NSDate *pickedDate, BOOL aligned) {
         if ([pickedDate compare:[NSDate date]] == NSOrderedDescending) {
             [weakSelf enterScheduledReadyFromFutureStartDate:pickedDate source:FSTScheduledReadySourcePreStart];
         } else {
             [[FSTSessionManager sharedManager] editActiveStartDate:pickedDate alignWithPlan:YES];
             [weakSelf refreshUI];
         }
-    }];
+    };
     UIViewController *hostViewController = self.tabBarController ?: self.navigationController ?: self;
     [hostViewController addChildViewController:sheet];
     [hostViewController.view addSubview:sheet.view];

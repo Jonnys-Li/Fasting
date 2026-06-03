@@ -3,36 +3,19 @@
 //  Fasting
 //
 //  餐食详情页的根视图：顶部返回按钮+标题 + 5 张卡片纵向滚动 + 底部保存按钮。
+//  RootView 自己负责外壳（topBar / scrollView / cardStack 容器 / bottomBar / saveButton）；
+//  5 张卡片由 VC 创建后通过 mount API 推入 cardStack。
 //
 
 #import <UIKit/UIKit.h>
 
-@class FSTMealTimeCardView;
-@class FSTMealSlotCardView;
-@class FSTMealDietCardView;
-@class FSTMealTasteCardView;
-@class FSTMealDetailContentCardView;
-
 NS_ASSUME_NONNULL_BEGIN
 
-/// MealDetail 页的根视图。承担全部 UI 创建与 Masonry 约束，
-/// VC 仅负责通过暴露的子视图属性进行状态推送与回调接线。
 @interface FSTMealDetailRootView : UIView
 
-/// 时间卡片。
-@property (nonatomic, strong, readonly) FSTMealTimeCardView *timeCardView;
-
-/// 正餐/零食卡片。
-@property (nonatomic, strong, readonly) FSTMealSlotCardView *slotCardView;
-
-/// 饮食类型卡片。
-@property (nonatomic, strong, readonly) FSTMealDietCardView *dietCardView;
-
-/// 口味卡片。
-@property (nonatomic, strong, readonly) FSTMealTasteCardView *tasteCardView;
-
-/// 详情（照片+描述）卡片。
-@property (nonatomic, strong, readonly) FSTMealDetailContentCardView *detailCardView;
+/// 把 VC 创建好的 5 张卡片 mount 到内部 cardStack，按入参顺序自上而下排列。
+/// 须在 RootView 加入 superview 之后调用一次。
+- (void)mountCards:(NSArray<UIView *> *)cards;
 
 /// 顶部返回按钮点击回调。
 @property (nonatomic, copy, nullable) void (^onBackTapped)(void);

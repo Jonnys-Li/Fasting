@@ -6,6 +6,10 @@
 //  由 FSTModalDialogViewController 创建并放入 cardContainer 内；
 //  VC 负责 dismiss 与回调分发，本视图只负责 UI 创建与约束。
 //
+//  使用方式：[[FSTModalDialogContentView alloc] init]，然后 set 各文案/图标属性。
+//  iconSystemName 与 iconImageName 互斥：imageName 优先，两个都没有则不显示图标。
+//  secondaryTitle 为空时次按钮自动隐藏。
+//
 
 #import <UIKit/UIKit.h>
 
@@ -13,23 +17,23 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FSTModalDialogContentView : UIView
 
-/// 唯一指定初始化。
-/// @param systemName     SF Symbol 名，nil 时尝试用 imageName。
-/// @param imageName      Asset Catalog 图片名，nil 时用 systemName。
-/// @param title          主标题。
-/// @param message        多行说明文字。
-/// @param primaryTitle   主按钮标题。
-/// @param secondaryTitle 次按钮标题，nil 时只显示主按钮。
-- (instancetype)initWithIconSystemName:(nullable NSString *)systemName
-                         iconImageName:(nullable NSString *)imageName
-                                 title:(NSString *)title
-                               message:(NSString *)message
-                          primaryTitle:(NSString *)primaryTitle
-                        secondaryTitle:(nullable NSString *)secondaryTitle NS_DESIGNATED_INITIALIZER;
+/// SF Symbol 名（与 iconImageName 互斥，imageName 优先）。
+@property (nonatomic, copy, nullable) NSString *iconSystemName;
 
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
-- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+/// Asset Catalog 图片名（优先于 iconSystemName）。
+@property (nonatomic, copy, nullable) NSString *iconImageName;
+
+/// 主标题。
+@property (nonatomic, copy, nullable) NSString *titleText;
+
+/// 多行说明文字。
+@property (nonatomic, copy, nullable) NSString *message;
+
+/// 主按钮标题。
+@property (nonatomic, copy, nullable) NSString *primaryTitle;
+
+/// 次按钮标题，nil 或空串时只显示主按钮（自动隐藏次按钮 + 取消按钮间距）。
+@property (nonatomic, copy, nullable) NSString *secondaryTitle;
 
 /// 关闭按钮点击回调。
 @property (nonatomic, copy, nullable) void (^onCloseTapped)(void);
