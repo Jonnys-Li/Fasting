@@ -39,7 +39,7 @@ static NSString *const kKeyRecordID  = @"recordID";
 static NSString *const kKeyReturns   = @"returnsToTimeline";
 static NSString *const kKeyStartDate = @"startDate";
 static NSString *const kKeyEndDate   = @"endDate";
-static NSString *const kKeyPlanName  = @"planName";
+static NSString *const kKeyPlanType  = @"planType";
 
 // VC type tokens —— 调整时记得同步升级 FSTSceneRestorationSchemaVersion
 static NSString *const kTypeActiveFasting   = @"ActiveFasting";
@@ -176,9 +176,9 @@ static NSDictionary *FSTRestorationTokenForViewController(UIViewController *vc) 
     }
     if ([vc isKindOfClass:[FSTPlanConfirmViewController class]]) {
         FSTPlanConfirmViewController *planConfirm = (FSTPlanConfirmViewController *)vc;
-        NSString *planName = planConfirm.plan.name;
-        if (!planName.length) return nil;
-        return @{kKeyType: kTypePlanConfirm, kKeyPlanName: planName};
+        FSTPlanType planType = planConfirm.plan.type;
+        if (planType == FSTPlanTypeCustom) return nil;  // 非内置方案不恢复
+        return @{kKeyType: kTypePlanConfirm, kKeyPlanType: @(planType)};
     }
     return nil;  // 其他（含各类 modal sheet）不在恢复 scope 内
 }
@@ -225,11 +225,12 @@ static UIViewController *FSTViewControllerForRestorationToken(NSDictionary *toke
         return [[FSTSendFeedbackViewController alloc] init];
     }
     if ([type isEqualToString:kTypePlanConfirm]) {
-        NSString *planName = token[kKeyPlanName];
-        if (![planName isKindOfClass:[NSString class]] || !planName.length) return nil;
+        NSNumber *planTypeNumber = token[kKeyPlanType];
+        if (![planTypeNumber isKindOfClass:[NSNumber class]]) return nil;
+        FSTPlanType planType = planTypeNumber.integerValue;
         FSTPlan *plan = nil;
         for (FSTPlan *candidate in [FSTPlan defaultDailyPlans]) {
-            if ([candidate.name isEqualToString:planName]) { plan = candidate; break; }
+            if (candidate.type == planType) { plan = candidate; break; }
         }
         if (!plan) return nil;
         return [[FSTPlanConfirmViewController alloc] initWithPlan:plan];
