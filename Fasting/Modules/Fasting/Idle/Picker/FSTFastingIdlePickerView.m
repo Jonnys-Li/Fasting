@@ -18,7 +18,7 @@ static const CGFloat kListTopOffset = 34;
 static const CGFloat kListSideInset = 22;
 static const CGFloat kListBottomMin = 40;
 
-// 计划卡列表的宽高比（与 FSTPlanSelectListView 内部 2×2 网格一致）
+// 计划卡列表的宽高比（与 FSTPlanSelectListView 内部竖排 4 卡一致：4×179 + 3×16）
 static const CGFloat kListAspectNumerator   = 716.0;
 static const CGFloat kListAspectDenominator = 335.0;
 static const CGFloat kListAspectOffset      = 48.0;
