@@ -16,7 +16,7 @@
     if ((self = [super initWithFrame:frame])) {
         _selectedDate = [NSDate date];
         self.backgroundColor = [UIColor whiteColor];
-        [self buildSubviews];
+        [self setupSubviews];
         [self refreshDateLabel];
     }
     return self;
@@ -28,7 +28,7 @@
 }
 
 /// 构建：返回按钮 + 中央日期胶囊 + 右侧筛选按钮 + 红点。
-- (void)buildSubviews {
+- (void)setupSubviews {
     UIButton *backButton = [UIButton fst_iconButtonWithSystemName:@"arrow.left" size:44];
     [backButton addTarget:self action:@selector(emitBackTapped) forControlEvents:UIControlEventTouchUpInside];
 

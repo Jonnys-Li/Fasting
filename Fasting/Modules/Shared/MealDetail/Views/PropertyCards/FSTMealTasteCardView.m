@@ -17,7 +17,7 @@
         _tasteLevel = 1;
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = 20;
-        [self buildSubviews];
+        [self setupSubviews];
         [self refresh];
     }
     return self;
@@ -25,7 +25,7 @@
 
 - (void)setTasteLevel:(NSInteger)tasteLevel { _tasteLevel = tasteLevel; [self refresh]; }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"How was the food?" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 

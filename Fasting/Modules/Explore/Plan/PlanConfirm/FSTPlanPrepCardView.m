@@ -11,12 +11,12 @@
     if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor fst_stageBlue];
         self.layer.cornerRadius = FSTRadiusCard;
-        [self buildSubviews];
+        [self setupSubviews];
     }
     return self;
 }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     UILabel *titleLabel = [[UILabel alloc] init];
     NSMutableParagraphStyle *titleStyle = [[NSMutableParagraphStyle alloc] init];
     titleStyle.lineHeightMultiple = 1.1;

@@ -15,7 +15,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor fst_addRecordHeaderGreen];
-        [self buildSubviews];
+        [self setupSubviews];
     }
     return self;
 }
@@ -27,7 +27,7 @@
 }
 
 /// 构建：山形背景色块 + 左右两个圆形按钮 + 标题 + 大数字。
-- (void)buildSubviews {
+- (void)setupSubviews {
     UIView *mountainBackground = [[UIView alloc] init];
     mountainBackground.backgroundColor = [[UIColor fst_addRecordMountainGreen] colorWithAlphaComponent:0.35];
 

@@ -66,7 +66,7 @@ static const CGFloat kBottomPadding = 118;
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         _primaryActionMode = FSTDailyPlanReadyPrimaryActionStartFasting;
-        [self buildSubviews];
+        [self setupSubviews];
         [self setupConstraints];
     }
     return self;
@@ -74,7 +74,7 @@ static const CGFloat kBottomPadding = 118;
 
 #pragma mark - 视图组装
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     __weak typeof(self) weakSelf = self;
 
     self.eatingTitleLabel = [UILabel fst_labelWithText:@"Eating Time" font:FSTFontAvenirBold(22) color:[UIColor fst_textHeading] alignment:NSTextAlignmentCenter];

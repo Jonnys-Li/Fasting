@@ -80,7 +80,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
         self.layer.cornerRadius = FSTRadiusL;
         self.layer.masksToBounds = YES;
         [self addTarget:self action:@selector(handleMoreTapped) forControlEvents:UIControlEventTouchUpInside];
-        [self buildSubviews];
+        [self setupSubviews];
         self.titleText = @"Fasting";
         self.hoursText = @"";
         self.minutesText = @"";
@@ -91,7 +91,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     return self;
 }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     self.badgeImageView = [self originalImageViewNamed:@"tl_target_badge" fit:YES];
     self.titleLabel = [UILabel fst_labelWithText:nil font:FSTFontSubhead() color:[UIColor whiteColor]];
     self.streakImageView = [self originalImageViewNamed:@"tl_streak_bolts" fit:YES];

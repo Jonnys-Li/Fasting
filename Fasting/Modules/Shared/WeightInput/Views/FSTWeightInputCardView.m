@@ -21,7 +21,7 @@
         _weightKg = 70.0;
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = FSTRadiusL;
-        [self buildSubviews];
+        [self setupSubviews];
         [self refreshValue];
     }
     return self;
@@ -39,7 +39,7 @@
 #pragma mark - 构建 UI
 
 /// 一次性创建并约束卡片里所有视图。
-- (void)buildSubviews {
+- (void)setupSubviews {
     UIButton *closeButton = [self buildCloseButton];
     UILabel *titleLabel = [UILabel fst_subtitleLabelWithText:@"Weight"];
     titleLabel.textAlignment = NSTextAlignmentCenter;

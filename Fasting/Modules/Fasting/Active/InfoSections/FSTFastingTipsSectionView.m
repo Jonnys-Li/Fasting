@@ -44,13 +44,13 @@ static NSString * const FSTFastingTipsExpandedText =
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = FSTRadiusL;
         self.layer.masksToBounds = YES;
-        [self buildSubviews];
+        [self setupSubviews];
         [self configureForStage:FSTTipsFastingStageDuring];
     }
     return self;
 }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     UIView *header     = [self buildSectionHeader];
     self.lemonCard     = [self buildLemonCard];
     self.stageCard     = [[FSTFastingStageCard alloc] init];

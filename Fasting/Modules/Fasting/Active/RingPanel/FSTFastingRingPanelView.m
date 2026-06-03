@@ -35,7 +35,7 @@ static const CGFloat kFlameSize           = 52;  // 与 @3x 源图 1x 原生尺�
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        [self buildSubviews];
+        [self setupSubviews];
     }
     return self;
 }
@@ -90,7 +90,7 @@ static const CGFloat kFlameSize           = 52;  // 与 @3x 源图 1x 原生尺�
     self.overtimeDetailLabel.attributedText = attributedText;
 }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     self.ring = [[FSTRingProgressView alloc] initWithFrame:CGRectZero];
     self.ring.lineWidth      = 22;
     self.ring.trackColor     = [UIColor fst_ringTrackLight];

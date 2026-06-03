@@ -33,7 +33,7 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         _presentationState = FSTDailyPlanReadyRingPresentationEatingWindow;
-        [self buildSubviews];
+        [self setupSubviews];
         [self refreshDisplay];
     }
     return self;
@@ -57,7 +57,7 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
 }
 
 /// 构建：开口弧 + 顶部切换按钮 + 中央 caption/value + 计划胶囊
-- (void)buildSubviews {
+- (void)setupSubviews {
     self.ringProgressView = [[FSTRingProgressView alloc] initWithFrame:CGRectZero];
     self.ringProgressView.lineWidth      = 22;
     self.ringProgressView.trackColor     = [UIColor fst_ringTrackLight];

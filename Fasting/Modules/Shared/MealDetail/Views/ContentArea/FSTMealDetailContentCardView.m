@@ -16,7 +16,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         [self fst_applyMealCardStyle];
-        [self buildSubviews];
+        [self setupSubviews];
         [self refresh];
     }
     return self;
@@ -26,7 +26,7 @@
 - (void)setDetailDescription:(NSString *)detailDescription { self.detailTextView.text = detailDescription ?: @""; }
 - (NSString *)detailDescription { return self.detailTextView.text; }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     UIButton *imageButton = [UIButton buttonWithType:UIButtonTypeSystem];
     imageButton.backgroundColor = [UIColor fst_mealImageBackground];
     imageButton.layer.cornerRadius = FSTRadiusM;

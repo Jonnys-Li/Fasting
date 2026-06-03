@@ -20,13 +20,13 @@
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = FSTRadiusS;
         self.clipsToBounds = YES;
-        [self buildSubviews];
+        [self setupSubviews];
         [self configureForBloodGlucoseStage];
     }
     return self;
 }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     self.stageIconView = [[UIImageView alloc] init];
     self.stageIconView.contentMode = UIViewContentModeScaleAspectFit;
     [self addSubview:self.stageIconView];

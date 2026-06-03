@@ -16,7 +16,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         _feelingLevel = 1;
-        [self buildSubviews];
+        [self setupSubviews];
         [self refreshSelection];
     }
     return self;
@@ -28,7 +28,7 @@
 }
 
 /// 构建：标题 + 3 个等宽感受按钮的水平 stack。
-- (void)buildSubviews {
+- (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"How did it feel?" font:FSTFontSubhead() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 

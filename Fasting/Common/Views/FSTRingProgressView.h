@@ -28,7 +28,7 @@ typedef NS_ENUM(NSInteger, FSTRingFillStyle) {
 
 /// 圆环 6 种视觉态——把"状态 → 外观旋钮"的翻译表集中到 `fst_applyStyle:` 里。
 /// 覆盖外观：progressColor / endTailColor / endTailFraction / showsEndTail / arrowHeadTintColor。
-/// **不覆盖**行为属性：progress（业务数据驱动）/ fillStyle（panel 状态或用户操作驱动）/ arrowHeadImage（panel 在 buildSubviews 设一次）。
+/// **不覆盖**行为属性：progress（业务数据驱动）/ fillStyle（panel 状态或用户操作驱动）/ arrowHeadImage（panel 在 setupSubviews 设一次）。
 /// 写入方：FSTFastingRingPanelView.applyPresentationState、FSTFastingIdleReadyRingView.refreshDisplay
 /// 读取方：FSTRingProgressView 内部 switch（见 .m 实现）
 typedef NS_ENUM(NSInteger, FSTRingStyle) {

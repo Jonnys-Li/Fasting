@@ -20,7 +20,7 @@
         _unit = FSTWeightUnitKg;
         self.backgroundColor = [UIColor fst_ringTrack];
         self.layer.cornerRadius = 20;
-        [self buildSubviews];
+        [self setupSubviews];
         [self refreshSelected:NO];
     }
     return self;
@@ -33,7 +33,7 @@
 }
 
 /// 构建：白滑块 + kg/lb 两个点击区。
-- (void)buildSubviews {
+- (void)setupSubviews {
     self.selectorView = [[UIView alloc] init];
     self.selectorView.backgroundColor = [UIColor fst_textPrimary];
     self.selectorView.layer.cornerRadius = FSTRadiusChip;

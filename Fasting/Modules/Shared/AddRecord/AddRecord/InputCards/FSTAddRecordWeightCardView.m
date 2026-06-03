@@ -20,7 +20,7 @@
     if ((self = [super initWithFrame:frame])) {
         _initialWeightKg = FSTDefaultInitialWeightKg;
         _targetWeightKg = FSTDefaultTargetWeightKg;
-        [self buildSubviews];
+        [self setupSubviews];
         [self refreshValues];
     }
     return self;
@@ -32,7 +32,7 @@
 - (void)setAppleHealthEnabled:(BOOL)enabled { _appleHealthEnabled = enabled; self.healthSwitch.on = enabled; }
 
 /// 构建：标题/今天/数值+编辑/进度条/初始+目标/Apple Health 行。
-- (void)buildSubviews {
+- (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Current weight" font:FSTFontSubhead() color:[UIColor fst_textPrimary]];
     UILabel *todayLabel = [self mutedLabelWithText:@"Today"];
 

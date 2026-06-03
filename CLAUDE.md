@@ -148,7 +148,9 @@ RootView 的职责是**摆放自己直接持有的子视图**；子视图内部�
 - (void)setupConstraints { /* Masonry */ }
 ```
 
-caller 端用 `[Foo new]` + 一串 `.xxx = ...` 设配置。**不要自造 `initWithLeftButton:rightButtons:centerContent:contentHeight:` 这种带一堆参数的 designated init。**
+**一次性建视图/约束的方法统一命名 `setupSubviews` / `setupConstraints`，不要用 `buildSubviews` 等别名。** 它对应 R10 初始化顺序里的「子视图 / 布局」两步；务必与系统的 `layoutSubviews` 区分——后者每次布局自动调、只做定位（见 R8、R10），不能把一次性建视图塞进去。
+
+caller 端用 `[[Foo alloc] init]` + 一串 `.xxx = ...` 设配置（无参 init 写法见 R7）。**不要自造 `initWithLeftButton:rightButtons:centerContent:contentHeight:` 这种带一堆参数的 designated init。**
 
 #### UIViewController 子类的对应做法
 

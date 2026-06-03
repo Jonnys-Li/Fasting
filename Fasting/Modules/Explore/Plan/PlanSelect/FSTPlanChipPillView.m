@@ -21,7 +21,7 @@
         self.backgroundColor = [UIColor fst_ringTrackLight];
         self.layer.cornerRadius = FSTRadiusChip;
         self.clipsToBounds = YES;
-        [self buildSubviews];
+        [self setupSubviews];
 
         UIControl *tapControl = [[UIControl alloc] init];
         [tapControl addTarget:self action:@selector(handleTap) forControlEvents:UIControlEventTouchUpInside];
@@ -33,7 +33,7 @@
     return self;
 }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     self.titleLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(15) color:[UIColor fst_textPrimary] alignment:NSTextAlignmentCenter];
     [self addSubview:self.titleLabel];
 

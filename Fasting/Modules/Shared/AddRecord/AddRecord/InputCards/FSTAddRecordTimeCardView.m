@@ -23,7 +23,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        [self buildSubviews];
+        [self setupSubviews];
         [self refreshValues];
     }
     return self;
@@ -41,7 +41,7 @@
 }
 
 /// 构建：计划标签 + 开始/结束两行可折叠 + picker + 底部提示。
-- (void)buildSubviews {
+- (void)setupSubviews {
     self.planLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(16) color:[UIColor fst_textPrimary]];
 
     UIView *startRow = [self timeRowWithTitle:@"Start" isStart:YES];

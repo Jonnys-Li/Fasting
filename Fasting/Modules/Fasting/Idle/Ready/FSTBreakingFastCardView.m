@@ -24,7 +24,7 @@
         self.layer.cornerRadius = FSTRadiusS;
         self.layer.borderColor = [[UIColor fst_separator] CGColor];
         self.layer.borderWidth = 1;
-        [self buildSubviews];
+        [self setupSubviews];
 
         UIControl *tapControl = [[UIControl alloc] init];
         [tapControl addTarget:self action:@selector(handleTap) forControlEvents:UIControlEventTouchUpInside];
@@ -36,7 +36,7 @@
     return self;
 }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     UIImage *foodImage = [UIImage fst_originalImageNamed:@"breaking_fast_food"];
     self.iconImageView = [[UIImageView alloc] initWithImage:foodImage];
     self.iconImageView.contentMode = UIViewContentModeScaleAspectFit;

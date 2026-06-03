@@ -27,14 +27,14 @@ static const CGFloat kPickerRadius = 16;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        [self buildSubviews];
+        [self setupSubviews];
     }
     return self;
 }
 
 #pragma mark - 视图组装
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     UIView *headerRow = [[UIView alloc] init];
 
     self.dot = [[UIView alloc] init];

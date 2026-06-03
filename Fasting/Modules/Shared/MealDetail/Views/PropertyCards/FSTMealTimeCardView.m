@@ -19,7 +19,7 @@
     if ((self = [super initWithFrame:frame])) {
         _date = [NSDate date];
         [self fst_applyMealCardStyle];
-        [self buildSubviews];
+        [self setupSubviews];
         [self refresh];
     }
     return self;
@@ -28,7 +28,7 @@
 - (void)setDate:(NSDate *)date { _date = date; [self refresh]; if (date) self.datePicker.date = date; }
 
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Time" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
 
     self.dateLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(17) color:[UIColor fst_mealDateText] alignment:NSTextAlignmentRight];

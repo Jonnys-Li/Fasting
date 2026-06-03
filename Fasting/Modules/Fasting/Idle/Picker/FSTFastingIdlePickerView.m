@@ -32,13 +32,13 @@ static const CGFloat kListAspectOffset      = 48.0;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        [self buildSubviews];
+        [self setupSubviews];
         [self setupConstraints];
     }
     return self;
 }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     self.subtitleLabel = [UILabel fst_labelWithText:@"Choose one to start"
                                                 font:FSTFontBold(21)
                                                color:[UIColor fst_textPrimary]

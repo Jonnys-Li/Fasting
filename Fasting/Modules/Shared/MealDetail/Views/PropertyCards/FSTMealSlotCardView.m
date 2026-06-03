@@ -16,7 +16,7 @@
     if ((self = [super initWithFrame:frame])) {
         _mealCategory = @"Meal";
         [self fst_applyMealCardStyle];
-        [self buildSubviews];
+        [self setupSubviews];
         [self refresh];
     }
     return self;
@@ -24,7 +24,7 @@
 
 - (void)setMealCategory:(NSString *)mealCategory { _mealCategory = [mealCategory copy]; [self refresh]; }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Meal/Snack" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 

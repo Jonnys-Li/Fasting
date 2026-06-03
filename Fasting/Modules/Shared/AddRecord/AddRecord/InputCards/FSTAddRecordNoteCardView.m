@@ -14,7 +14,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        [self buildSubviews];
+        [self setupSubviews];
     }
     return self;
 }
@@ -22,7 +22,7 @@
 - (void)setText:(NSString *)text { self.textView.text = text ?: @""; }
 - (NSString *)text { return self.textView.text; }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Notes" font:FSTFontSubhead() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 

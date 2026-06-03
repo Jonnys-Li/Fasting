@@ -18,7 +18,7 @@
         _dietType = @"Not sure";
         _dietNames = @[@"Keto", @"Low-carb", @"Mixed", @"High-carb", @"Not sure"];
         [self fst_applyMealCardStyle];
-        [self buildSubviews];
+        [self setupSubviews];
         [self refresh];
     }
     return self;
@@ -26,7 +26,7 @@
 
 - (void)setDietType:(NSString *)dietType { _dietType = [dietType copy]; [self refresh]; }
 
-- (void)buildSubviews {
+- (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Diet Type" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
     [self addSubview:titleLabel];
 

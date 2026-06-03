@@ -17,7 +17,7 @@ static const CGFloat kDotSize = 14;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        [self buildSubviews];
+        [self setupSubviews];
         [self refresh];
     }
     return self;
@@ -27,7 +27,7 @@ static const CGFloat kDotSize = 14;
 - (void)setEndDate:(NSDate *)endDate { _endDate = endDate; [self refresh]; }
 
 /// 构建：两个圆点 + 一段连线 + 两个标题 + 时间值 + 铅笔按钮。
-- (void)buildSubviews {
+- (void)setupSubviews {
     UIView *startDotLabel = [self dotLabelWithColor:[UIColor fst_primaryGreen]];
     UIView *endDotLabel = [self dotLabelWithColor:[UIColor fst_redDot]];
     UIView *connectorLineView = [[UIView alloc] init];
