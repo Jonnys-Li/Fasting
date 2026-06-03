@@ -24,6 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 开始断食按钮点击回调。
 @property (nonatomic, copy, nullable) void (^onStartTapped)(void);
 
+/// 点击「方案名 + chevron」区域回调（换方案）。
+@property (nonatomic, copy, nullable) void (^onChangePlanTapped)(void);
+
 @end
 
 NS_ASSUME_NONNULL_END

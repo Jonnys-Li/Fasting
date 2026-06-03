@@ -13,6 +13,7 @@
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *shareButton;
 @property (nonatomic, strong) UIImageView *chevronImageView;
+@property (nonatomic, strong) UIControl *planSelectorControl;
 @property (nonatomic, strong) UIButton *startButton;
 @property (nonatomic, strong) FSTPlanPrepCardView *prepCardView;
 @end
@@ -98,6 +99,20 @@
         make.centerY.equalTo(titleLabel);
         make.size.mas_equalTo(CGSizeMake(28, 28));
     }];
+
+    // 「方案名 + chevron」整块做换方案点击区：透明 UIControl 盖在上层，
+    // titleLabel / chevron 默认 userInteractionEnabled = NO，触摸会落到本 control。
+    self.planSelectorControl = [[UIControl alloc] init];
+    [self.planSelectorControl addTarget:self action:@selector(handleChangePlanTapped)
+                       forControlEvents:UIControlEventTouchUpInside];
+    [self.contentView addSubview:self.planSelectorControl];
+    [self.planSelectorControl mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(titleLabel);
+        make.right.equalTo(self.chevronImageView);
+        make.top.equalTo(titleLabel).offset(-8);
+        make.bottom.equalTo(titleLabel).offset(8);
+    }];
+
     [timelineView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(titleLabel.mas_bottom).offset(58);
         make.left.right.equalTo(self.contentView);
@@ -122,6 +137,10 @@
 
 - (void)handleStartTapped {
     if (self.onStartTapped) self.onStartTapped();
+}
+
+- (void)handleChangePlanTapped {
+    if (self.onChangePlanTapped) self.onChangePlanTapped();
 }
 
 @end

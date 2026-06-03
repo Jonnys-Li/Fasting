@@ -9,6 +9,8 @@
 #import "FSTActiveFastingViewController.h"
 #import "FSTFastingIdleViewController.h"
 #import "FSTSessionManager.h"
+#import "FSTAppRouter.h"
+#import "FSTPlan.h"
 #import "UIViewController+FSTTimeEditor.h"
 #import "UINavigationController+FSTHelpers.h"
 #import "FSTTheme.h"
@@ -62,6 +64,9 @@
     self.rootView.onStartTapped = ^{
         [weakSelf handleStartTapped];
     };
+    self.rootView.onChangePlanTapped = ^{
+        [weakSelf handleChangePlanTapped];
+    };
     self.timelineView.onEditStartTapped = ^{
         [weakSelf handleEditStartTapped];
     };
@@ -80,6 +85,16 @@
 #pragma mark - 事件
 
 - (void)handleBackTapped { [self.navigationController popViewControllerAnimated:YES]; }
+
+- (void)handleChangePlanTapped {
+    // 此处尚未开始断食，只换本地选中的 plan（不走 switchToPlanPreservingState:，那是 active session 用）。
+    __weak typeof(self) weakSelf = self;
+    [FSTAppRouter presentPlanPickerFrom:self onPick:^(FSTPlan *picked) {
+        if (!picked) return;
+        weakSelf.plan = picked;
+        [weakSelf refreshPlanLabels];
+    }];
+}
 
 - (void)handleEditStartTapped {
     NSDate *initialDate = self.selectedStartDate ?: [NSDate date];
