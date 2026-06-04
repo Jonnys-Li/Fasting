@@ -27,6 +27,7 @@ static const NSInteger kDefaultFeelingLevel = 1;
     record.appleHealthEnabled = dictionary[@"appleHealthEnabled"] ? [dictionary[@"appleHealthEnabled"] boolValue]    : NO;
     record.feelingLevel       = dictionary[@"feelingLevel"]       ? [dictionary[@"feelingLevel"]       integerValue] : kDefaultFeelingLevel;
     record.note               = dictionary[@"note"] ?: @"";
+    
     return record;
 }
 
@@ -43,6 +44,7 @@ static const NSInteger kDefaultFeelingLevel = 1;
     dictionary[@"appleHealthEnabled"] = @(self.appleHealthEnabled);
     dictionary[@"feelingLevel"]       = @(self.feelingLevel);
     dictionary[@"note"]               = self.note ?: @"";
+    
     return [dictionary copy];
 }
 

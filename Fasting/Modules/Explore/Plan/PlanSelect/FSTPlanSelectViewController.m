@@ -23,6 +23,8 @@ static const CGFloat FSTPlanSelectHeaderHeight = 162;  // 8pt 顶部 + 48pt 按�
 
 @implementation FSTPlanSelectViewController
 
+#pragma mark - 生命周期
+
 - (instancetype)init {
     if ((self = [super init])) {
         _showsCloseButton = YES;
@@ -36,6 +38,8 @@ static const CGFloat FSTPlanSelectHeaderHeight = 162;  // 8pt 顶部 + 48pt 按�
     [self buildScrollContainer];
     [self buildStickyHeader];   // 后加入 -> 在 z-order 上覆盖 scrollView
 }
+
+#pragma mark - 视图构建
 
 - (void)buildScrollContainer {
     self.scrollView = [[UIScrollView alloc] init];
@@ -140,6 +144,8 @@ static const CGFloat FSTPlanSelectHeaderHeight = 162;  // 8pt 顶部 + 48pt 按�
         make.height.mas_equalTo(74);
     }];
 }
+
+#pragma mark - 事件
 
 - (void)handleCloseTapped {
     [self dismissViewControllerAnimated:YES completion:nil];

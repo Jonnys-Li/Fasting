@@ -21,6 +21,8 @@
 
 @implementation FSTAppRouter
 
+#pragma mark - 系统弹窗
+
 + (void)showAlertFrom:(UIViewController *)vc
                 title:(NSString *)title
               message:(NSString *)message
@@ -33,6 +35,8 @@
                                             handler:nil]];
     [vc presentViewController:alert animated:YES completion:nil];
 }
+
+#pragma mark - Plan 选择 / 浏览
 
 + (void)presentPlanPickerFrom:(UIViewController *)vc
                        onPick:(void (^)(FSTPlan *plan))onPick {
@@ -64,6 +68,8 @@
     [vc presentViewController:nav animated:YES completion:nil];
 }
 
+#pragma mark - 断食主页 push
+
 + (void)pushActiveFastingFrom:(UIViewController *)vc promptForStartTime:(BOOL)prompt {
     [self pushActiveFastingFrom:vc promptForStartTime:prompt animated:YES];
 }
@@ -75,6 +81,8 @@
     active.promptsForStartTimeOnFirstAppear = prompt;
     [vc.navigationController pushViewController:active animated:animated];
 }
+
+#pragma mark - 记录补录 / 历史 / 日记 / 详情 push
 
 + (void)pushQuickAddRecordFrom:(UIViewController *)vc {
     FSTQuickAddRecordViewController *record = [[FSTQuickAddRecordViewController alloc] init];
@@ -118,6 +126,8 @@
     [vc.navigationController pushViewController:detail animated:YES];
 }
 
+#pragma mark - 反馈 / 分享 / 体重输入 present
+
 + (void)pushFeedbackFrom:(UIViewController *)vc {
     FSTSendFeedbackViewController *feedback = [[FSTSendFeedbackViewController alloc] init];
     feedback.hidesBottomBarWhenPushed = YES;
@@ -139,6 +149,8 @@
     weight.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [vc presentViewController:weight animated:YES completion:nil];
 }
+
+#pragma mark - 完成断食 flow
 
 + (void)finishFlowFrom:(UIViewController *)vc
                updates:(dispatch_block_t)updates

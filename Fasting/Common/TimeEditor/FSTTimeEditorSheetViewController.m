@@ -10,7 +10,7 @@
 static const CGFloat kCornerRadius = 22.0;
 
 @interface FSTTimeEditorSheetViewController ()
-// 内部状态机（同 demo1）：
+// 内部状态机：
 //   alignApplied — chip 刚被点过、picker 已被对齐；保存时此标志同步传给上游。
 //   pickerWasChanged — 用户至少滚动过 picker 一次（EndFast 模式用来决定 chip 何时启用）。
 @property (nonatomic, assign) BOOL alignApplied;

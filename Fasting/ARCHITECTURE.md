@@ -13,8 +13,8 @@ Fasting/
 ```
 
 - **顶层按「层」分**：`Common`（横向复用） / `Core`（领域数据与逻辑） / `Modules`（纵向功能）。
-- **`Modules` 内按「功能」分**：`Fasting`（断食 Tab）、`Plan`、`Timeline`、`MealDiary`…
-- **功能内按「类型」或「屏幕」分**（见第三节）。
+- **`Modules` 内先按「Tab / 角色」分组**：`Daily/`（Timeline、FastingHistory、MealDiary）、`Fasting/`（Idle、Active）、`Explore/`（Plan）、`Root/`（TabBar）、`Shared/`（AddRecord、MealDetail、WeightInput 等跨 Tab 复用屏）。
+- **分组内按「功能 → 屏幕 → 类型」分**（见第三节）。
 
 > Xcode 使用 synchronized groups：磁盘上的文件夹结构即工程结构，**新增/移动文件夹无需手动改 `.pbxproj`**。Obj-C 的 `#import "X.h"` 经 header map 解析，与文件所在文件夹无关。
 
@@ -25,7 +25,7 @@ Fasting/
 | 数据模型 / 持久化（Record、Plan…） | `Core/Models/` |
 | 会话状态机、断食生命周期、下次断食推导 | `Core/Services/Session/` |
 | 记录读写仓库 | `Core/Services/Records/` |
-| 某个**业务屏幕**（VC + 它的视图） | `Modules/<功能>/<屏幕>/` |
+| 某个**业务屏幕**（VC + 它的视图） | `Modules/<分组>/<功能>/<屏幕>/` |
 | 跨模块复用的控件（TopBar、卡片栈、进度环…） | `Common/Views/` |
 | 配色 / 字体 / 圆角等主题 token | `Common/Theme/` |
 | 通用 UIKit 扩展（布局、按钮/标签样式…） | `Common/Categories/` |
@@ -41,16 +41,19 @@ Fasting/
   例：
   ```
   Modules/Fasting/            断食 Tab（同一个 Tab 的两种状态）
-    Idle/      未在断食的主页：FSTFastingIdleViewController + Ready/ReadyRing/Picker + BreakingFastCard
-    Active/    正在断食：FSTActiveFastingViewController + InfoSections/ + RingPanel/
-  Modules/Plan/               选 / 确认断食方案（名副其实，只管 plan）
+    Idle/      未在断食的主页：FSTFastingIdleViewController + Ready/、Picker/ + BreakingFastCard
+    Active/    正在断食：FSTActiveFastingViewController + RingPanel/、InfoSections/、SendFeedback/、Share/
+  Modules/Explore/Plan/       选 / 确认断食方案（名副其实，只管 plan）
     PlanConfirm/  FSTPlanConfirmViewController + RootView/Timeline/PrepCard
     PlanSelect/   FSTPlanSelectViewController + ListView/ChipPill/TagChips
-  Modules/AddRecord/
-    AddRecord/    完整补录屏：VC + RootView + HeaderView + InputCards/
-    QuickAdd/     快速补录屏：VC + RootView + TimeRowView
+  Modules/Daily/              Daily Tab：聚合页 + 历史 + 食物日记
+    Timeline/ FastingHistory/ MealDiary/    各自 Controllers/ + Views/
+  Modules/Shared/             跨 Tab 复用的屏
+    AddRecord/  完整补录（VC + RootView + HeaderView + InputCards/）+ QuickAdd（VC + RootView + TimeRowView）
+    MealDetail/ WeightInput/
   ```
-  > 命名要名实相符：`Fasting/Idle` 是断食 Tab 主页（不是"计划"），故 VC 叫 `FSTFastingIdleViewController` 而非历史上的 `FSTDailyPlanViewController`；`Plan` 模块只保留真正的"选/确认方案"。
+  > 命名要名实相符：`Fasting/Idle` 是断食 Tab 主页（不是"计划"），故 VC 叫 `FSTFastingIdleViewController` 而非历史上的 `FSTDailyPlanViewController`；`Plan` 模块只保留真正的"选/确认方案"，归入 `Explore/`。
+  > 一次性建视图 / 约束的方法统一命名 `setupSubviews` / `setupConstraints`（不要 `buildSubviews` 等别名）；UIView/UIControl 子类在 `initWithFrame:` 里按「数据 → 子视图 → 布局」顺序调用（见 `CLAUDE.md` R3 / R10）。
 
 ## 四、Category（分类）放哪
 

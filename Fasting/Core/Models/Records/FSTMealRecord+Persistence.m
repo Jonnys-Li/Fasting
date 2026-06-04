@@ -23,6 +23,7 @@ static const NSInteger kDefaultTasteLevel   = 1;
     record.tasteLevel        = dictionary[@"tasteLevel"]        ? [dictionary[@"tasteLevel"] integerValue] : kDefaultTasteLevel;
     record.detailDescription = dictionary[@"detailDescription"] ?: @"";
     record.imagePath         = dictionary[@"imagePath"] ?: @"";
+    
     return record;
 }
 
@@ -35,6 +36,7 @@ static const NSInteger kDefaultTasteLevel   = 1;
     dictionary[@"tasteLevel"]        = @(self.tasteLevel);
     dictionary[@"detailDescription"] = self.detailDescription ?: @"";
     dictionary[@"imagePath"]         = self.imagePath ?: @"";
+    
     return [dictionary copy];
 }
 

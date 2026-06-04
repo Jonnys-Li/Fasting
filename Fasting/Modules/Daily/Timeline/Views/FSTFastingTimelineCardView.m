@@ -74,6 +74,8 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 
 @implementation FSTFastingTimelineCardView
 
+#pragma mark - 初始化 / 构建
+
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor fst_timelineGreen];
@@ -138,6 +140,8 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     [self installConstraints];
 }
 
+#pragma mark - 子视图工厂
+
 - (UIImageView *)originalImageViewNamed:(NSString *)name fit:(BOOL)aspectFit {
     UIImageView *view = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:name]];
     if (aspectFit) view.contentMode = UIViewContentModeScaleAspectFit;
@@ -167,6 +171,8 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     label.minimumScaleFactor = 0.75;
     return label;
 }
+
+#pragma mark - 约束
 
 - (void)installConstraints {
     [self.badgeImageView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -267,6 +273,8 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     }];
 }
 
+#pragma mark - 数据下发
+
 - (void)setTitleText:(NSString *)titleText {
     _titleText = [titleText copy];
     self.titleLabel.text = _titleText ?: @"";
@@ -316,6 +324,8 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     self.endTimeText = FSTTimelineCardEndTime(record.startDate, record.endDate);
     self.rating = FSTTimelineRatingFromFeelingLevel(record.feelingLevel);
 }
+
+#pragma mark - 事件
 
 - (void)handleMoreTapped {
     if (self.onMoreTapped) {

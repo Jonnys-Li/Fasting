@@ -16,6 +16,8 @@
 
 @implementation FSTSessionLifecycleService
 
+#pragma mark - 开始 / 取消 / 完成 / 清空 / 切换
+
 /// 开始一次新的断食。调用方：PlanConfirm 页点 START、ActiveFasting 页 Reset 起点等。
 /// 做 4 件事：
 ///   1) 切 plan + 起点（startDate 为 nil 时用 now 兜底）；
@@ -83,6 +85,8 @@
     [session persistAllState];
 }
 
+#pragma mark - 预约就绪 (scheduledReady)
+
 + (void)markSession:(FSTSessionManager *)session
 scheduledReadyWithSource:(FSTScheduledReadySource)source
          anchorDate:(NSDate *)anchorDate {
@@ -103,6 +107,8 @@ scheduledReadyWithSource:(FSTScheduledReadySource)source
     [session persistAllState];
 }
 
+#pragma mark - 吃窗口 / 预约未来起点
+
 + (void)beginEatingWindowForSession:(FSTSessionManager *)session fromDate:(NSDate *)date {
     session.activeStartDate = nil;
     session.activeEndOverrideDate = nil;
@@ -122,6 +128,8 @@ scheduledReadyWithSource:(FSTScheduledReadySource)source
     [session setNextFastingStartDate:futureDate];
     [self markSession:session scheduledReadyWithSource:source anchorDate:[NSDate date]];
 }
+
+#pragma mark - 编辑活跃断食起止时刻
 
 /// 编辑活跃断食的 Start 时刻 — 双模式：
 ///   alignWithPlan=YES：擦掉 endOverride，end 跟随 plan 自动对齐到 newStart + plan.fastingHours。
