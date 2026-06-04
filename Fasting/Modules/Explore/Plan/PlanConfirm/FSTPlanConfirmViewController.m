@@ -84,7 +84,9 @@
 
 #pragma mark - 事件
 
-- (void)handleBackTapped { [self.navigationController popViewControllerAnimated:YES]; }
+- (void)handleBackTapped {
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 - (void)handleChangePlanTapped {
     // 此处尚未开始断食，只换本地选中的 plan（不走 switchToPlanPreservingState:，那是 active session 用）。

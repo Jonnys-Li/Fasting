@@ -23,8 +23,12 @@ static const CGFloat kDotSize = 14;
     return self;
 }
 
-- (void)setStartDate:(NSDate *)startDate { _startDate = startDate; [self refresh]; }
-- (void)setEndDate:(NSDate *)endDate { _endDate = endDate; [self refresh]; }
+- (void)setStartDate:(NSDate *)startDate {
+    _startDate = startDate; [self refresh];
+}
+- (void)setEndDate:(NSDate *)endDate {
+    _endDate = endDate; [self refresh];
+}
 
 /// 构建：两个圆点 + 一段连线 + 两个标题 + 时间值 + 铅笔按钮。
 - (void)setupSubviews {
