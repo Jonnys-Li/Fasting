@@ -22,19 +22,43 @@ const CGFloat FSTRadiusXL   = 24;
 
 const CGFloat FSTPoundsPerKilogram = 2.20462262;
 
-UIFont *FSTFontRegular(CGFloat size)  { return [UIFont systemFontOfSize:size weight:UIFontWeightRegular]; }
-UIFont *FSTFontMedium(CGFloat size)   { return [UIFont systemFontOfSize:size weight:UIFontWeightMedium]; }
-UIFont *FSTFontSemibold(CGFloat size) { return [UIFont systemFontOfSize:size weight:UIFontWeightSemibold]; }
-UIFont *FSTFontBold(CGFloat size)     { return [UIFont systemFontOfSize:size weight:UIFontWeightBold]; }
-UIFont *FSTFontHeavy(CGFloat size)    { return [UIFont systemFontOfSize:size weight:UIFontWeightHeavy]; }
-UIFont *FSTFontAvenirBold(CGFloat size)     { return [UIFont fontWithName:@"AvenirNext-Bold" size:size] ?: FSTFontBold(size); }
-UIFont *FSTFontAvenirDemiBold(CGFloat size) { return [UIFont fontWithName:@"AvenirNext-DemiBold" size:size] ?: FSTFontSemibold(size); }
+UIFont *FSTFontRegular(CGFloat size) {
+    return [UIFont systemFontOfSize:size weight:UIFontWeightRegular];
+}
+UIFont *FSTFontMedium(CGFloat size) {
+    return [UIFont systemFontOfSize:size weight:UIFontWeightMedium];
+}
+UIFont *FSTFontSemibold(CGFloat size) {
+    return [UIFont systemFontOfSize:size weight:UIFontWeightSemibold];
+}
+UIFont *FSTFontBold(CGFloat size) {
+    return [UIFont systemFontOfSize:size weight:UIFontWeightBold];
+}
+UIFont *FSTFontHeavy(CGFloat size) {
+    return [UIFont systemFontOfSize:size weight:UIFontWeightHeavy];
+}
+UIFont *FSTFontAvenirBold(CGFloat size) {
+    return [UIFont fontWithName:@"AvenirNext-Bold" size:size] ?: FSTFontBold(size);
+}
+UIFont *FSTFontAvenirDemiBold(CGFloat size) {
+    return [UIFont fontWithName:@"AvenirNext-DemiBold" size:size] ?: FSTFontSemibold(size);
+}
 
-UIFont *FSTFontHeadline(void) { return FSTFontBold(28); }
-UIFont *FSTFontTitle(void)    { return FSTFontBold(22); }
-UIFont *FSTFontSubhead(void)  { return FSTFontBold(20); }
-UIFont *FSTFontBody(void)     { return FSTFontRegular(15); }
-UIFont *FSTFontCaption(void)  { return FSTFontRegular(13); }
+UIFont *FSTFontHeadline(void) {
+    return FSTFontBold(28);
+}
+UIFont *FSTFontTitle(void) {
+    return FSTFontBold(22);
+}
+UIFont *FSTFontSubhead(void) {
+    return FSTFontBold(20);
+}
+UIFont *FSTFontBody(void) {
+    return FSTFontRegular(15);
+}
+UIFont *FSTFontCaption(void) {
+    return FSTFontRegular(13);
+}
 
 NSString *FSTFormatHHMMSS(NSTimeInterval seconds) {
     if (seconds < 0) seconds = 0;

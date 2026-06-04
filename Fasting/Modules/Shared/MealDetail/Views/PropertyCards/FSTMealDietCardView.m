@@ -24,7 +24,9 @@
     return self;
 }
 
-- (void)setDietType:(NSString *)dietType { _dietType = [dietType copy]; [self refresh]; }
+- (void)setDietType:(NSString *)dietType {
+    _dietType = [dietType copy]; [self refresh];
+}
 
 - (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Diet Type" font:FSTFontTitle() color:[UIColor fst_textPrimary]];

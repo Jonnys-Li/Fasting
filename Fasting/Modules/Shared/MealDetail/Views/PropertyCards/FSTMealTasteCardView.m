@@ -23,7 +23,9 @@
     return self;
 }
 
-- (void)setTasteLevel:(NSInteger)tasteLevel { _tasteLevel = tasteLevel; [self refresh]; }
+- (void)setTasteLevel:(NSInteger)tasteLevel {
+    _tasteLevel = tasteLevel; [self refresh];
+}
 
 - (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"How was the food?" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
@@ -91,6 +93,8 @@
     }
 }
 
-- (void)handleTasteTapped:(UIControl *)button { self.tasteLevel = button.tag; }
+- (void)handleTasteTapped:(UIControl *)button {
+    self.tasteLevel = button.tag;
+}
 
 @end

@@ -185,7 +185,11 @@ static const CGFloat kDotSize = 12;
 
 #pragma mark - Events
 
-- (void)emitCardTapped { if (self.onCardTapped) self.onCardTapped(); }
-- (void)emitEditTapped { if (self.onEditTapped) self.onEditTapped(); }
+- (void)emitCardTapped {
+    if (self.onCardTapped) self.onCardTapped();
+}
+- (void)emitEditTapped {
+    if (self.onEditTapped) self.onEditTapped();
+}
 
 @end

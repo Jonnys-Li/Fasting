@@ -29,8 +29,12 @@
     return self;
 }
 
-- (void)setStartDate:(NSDate *)startDate { _startDate = startDate; [self refreshValues]; }
-- (void)setEndDate:(NSDate *)endDate { _endDate = endDate; [self refreshValues]; }
+- (void)setStartDate:(NSDate *)startDate {
+    _startDate = startDate; [self refreshValues];
+}
+- (void)setEndDate:(NSDate *)endDate {
+    _endDate = endDate; [self refreshValues];
+}
 - (void)setPlanName:(NSString *)planName {
     _planName = [planName copy];
     self.planLabel.text = [NSString stringWithFormat:@"◎  Fasting %@", planName ?: @"14-10"];

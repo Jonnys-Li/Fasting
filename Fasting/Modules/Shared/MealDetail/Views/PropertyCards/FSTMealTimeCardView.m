@@ -25,7 +25,9 @@
     return self;
 }
 
-- (void)setDate:(NSDate *)date { _date = date; [self refresh]; if (date) self.datePicker.date = date; }
+- (void)setDate:(NSDate *)date {
+    _date = date; [self refresh]; if (date) self.datePicker.date = date;
+}
 
 
 - (void)setupSubviews {

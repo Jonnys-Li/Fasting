@@ -46,10 +46,18 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
     [self refreshDisplay];
 }
 
-- (void)setElapsedText:(NSString *)elapsedText      { _elapsedText = [elapsedText copy]; [self refreshDisplay]; }
-- (void)setRemainingText:(NSString *)remainingText  { _remainingText = [remainingText copy]; [self refreshDisplay]; }
-- (void)setTimeSinceLastFastText:(NSString *)timeSinceLastFastText { _timeSinceLastFastText = [timeSinceLastFastText copy]; [self refreshDisplay]; }
-- (void)setPlanName:(NSString *)planName            { _planName = [planName copy]; self.planChipPillView.planName = planName ?: @""; }
+- (void)setElapsedText:(NSString *)elapsedText {
+    _elapsedText = [elapsedText copy]; [self refreshDisplay];
+}
+- (void)setRemainingText:(NSString *)remainingText {
+    _remainingText = [remainingText copy]; [self refreshDisplay];
+}
+- (void)setTimeSinceLastFastText:(NSString *)timeSinceLastFastText {
+    _timeSinceLastFastText = [timeSinceLastFastText copy]; [self refreshDisplay];
+}
+- (void)setPlanName:(NSString *)planName {
+    _planName = [planName copy]; self.planChipPillView.planName = planName ?: @"";
+}
 
 - (void)setProgress:(CGFloat)progress {
     _progress = progress;

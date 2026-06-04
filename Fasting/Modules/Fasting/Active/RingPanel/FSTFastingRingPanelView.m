@@ -40,16 +40,34 @@ static const CGFloat kFlameSize           = 52;  // 与 @3x 源图 1x 原生尺�
     return self;
 }
 
-- (UIView *)ringView { return self.ring; }
+- (UIView *)ringView {
+    return self.ring;
+}
 
-- (void)setTimerCaption:(NSString *)caption { _timerCaption = [caption copy]; self.timerCaptionLabel.text = caption; }
-- (void)setTimerText:(NSString *)text       { _timerText    = [text copy];    self.timerLabel.text        = text; }
-- (void)setOvertimeTotalText:(NSString *)text { _overtimeTotalText = [text copy]; self.overtimeTotalLabel.text = text; }
-- (void)setEndText:(NSString *)text         { _endText      = [text copy];    self.endTimeLabel.text      = text; self.endCaptionLabel.text = @"End time"; }
-- (void)setPercentText:(NSString *)text     { _percentText  = [text copy];    self.percentLabel.text      = text; }
-- (void)setPlanName:(NSString *)planName    { _planName     = [planName copy]; self.planChipView.planName = planName; }
-- (void)setProgress:(CGFloat)progress       { _progress     = progress;       [self.ring setProgress:progress animated:NO]; [self refreshFlameState]; }
-- (void)setFlameProgress:(CGFloat)flameProgress { _flameProgress = flameProgress; [self refreshFlameState]; }
+- (void)setTimerCaption:(NSString *)caption {
+    _timerCaption = [caption copy]; self.timerCaptionLabel.text = caption;
+}
+- (void)setTimerText:(NSString *)text {
+    _timerText    = [text copy];    self.timerLabel.text        = text;
+}
+- (void)setOvertimeTotalText:(NSString *)text {
+    _overtimeTotalText = [text copy]; self.overtimeTotalLabel.text = text;
+}
+- (void)setEndText:(NSString *)text {
+    _endText      = [text copy];    self.endTimeLabel.text      = text; self.endCaptionLabel.text = @"End time";
+}
+- (void)setPercentText:(NSString *)text {
+    _percentText  = [text copy];    self.percentLabel.text      = text;
+}
+- (void)setPlanName:(NSString *)planName {
+    _planName     = [planName copy]; self.planChipView.planName = planName;
+}
+- (void)setProgress:(CGFloat)progress {
+    _progress     = progress;       [self.ring setProgress:progress animated:NO]; [self refreshFlameState];
+}
+- (void)setFlameProgress:(CGFloat)flameProgress {
+    _flameProgress = flameProgress; [self refreshFlameState];
+}
 - (void)setDisplayMode:(FSTRingDisplayMode)mode {
     _displayMode = mode;
     [self refreshRingFillStyle];

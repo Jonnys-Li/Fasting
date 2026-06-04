@@ -22,9 +22,15 @@
     return self;
 }
 
-- (void)setImagePath:(NSString *)imagePath { _imagePath = [imagePath copy]; [self refresh]; }
-- (void)setDetailDescription:(NSString *)detailDescription { self.detailTextView.text = detailDescription ?: @""; }
-- (NSString *)detailDescription { return self.detailTextView.text; }
+- (void)setImagePath:(NSString *)imagePath {
+    _imagePath = [imagePath copy]; [self refresh];
+}
+- (void)setDetailDescription:(NSString *)detailDescription {
+    self.detailTextView.text = detailDescription ?: @"";
+}
+- (NSString *)detailDescription {
+    return self.detailTextView.text;
+}
 
 - (void)setupSubviews {
     UIButton *imageButton = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -67,6 +73,8 @@
     self.imageStatusLabel.text = self.imagePath.length ? @"Food photo added" : @"Add food details";
 }
 
-- (void)emitImageTapped { if (self.onImageTapped) self.onImageTapped(); }
+- (void)emitImageTapped {
+    if (self.onImageTapped) self.onImageTapped();
+}
 
 @end

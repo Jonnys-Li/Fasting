@@ -183,7 +183,9 @@
     self.hiddenTextField.text = [NSString stringWithFormat:@"%.1f", displayValue];
 }
 
-- (void)handleValueTapped { [self.hiddenTextField becomeFirstResponder]; }
+- (void)handleValueTapped {
+    [self.hiddenTextField becomeFirstResponder];
+}
 
 - (void)handleTextChanged:(UITextField *)textField {
     CGFloat enteredValue = (textField.text ?: @"").doubleValue;
@@ -205,7 +207,9 @@
     return YES;
 }
 
-- (void)handleCloseTapped { if (self.onClose) self.onClose(); }
+- (void)handleCloseTapped {
+    if (self.onClose) self.onClose();
+}
 
 - (FSTWeightUnit)currentUnit {
     return self.unitToggleView.unit;

@@ -19,8 +19,12 @@
     return self;
 }
 
-- (void)setText:(NSString *)text { self.textView.text = text ?: @""; }
-- (NSString *)text { return self.textView.text; }
+- (void)setText:(NSString *)text {
+    self.textView.text = text ?: @"";
+}
+- (NSString *)text {
+    return self.textView.text;
+}
 
 - (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Notes" font:FSTFontSubhead() color:[UIColor fst_textPrimary]];

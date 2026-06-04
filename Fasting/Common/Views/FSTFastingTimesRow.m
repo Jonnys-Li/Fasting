@@ -159,7 +159,11 @@ static const CGFloat kPencilGap  = 6;
 
 #pragma mark - 事件
 
-- (void)handleStartEditTapped { if (self.onEditStartTapped) self.onEditStartTapped(); }
-- (void)handleEndEditTapped   { if (self.onEditEndTapped)   self.onEditEndTapped();   }
+- (void)handleStartEditTapped {
+    if (self.onEditStartTapped) self.onEditStartTapped();
+}
+- (void)handleEndEditTapped {
+    if (self.onEditEndTapped)   self.onEditEndTapped();
+}
 
 @end

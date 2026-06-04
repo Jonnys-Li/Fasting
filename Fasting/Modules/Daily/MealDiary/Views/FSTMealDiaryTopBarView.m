@@ -97,8 +97,14 @@
     self.dateLabel.text = FSTFormatRelativeDay(self.selectedDate ?: [NSDate date]);
 }
 
-- (void)emitBackTapped { if (self.onBackTapped) self.onBackTapped(); }
-- (void)emitDateChipTapped { if (self.onDateChipTapped) self.onDateChipTapped(); }
-- (void)emitFilterTapped { if (self.onFilterTapped) self.onFilterTapped(); }
+- (void)emitBackTapped {
+    if (self.onBackTapped) self.onBackTapped();
+}
+- (void)emitDateChipTapped {
+    if (self.onDateChipTapped) self.onDateChipTapped();
+}
+- (void)emitFilterTapped {
+    if (self.onFilterTapped) self.onFilterTapped();
+}
 
 @end

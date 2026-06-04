@@ -26,10 +26,18 @@
     return self;
 }
 
-- (void)setWeightKg:(CGFloat)weightKg { _weightKg = weightKg; [self refreshValues]; }
-- (void)setInitialWeightKg:(CGFloat)initialWeightKg { _initialWeightKg = initialWeightKg; [self refreshValues]; }
-- (void)setTargetWeightKg:(CGFloat)targetWeightKg { _targetWeightKg = targetWeightKg; [self refreshValues]; }
-- (void)setAppleHealthEnabled:(BOOL)enabled { _appleHealthEnabled = enabled; self.healthSwitch.on = enabled; }
+- (void)setWeightKg:(CGFloat)weightKg {
+    _weightKg = weightKg; [self refreshValues];
+}
+- (void)setInitialWeightKg:(CGFloat)initialWeightKg {
+    _initialWeightKg = initialWeightKg; [self refreshValues];
+}
+- (void)setTargetWeightKg:(CGFloat)targetWeightKg {
+    _targetWeightKg = targetWeightKg; [self refreshValues];
+}
+- (void)setAppleHealthEnabled:(BOOL)enabled {
+    _appleHealthEnabled = enabled; self.healthSwitch.on = enabled;
+}
 
 /// 构建：标题/今天/数值+编辑/进度条/初始+目标/Apple Health 行。
 - (void)setupSubviews {
@@ -113,7 +121,9 @@
     return [UILabel fst_labelWithText:text font:FSTFontBold(15) color:[UIColor fst_textSecondary]];
 }
 
-- (void)setUsePounds:(BOOL)usePounds { _usePounds = usePounds; [self refreshValues]; }
+- (void)setUsePounds:(BOOL)usePounds {
+    _usePounds = usePounds; [self refreshValues];
+}
 
 - (void)refreshValues {
     BOOL useLb = self.usePounds;
@@ -124,7 +134,9 @@
     self.targetLabel.text = [NSString stringWithFormat:@"Target: %.1f %@", self.targetWeightKg * factor, unit];
 }
 
-- (void)emitEditTapped { if (self.onEditTapped) self.onEditTapped(); }
+- (void)emitEditTapped {
+    if (self.onEditTapped) self.onEditTapped();
+}
 
 - (void)handleHealthSwitchChanged:(UISwitch *)healthSwitch {
     _appleHealthEnabled = healthSwitch.isOn;

@@ -79,7 +79,11 @@
     return button;
 }
 
-- (void)emitBackTapped { if (self.onBackTapped) self.onBackTapped(); }
-- (void)emitTrashTapped { if (self.onTrashTapped) self.onTrashTapped(); }
+- (void)emitBackTapped {
+    if (self.onBackTapped) self.onBackTapped();
+}
+- (void)emitTrashTapped {
+    if (self.onTrashTapped) self.onTrashTapped();
+}
 
 @end
