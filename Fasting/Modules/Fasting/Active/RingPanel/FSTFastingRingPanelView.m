@@ -122,25 +122,32 @@ static const CGFloat kFlameSize           = 52;  // 与 @3x 源图 1x 原生尺�
     self.modeButton.imageView.contentMode      = UIViewContentModeScaleAspectFit;
     [self.modeButton addTarget:self action:@selector(emitModeTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    self.timerCaptionLabel = [UILabel fst_centerLabelWithFont:FSTFontBold(16)
+    self.timerCaptionLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(16)
                                                         color:[UIColor fst_textSecondary]];
-    self.timerLabel        = [UILabel fst_centerLabelWithFont:[UIFont monospacedDigitSystemFontOfSize:32 weight:UIFontWeightBold]
+    self.timerCaptionLabel.textAlignment = NSTextAlignmentCenter;
+    self.timerLabel        = [UILabel fst_labelWithText:nil font:[UIFont monospacedDigitSystemFontOfSize:32 weight:UIFontWeightBold]
                                                         color:[UIColor fst_textHeading]];
+    self.timerLabel.textAlignment = NSTextAlignmentCenter;
     self.completionIconView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"congratulations"]];
     self.completionIconView.contentMode = UIViewContentModeScaleAspectFit;
     self.completionIconView.hidden = YES;
-    self.overtimeDetailLabel = [UILabel fst_centerLabelWithFont:FSTFontRegular(18)
+    self.overtimeDetailLabel = [UILabel fst_labelWithText:nil font:FSTFontRegular(18)
                                                           color:[UIColor fst_textCaption]];
+    self.overtimeDetailLabel.textAlignment = NSTextAlignmentCenter;
     self.overtimeDetailLabel.hidden = YES;
-    self.overtimeTotalLabel = [UILabel fst_centerLabelWithFont:[UIFont monospacedDigitSystemFontOfSize:28 weight:UIFontWeightBold]
+    self.overtimeTotalLabel = [UILabel fst_labelWithText:nil font:[UIFont monospacedDigitSystemFontOfSize:28 weight:UIFontWeightBold]
                                                          color:[UIColor fst_textHeading]];
+    self.overtimeTotalLabel.textAlignment = NSTextAlignmentCenter;
     self.overtimeTotalLabel.hidden = YES;
-    self.endCaptionLabel   = [UILabel fst_centerLabelWithFont:FSTFontRegular(16)
+    self.endCaptionLabel   = [UILabel fst_labelWithText:nil font:FSTFontRegular(16)
                                                         color:[UIColor fst_textSecondary]];
-    self.endTimeLabel      = [UILabel fst_centerLabelWithFont:FSTFontBold(18)
+    self.endCaptionLabel.textAlignment = NSTextAlignmentCenter;
+    self.endTimeLabel      = [UILabel fst_labelWithText:nil font:FSTFontBold(18)
                                                         color:[UIColor fst_textPrimary]];
-    self.percentLabel      = [UILabel fst_centerLabelWithFont:FSTFontRegular(18)
+    self.endTimeLabel.textAlignment = NSTextAlignmentCenter;
+    self.percentLabel      = [UILabel fst_labelWithText:nil font:FSTFontRegular(18)
                                                         color:[UIColor fst_textSecondary]];
+    self.percentLabel.textAlignment = NSTextAlignmentCenter;
 
     self.planChipView = [[FSTPlanChipPillView alloc] init];
     __weak typeof(self) weakSelf = self;

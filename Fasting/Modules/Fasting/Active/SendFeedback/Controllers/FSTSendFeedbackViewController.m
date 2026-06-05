@@ -36,9 +36,9 @@ static NSString * const kPlaceholder = @"Anything you share helps us make fastin
 
     self.placeholderLabel = [UILabel fst_labelWithText:kPlaceholder
                                                   font:FSTFontRegular(16)
-                                                 color:[UIColor fst_textSecondary]
-                                             alignment:NSTextAlignmentLeft
-                                         numberOfLines:0];
+                                                 color:[UIColor fst_textSecondary]];
+    self.placeholderLabel.textAlignment = NSTextAlignmentLeft;
+    self.placeholderLabel.numberOfLines = 0;
 
     self.rootView = [[FSTSendFeedbackRootView alloc] init];
     [self.view addSubview:self.rootView];

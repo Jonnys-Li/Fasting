@@ -107,7 +107,8 @@
 
     UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(19) color:[UIColor fst_textPrimary]];
 
-    UILabel *valueLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(17) color:[UIColor fst_primaryGreen] alignment:NSTextAlignmentRight];
+    UILabel *valueLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(17) color:[UIColor fst_primaryGreen]];
+    valueLabel.textAlignment = NSTextAlignmentRight;
     if (isStart) self.startValueLabel = valueLabel; else self.endValueLabel = valueLabel;
 
     UIImageView *editIconView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"edit_pencil"]];

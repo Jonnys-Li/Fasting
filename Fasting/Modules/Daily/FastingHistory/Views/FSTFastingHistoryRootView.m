@@ -43,19 +43,19 @@ static const CGFloat kTableTopGap = 22;
 #pragma mark - 视图组装
 
 - (void)setupSubviews {
-    self.backButton = [UIButton fst_navPlainButtonWithImageNamed:@"nav_back" size:CGSizeMake(kNavButtonSize, kNavButtonSize)];
+    self.backButton = [UIButton fst_plainImageButtonWithImageNamed:@"nav_back" size:CGSizeMake(kNavButtonSize, kNavButtonSize) tintColor:nil];
     [self.backButton addTarget:self action:@selector(handleBackTapped)
               forControlEvents:UIControlEventTouchUpInside];
 
     self.titleLabel = [UILabel fst_subtitleLabelWithText:@"Timeline"];
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
 
-    self.shareButton = [UIButton fst_navPlainButtonWithImageNamed:@"nav_share" size:CGSizeMake(kNavButtonSize, kNavButtonSize)];
+    self.shareButton = [UIButton fst_plainImageButtonWithImageNamed:@"nav_share" size:CGSizeMake(kNavButtonSize, kNavButtonSize) tintColor:nil];
 
     self.todayLabel = [UILabel fst_labelWithText:self.todayText
                                             font:FSTFontBold(18)
-                                           color:[UIColor fst_textSecondary]
-                                       alignment:NSTextAlignmentCenter];
+                                           color:[UIColor fst_textSecondary]];
+    self.todayLabel.textAlignment = NSTextAlignmentCenter;
 
     for (UIView *v in @[self.backButton, self.titleLabel, self.shareButton, self.todayLabel]) {
         [self addSubview:v];

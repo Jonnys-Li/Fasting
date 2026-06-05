@@ -58,8 +58,8 @@
 
     self.durationValueLabel = [UILabel fst_labelWithText:nil
                                                     font:FSTFontBold(16)
-                                                   color:[UIColor blackColor]
-                                               alignment:NSTextAlignmentRight];
+                                                   color:[UIColor blackColor]];
+    self.durationValueLabel.textAlignment = NSTextAlignmentRight;
 
     self.rootView = [[FSTQuickAddRecordRootView alloc] init];
     [self.view addSubview:self.rootView];

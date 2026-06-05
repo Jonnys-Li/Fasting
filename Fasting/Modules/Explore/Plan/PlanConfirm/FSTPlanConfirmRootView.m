@@ -40,10 +40,10 @@
     self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
-    self.backButton = [UIButton fst_navPlainButtonWithImageNamed:@"nav_back" size:CGSizeMake(34, 34)];
+    self.backButton = [UIButton fst_plainImageButtonWithImageNamed:@"nav_back" size:CGSizeMake(34, 34) tintColor:nil];
     [self.backButton addTarget:self action:@selector(handleBackTapped)
               forControlEvents:UIControlEventTouchUpInside];
-    self.shareButton = [UIButton fst_navPlainButtonWithImageNamed:@"nav_share" size:CGSizeMake(34, 34)];
+    self.shareButton = [UIButton fst_plainImageButtonWithImageNamed:@"nav_share" size:CGSizeMake(34, 34) tintColor:nil];
     [self addSubview:self.backButton];
     [self addSubview:self.shareButton];
 

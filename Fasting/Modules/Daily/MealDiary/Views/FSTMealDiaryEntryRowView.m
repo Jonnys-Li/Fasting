@@ -63,8 +63,8 @@ static const CGFloat kDotSize = 12;
 
     self.foodIconLabel = [UILabel fst_labelWithText:@"\U0001F37D"
                                                font:FSTFontRegular(34)
-                                              color:[UIColor blackColor]
-                                          alignment:NSTextAlignmentCenter];
+                                              color:[UIColor blackColor]];
+    self.foodIconLabel.textAlignment = NSTextAlignmentCenter;
     self.foodIconLabel.backgroundColor = [UIColor whiteColor];
     self.foodIconLabel.layer.cornerRadius = FSTRadiusM;
     self.foodIconLabel.clipsToBounds = YES;
@@ -175,8 +175,8 @@ static const CGFloat kDotSize = 12;
 - (UILabel *)pillLabelWithText:(NSString *)text {
     UILabel *label = [UILabel fst_labelWithText:[NSString stringWithFormat:@"  %@  ", text]
                                             font:FSTFontBody()
-                                           color:[UIColor fst_textPrimary]
-                                       alignment:NSTextAlignmentCenter];
+                                           color:[UIColor fst_textPrimary]];
+    label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor whiteColor];
     label.layer.cornerRadius = FSTRadiusChip;
     label.clipsToBounds = YES;

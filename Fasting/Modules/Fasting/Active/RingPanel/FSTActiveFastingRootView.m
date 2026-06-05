@@ -60,8 +60,8 @@ static const CGFloat kTipsBottomPadding = 124;  // 留给浮动 tab bar
 
     self.headlineLabel = [UILabel fst_labelWithText:@"You're fasting!"
                                                 font:FSTFontAvenirBold(22)
-                                               color:[UIColor fst_textHeading]
-                                           alignment:NSTextAlignmentCenter];
+                                               color:[UIColor fst_textHeading]];
+    self.headlineLabel.textAlignment = NSTextAlignmentCenter;
     [self.contentView addSubview:self.headlineLabel];
 }
 

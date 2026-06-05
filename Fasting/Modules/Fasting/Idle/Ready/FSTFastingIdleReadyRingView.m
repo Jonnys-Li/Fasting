@@ -83,9 +83,11 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
     [self.toggleButton addTarget:self action:@selector(handleToggleTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.toggleButton];
 
-    self.captionLabel = [UILabel fst_centerLabelWithFont:FSTFontBody() color:[UIColor fst_textSecondary]];
-    self.valueLabel = [UILabel fst_centerLabelWithFont:[UIFont monospacedDigitSystemFontOfSize:32 weight:UIFontWeightBold]
-                                                 color:[UIColor fst_textPrimary]];
+    self.captionLabel = [UILabel fst_labelWithText:nil font:FSTFontBody() color:[UIColor fst_textSecondary]];
+    self.captionLabel.textAlignment = NSTextAlignmentCenter;
+    self.valueLabel = [UILabel fst_labelWithText:nil font:[UIFont monospacedDigitSystemFontOfSize:32 weight:UIFontWeightBold]
+                                           color:[UIColor fst_textPrimary]];
+    self.valueLabel.textAlignment = NSTextAlignmentCenter;
 
     for (UIView *subview in @[self.captionLabel, self.valueLabel]) {
         [self addSubview:subview];

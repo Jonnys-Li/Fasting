@@ -23,10 +23,6 @@
     self.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.22].CGColor;
 }
 
-+ (instancetype)fst_whiteCardWithRadius:(CGFloat)radius {
-    return [self fst_containerWithBackground:[UIColor whiteColor] radius:radius];
-}
-
 + (instancetype)fst_containerWithBackground:(UIColor *)bg radius:(CGFloat)radius {
     UIView *view = [[self alloc] init];
     view.backgroundColor = bg;

@@ -48,8 +48,8 @@ static const CGFloat kSubmitRadius = 28;
 
     self.titleLabel = [UILabel fst_labelWithText:@"Add new record"
                                             font:FSTFontBold(18)
-                                           color:[UIColor blackColor]
-                                       alignment:NSTextAlignmentCenter];
+                                           color:[UIColor blackColor]];
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:self.titleLabel];
 
     self.scrollView = [[UIScrollView alloc] init];

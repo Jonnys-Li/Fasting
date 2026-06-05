@@ -77,7 +77,8 @@ static const CGFloat kBottomPadding = 118;
 - (void)setupSubviews {
     __weak typeof(self) weakSelf = self;
 
-    self.eatingTitleLabel = [UILabel fst_labelWithText:@"Eating Time" font:FSTFontAvenirBold(22) color:[UIColor fst_textHeading] alignment:NSTextAlignmentCenter];
+    self.eatingTitleLabel = [UILabel fst_labelWithText:@"Eating Time" font:FSTFontAvenirBold(22) color:[UIColor fst_textHeading]];
+    self.eatingTitleLabel.textAlignment = NSTextAlignmentCenter;
 
     self.breakingFastCardView = [[FSTBreakingFastCardView alloc] init];
     self.breakingFastCardView.onTapped = ^{
@@ -289,7 +290,7 @@ static const CGFloat kBottomPadding = 118;
 #pragma mark - Add Record Row
 
 - (UIView *)buildAddRecordRow {
-    UIView *row = [UIView fst_whiteCardWithRadius:kAddRecordRadius];
+    UIView *row = [UIView fst_containerWithBackground:[UIColor whiteColor] radius:kAddRecordRadius];
 
     UIImageView *plusIcon = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"add_record_plus"]];
     plusIcon.contentMode = UIViewContentModeScaleAspectFit;

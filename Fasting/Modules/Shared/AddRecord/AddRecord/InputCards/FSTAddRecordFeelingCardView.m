@@ -68,7 +68,8 @@
     feelingImageView.contentMode = UIViewContentModeScaleAspectFit;
     [button addSubview:feelingImageView];
 
-    UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(16) color:[UIColor fst_textSecondary] alignment:NSTextAlignmentCenter];
+    UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(16) color:[UIColor fst_textSecondary]];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
     [button addSubview:titleLabel];
 
     [feelingImageView mas_makeConstraints:^(MASConstraintMaker *make) {

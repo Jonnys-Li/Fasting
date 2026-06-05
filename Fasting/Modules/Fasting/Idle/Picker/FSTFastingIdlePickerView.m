@@ -41,8 +41,8 @@ static const CGFloat kListAspectOffset      = 48.0;
 - (void)setupSubviews {
     self.subtitleLabel = [UILabel fst_labelWithText:@"Choose one to start"
                                                 font:FSTFontBold(21)
-                                               color:[UIColor fst_textPrimary]
-                                           alignment:NSTextAlignmentCenter];
+                                               color:[UIColor fst_textPrimary]];
+    self.subtitleLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:self.subtitleLabel];
 
     self.listView = [[FSTPlanSelectListView alloc] init];

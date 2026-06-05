@@ -79,11 +79,6 @@ typedef NS_ENUM(NSInteger, FSTPillButtonStyle) {
 
 // MARK: - 导航圆形按钮
 
-/// 用 SF Symbol 构建白色圆形导航按钮。tintColor 传 nil 时使用 fst_textPrimary。
-+ (instancetype)fst_navCircleButtonWithSystemName:(NSString *)symbolName
-                                         diameter:(CGFloat)diameter
-                                        tintColor:(nullable UIColor *)tintColor;
-
 /// 用 Asset Catalog 中的图片构建白色圆形导航按钮（原始渲染）。
 + (instancetype)fst_navCircleButtonWithImageNamed:(NSString *)imageName
                                          diameter:(CGFloat)diameter;
@@ -97,11 +92,6 @@ typedef NS_ENUM(NSInteger, FSTPillButtonStyle) {
 + (instancetype)fst_plainImageButtonWithImageNamed:(NSString *)imageName
                                               size:(CGSize)size
                                          tintColor:(nullable UIColor *)tintColor;
-
-/// 历史命名（带 nav 前缀）。新代码请用 fst_plainImageButtonWithImageNamed:size:tintColor: —
-/// 本方法等价 tintColor:nil 的调用，仅保留 nav_back / nav_share 等现有调用方兼容。
-+ (instancetype)fst_navPlainButtonWithImageNamed:(NSString *)imageName
-                                            size:(CGSize)size;
 
 @end
 

@@ -107,7 +107,8 @@ static const CGFloat kChipHeight   = 34;
 
 - (UIView *)buildQuestionBadge {
     UIView *badge = [UIView fst_containerWithBackground:[[UIColor fst_mealDateText] colorWithAlphaComponent:0.15] radius:13];
-    UILabel *qLabel = [UILabel fst_labelWithText:@"?" font:FSTFontBold(15) color:[UIColor fst_mealDateText] alignment:NSTextAlignmentCenter];
+    UILabel *qLabel = [UILabel fst_labelWithText:@"?" font:FSTFontBold(15) color:[UIColor fst_mealDateText]];
+    qLabel.textAlignment = NSTextAlignmentCenter;
     [badge addSubview:qLabel];
     [qLabel mas_makeConstraints:^(MASConstraintMaker *make) { make.center.equalTo(badge); }];
     return badge;
@@ -134,7 +135,8 @@ static const CGFloat kChipHeight   = 34;
     self.cardView.layer.borderColor = [UIColor fst_mealDiaryCardBorder].CGColor;
     [self.cardView addTarget:self action:@selector(handleEntryTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    self.foodIconLabel = [UILabel fst_labelWithText:nil font:FSTFontRegular(34) color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
+    self.foodIconLabel = [UILabel fst_labelWithText:nil font:FSTFontRegular(34) color:[UIColor blackColor]];
+    self.foodIconLabel.textAlignment = NSTextAlignmentCenter;
     self.foodIconLabel.backgroundColor = [UIColor whiteColor];
     self.foodIconLabel.layer.cornerRadius = FSTRadiusM;
     self.foodIconLabel.clipsToBounds = YES;
@@ -203,7 +205,8 @@ static const CGFloat kChipHeight   = 34;
 }
 
 - (UILabel *)buildChipLabel {
-    UILabel *label = [UILabel fst_labelWithText:nil font:FSTFontBody() color:[UIColor fst_textPrimary] alignment:NSTextAlignmentCenter];
+    UILabel *label = [UILabel fst_labelWithText:nil font:FSTFontBody() color:[UIColor fst_textPrimary]];
+    label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor whiteColor];
     label.layer.cornerRadius = FSTRadiusChip;
     label.clipsToBounds = YES;
@@ -246,7 +249,8 @@ static const CGFloat kChipHeight   = 34;
 #pragma mark - 空态
 
 - (void)buildEmptyState {
-    self.emptyLabel = [UILabel fst_labelWithText:@"No meal records today" font:FSTFontBody() color:[UIColor fst_textSecondary] alignment:NSTextAlignmentCenter];
+    self.emptyLabel = [UILabel fst_labelWithText:@"No meal records today" font:FSTFontBody() color:[UIColor fst_textSecondary]];
+    self.emptyLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:self.emptyLabel];
 
     [self.emptyLabel mas_makeConstraints:^(MASConstraintMaker *make) {

@@ -60,8 +60,8 @@ static const CGFloat kSaveButtonRadius  = 30;
 
     self.titleLabel = [UILabel fst_labelWithText:@"Meal Details"
                                             font:FSTFontTitle()
-                                           color:[UIColor fst_textPrimary]
-                                       alignment:NSTextAlignmentCenter];
+                                           color:[UIColor fst_textPrimary]];
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:self.titleLabel];
 
     self.scrollView = [[UIScrollView alloc] init];

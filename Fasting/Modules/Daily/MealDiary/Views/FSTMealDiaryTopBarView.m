@@ -35,7 +35,8 @@
     UIControl *dateChip = [[UIControl alloc] init];
     [dateChip addTarget:self action:@selector(emitDateChipTapped) forControlEvents:UIControlEventTouchUpInside];
 
-    UILabel *calendarIconLabel = [UILabel fst_labelWithText:@"📅" font:FSTFontRegular(22) color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
+    UILabel *calendarIconLabel = [UILabel fst_labelWithText:@"📅" font:FSTFontRegular(22) color:[UIColor blackColor]];
+    calendarIconLabel.textAlignment = NSTextAlignmentCenter;
 
     self.dateLabel = [UILabel fst_labelWithText:nil font:FSTFontTitle() color:[UIColor fst_textPrimary]];
 

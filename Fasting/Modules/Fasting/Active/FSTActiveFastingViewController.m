@@ -116,8 +116,9 @@ static const CGFloat kTopBarHeight = 80;
 /// share | segment | water：share 用裸图标，water 保留白底圆形；segment 仅作视觉装饰。
 /// topBar 必须 install 到 VC.view 顶层（safeArea 锚），因此不放在 RootView 内部。
 - (void)installTopBar {
-    UIButton *shareButton = [UIButton fst_navPlainButtonWithImageNamed:@"nav_share"
-                                                                  size:CGSizeMake(kPlainIconSize, kPlainIconSize)];
+    UIButton *shareButton = [UIButton fst_plainImageButtonWithImageNamed:@"nav_share"
+                                                                  size:CGSizeMake(kPlainIconSize, kPlainIconSize)
+                                                             tintColor:nil];
     [shareButton addTarget:self action:@selector(handleShareTapped) forControlEvents:UIControlEventTouchUpInside];
     UIButton *waterButton = [UIButton fst_navCircleButtonWithImageNamed:@"nav_water"
                                                                diameter:kNavButtonDiameter];

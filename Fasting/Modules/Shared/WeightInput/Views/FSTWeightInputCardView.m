@@ -144,8 +144,8 @@
     [valueBoxView fst_applyTintedBoxWithColor:[UIColor fst_primaryGreen] alpha:0.22 radius:8];
     self.valueLabel = [UILabel fst_labelWithText:nil
                                             font:[UIFont monospacedDigitSystemFontOfSize:54 weight:UIFontWeightBold]
-                                           color:[UIColor fst_textPrimary]
-                                       alignment:NSTextAlignmentCenter];
+                                           color:[UIColor fst_textPrimary]];
+    self.valueLabel.textAlignment = NSTextAlignmentCenter;
     self.unitSuffixLabel = [UILabel fst_labelWithText:nil font:FSTFontSubhead() color:[UIColor fst_textSecondary]];
     return valueBoxView;
 }

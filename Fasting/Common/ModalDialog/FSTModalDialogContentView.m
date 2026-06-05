@@ -74,15 +74,15 @@ static const CGFloat kBottomInset   = 36.0;
                forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.closeButton];
 
-    self.titleLabel = [UILabel fst_centerLabelWithFont:FSTFontBold(24)
-                                                 color:[UIColor fst_dialogTitle]];
+    self.titleLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(24) color:[UIColor fst_dialogTitle]];
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
     self.titleLabel.numberOfLines = 2;
     self.titleLabel.adjustsFontSizeToFitWidth = YES;
     self.titleLabel.minimumScaleFactor = 0.78;
     [self addSubview:self.titleLabel];
 
-    self.messageLabel = [UILabel fst_centerLabelWithFont:FSTFontSemibold(18)
-                                                   color:[UIColor fst_textSecondary]];
+    self.messageLabel = [UILabel fst_labelWithText:nil font:FSTFontSemibold(18) color:[UIColor fst_textSecondary]];
+    self.messageLabel.textAlignment = NSTextAlignmentCenter;
     self.messageLabel.numberOfLines = 0;
     [self addSubview:self.messageLabel];
 

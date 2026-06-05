@@ -151,7 +151,8 @@ static const CGFloat kPencilGap  = 6;
 }
 
 - (UILabel *)timeLabelWithColor:(UIColor *)color {
-    UILabel *label = [UILabel fst_labelWithText:@"--" font:FSTFontAvenirDemiBold(15) color:color alignment:NSTextAlignmentLeft];
+    UILabel *label = [UILabel fst_labelWithText:@"--" font:FSTFontAvenirDemiBold(15) color:color];
+    label.textAlignment = NSTextAlignmentLeft;
     label.lineBreakMode = NSLineBreakByClipping;
     [label setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
     return label;

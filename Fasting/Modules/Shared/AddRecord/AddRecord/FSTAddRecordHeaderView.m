@@ -39,10 +39,11 @@
 
     UILabel *captionLabel = [UILabel fst_labelWithText:@"Total fasting time"
                                                   font:FSTFontSubhead()
-                                                 color:[[UIColor whiteColor] colorWithAlphaComponent:0.78]
-                                             alignment:NSTextAlignmentCenter];
+                                                 color:[[UIColor whiteColor] colorWithAlphaComponent:0.78]];
+    captionLabel.textAlignment = NSTextAlignmentCenter;
 
-    self.durationLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(36) color:[UIColor whiteColor] alignment:NSTextAlignmentCenter];
+    self.durationLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(36) color:[UIColor whiteColor]];
+    self.durationLabel.textAlignment = NSTextAlignmentCenter;
 
     [self fst_addSubviews:@[mountainBackground, backButton, trashButton, captionLabel, self.durationLabel]];
 

@@ -69,10 +69,12 @@
     iconBox.userInteractionEnabled = NO;
     [tile addSubview:iconBox];
 
-    UILabel *iconLabel = [UILabel fst_labelWithText:emoji font:FSTFontRegular(42) color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
+    UILabel *iconLabel = [UILabel fst_labelWithText:emoji font:FSTFontRegular(42) color:[UIColor blackColor]];
+    iconLabel.textAlignment = NSTextAlignmentCenter;
     [iconBox addSubview:iconLabel];
 
-    UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(19) color:[UIColor fst_textPrimary] alignment:NSTextAlignmentCenter];
+    UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(19) color:[UIColor fst_textPrimary]];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
     [tile addSubview:titleLabel];
 
     [iconBox mas_makeConstraints:^(MASConstraintMaker *make) {

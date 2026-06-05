@@ -44,7 +44,8 @@
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Current weight" font:FSTFontSubhead() color:[UIColor fst_textPrimary]];
     UILabel *todayLabel = [self mutedLabelWithText:@"Today"];
 
-    self.weightValueLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(28) color:[UIColor fst_primaryGreen] alignment:NSTextAlignmentCenter];
+    self.weightValueLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(28) color:[UIColor fst_primaryGreen]];
+    self.weightValueLabel.textAlignment = NSTextAlignmentCenter;
 
     UIButton *editButton = [UIButton fst_plainImageButtonWithImageNamed:@"edit_pencil"
                                                                    size:CGSizeMake(40, 40)

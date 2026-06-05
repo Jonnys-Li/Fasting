@@ -69,7 +69,8 @@
     faceImageView.contentMode = UIViewContentModeScaleAspectFit;
     [button addSubview:faceImageView];
 
-    UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(17) color:[UIColor fst_textSecondary] alignment:NSTextAlignmentCenter];
+    UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(17) color:[UIColor fst_textSecondary]];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
     [button addSubview:titleLabel];
 
     [faceImageView mas_makeConstraints:^(MASConstraintMaker *make) {

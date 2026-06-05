@@ -43,8 +43,8 @@
 - (void)installRootView {
     self.titleLabel = [UILabel fst_labelWithText:nil
                                             font:FSTFontBold(34)
-                                           color:[UIColor fst_textPrimary]
-                                       alignment:NSTextAlignmentCenter];
+                                           color:[UIColor fst_textPrimary]];
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
     self.timelineView = [[FSTPlanConfirmTimelineView alloc] init];
 
     self.rootView = [[FSTPlanConfirmRootView alloc] init];

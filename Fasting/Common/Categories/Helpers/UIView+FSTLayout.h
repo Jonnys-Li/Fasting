@@ -21,10 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 绿色描边白卡（MealDetail 模块通用）。
 - (void)fst_applyMealCardStyle;
 
-/// 白底圆角容器：覆盖项目里大量 `self.backgroundColor = white; self.layer.cornerRadius = X;` 模板。
-+ (instancetype)fst_whiteCardWithRadius:(CGFloat)radius;
-
-/// 任意背景色 + 圆角容器：fst_whiteCardWithRadius: 的泛化版。
+/// 背景色 + 圆角容器：覆盖项目里大量 `self.backgroundColor = X; self.layer.cornerRadius = Y;` 模板。
+/// 白底场景传 [UIColor whiteColor]。
 + (instancetype)fst_containerWithBackground:(UIColor *)bg radius:(CGFloat)radius;
 
 /// 描边圆点：cornerRadius=size/2 + clipsToBounds + 可选 borderWidth/borderColor/bgColor。

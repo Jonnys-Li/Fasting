@@ -175,20 +175,6 @@
 
 // MARK: - 导航圆形按钮
 
-+ (instancetype)fst_navCircleButtonWithSystemName:(NSString *)symbolName
-                                         diameter:(CGFloat)diameter
-                                        tintColor:(nullable UIColor *)tintColor {
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-    UIImageSymbolConfiguration *config =
-        [UIImageSymbolConfiguration configurationWithPointSize:diameter * 0.4
-                                                        weight:UIImageSymbolWeightSemibold];
-    [button setImage:[UIImage systemImageNamed:symbolName withConfiguration:config]
-            forState:UIControlStateNormal];
-    button.tintColor = tintColor ?: [UIColor fst_textPrimary];
-    [self fst_applyCircleStyle:button diameter:diameter];
-    return button;
-}
-
 + (instancetype)fst_navCircleButtonWithImageNamed:(NSString *)imageName
                                          diameter:(CGFloat)diameter {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -218,11 +204,6 @@
     button.adjustsImageWhenHighlighted = NO;
     button.bounds = CGRectMake(0, 0, size.width, size.height);
     return button;
-}
-
-+ (instancetype)fst_navPlainButtonWithImageNamed:(NSString *)imageName
-                                            size:(CGSize)size {
-    return [self fst_plainImageButtonWithImageNamed:imageName size:size tintColor:nil];
 }
 
 + (void)fst_applyCircleStyle:(UIButton *)button diameter:(CGFloat)diameter {

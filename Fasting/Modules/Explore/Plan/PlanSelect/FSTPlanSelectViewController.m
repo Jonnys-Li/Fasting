@@ -100,8 +100,8 @@ static const CGFloat FSTPlanSelectHeaderHeight = 162;  // 8pt 顶部 + 48pt 按�
 
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Choose one to start fasting"
                                                  font:FSTFontBold(18)
-                                                color:[UIColor fst_textPrimary]
-                                            alignment:NSTextAlignmentCenter];
+                                                color:[UIColor fst_textPrimary]];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.adjustsFontSizeToFitWidth = YES;
     titleLabel.minimumScaleFactor = 0.8;
     [headerContentView addSubview:titleLabel];

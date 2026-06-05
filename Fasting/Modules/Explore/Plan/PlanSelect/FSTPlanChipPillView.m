@@ -34,7 +34,8 @@
 }
 
 - (void)setupSubviews {
-    self.titleLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(15) color:[UIColor fst_textPrimary] alignment:NSTextAlignmentCenter];
+    self.titleLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(15) color:[UIColor fst_textPrimary]];
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:self.titleLabel];
 
     self.pencilIconView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"plan_chip_pencil"]];

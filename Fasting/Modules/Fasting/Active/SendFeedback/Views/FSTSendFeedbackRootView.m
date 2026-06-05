@@ -79,8 +79,10 @@ static const CGFloat kSubmitRadius = 28;
     self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
 
-    self.envelopeLabel = [UILabel fst_labelWithText:@"\U0001F4E9" font:FSTFontRegular(60) color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
-    self.titleLabel    = [UILabel fst_labelWithText:@"How can we help you?" font:FSTFontTitle() color:[UIColor blackColor] alignment:NSTextAlignmentCenter];
+    self.envelopeLabel = [UILabel fst_labelWithText:@"\U0001F4E9" font:FSTFontRegular(60) color:[UIColor blackColor]];
+    self.envelopeLabel.textAlignment = NSTextAlignmentCenter;
+    self.titleLabel    = [UILabel fst_labelWithText:@"How can we help you?" font:FSTFontTitle() color:[UIColor blackColor]];
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
     self.chipContainer = [[UIView alloc] init];
     self.moreLabel     = [UILabel fst_labelWithText:@"Tell us more (optional)" font:FSTFontBold(18) color:[UIColor blackColor]];
 
@@ -154,7 +156,8 @@ static const CGFloat kSubmitRadius = 28;
     chip.tag = index;
     [chip addTarget:self action:@selector(handleChipTapped:) forControlEvents:UIControlEventTouchUpInside];
 
-    UILabel *label = [UILabel fst_labelWithText:title font:FSTFontMedium(15) color:[UIColor fst_textHeading] alignment:NSTextAlignmentCenter];
+    UILabel *label = [UILabel fst_labelWithText:title font:FSTFontMedium(15) color:[UIColor fst_textHeading]];
+    label.textAlignment = NSTextAlignmentCenter;
     label.tag = 100;
     label.userInteractionEnabled = NO;
     [chip addSubview:label];

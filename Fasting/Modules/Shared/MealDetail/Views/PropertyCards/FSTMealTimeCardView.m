@@ -33,7 +33,8 @@
 - (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Time" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
 
-    self.dateLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(17) color:[UIColor fst_mealDateText] alignment:NSTextAlignmentRight];
+    self.dateLabel = [UILabel fst_labelWithText:nil font:FSTFontBold(17) color:[UIColor fst_mealDateText]];
+    self.dateLabel.textAlignment = NSTextAlignmentRight;
 
     UIImageView *editIconView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:@"edit_pencil"]];
     editIconView.contentMode = UIViewContentModeScaleAspectFit;

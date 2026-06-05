@@ -166,7 +166,8 @@ static FSTFastingRating FSTFastingRecordRatingFromFeelingLevel(NSInteger feeling
 }
 
 - (UILabel *)timelineValueLabel {
-    UILabel *label = [UILabel fst_labelWithText:nil font:FSTFontBold(15) color:[UIColor whiteColor] alignment:NSTextAlignmentRight];
+    UILabel *label = [UILabel fst_labelWithText:nil font:FSTFontBold(15) color:[UIColor whiteColor]];
+    label.textAlignment = NSTextAlignmentRight;
     label.adjustsFontSizeToFitWidth = YES;
     label.minimumScaleFactor = 0.75;
     return label;

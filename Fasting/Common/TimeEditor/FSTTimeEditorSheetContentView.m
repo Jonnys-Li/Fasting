@@ -52,8 +52,8 @@ static const CGFloat kPickerTopOffsetAligned = 22.0;
 
     self.titleLabel = [UILabel fst_labelWithText:@""
                                             font:FSTFontAvenirDemiBold(24)
-                                           color:[UIColor fst_textHeading]
-                                       alignment:NSTextAlignmentCenter];
+                                           color:[UIColor fst_textHeading]];
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
     self.titleLabel.adjustsFontSizeToFitWidth = YES;
     self.titleLabel.minimumScaleFactor = 0.76;
     [self addSubview:self.titleLabel];
@@ -136,8 +136,8 @@ static const CGFloat kPickerTopOffsetAligned = 22.0;
 
     self.alignLabel = [UILabel fst_labelWithText:@""
                                             font:FSTFontAvenirDemiBold(16)
-                                           color:[UIColor fst_textPrimary]
-                                       alignment:NSTextAlignmentCenter];
+                                           color:[UIColor fst_textPrimary]];
+    self.alignLabel.textAlignment = NSTextAlignmentCenter;
 
     [control fst_addSubviews:@[self.alignIconView, self.alignLabel]];
     [self addSubview:control];
