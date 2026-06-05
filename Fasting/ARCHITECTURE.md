@@ -13,7 +13,7 @@ Fasting/
 ```
 
 - **顶层按「层」分**：`Common`（横向复用） / `Core`（领域数据与逻辑） / `Modules`（纵向功能）。
-- **`Modules` 内先按「Tab / 角色」分组**：`Daily/`（Timeline、FastingHistory、MealDiary）、`Fasting/`（Idle、Active）、`Explore/`（Plan）、`Root/`（TabBar）、`Shared/`（AddRecord、MealDetail、WeightInput 等跨 Tab 复用屏）。
+- **`Modules` 内先按「Tab / 角色」分组**：`Daily/`（Timeline、FastingHistory、MealDiary）、`Fasting/`（Idle、Active）、`Explore/`（Plan）、`Root/`（TabBar）、`Shared/`（AddRecord、MealDetail、WeightInput 等跨 Tab 复用屏 + FastingRecordCard 跨屏复用视图）。
 - **分组内按「功能 → 屏幕 → 类型」分**（见第三节）。
 
 > Xcode 使用 synchronized groups：磁盘上的文件夹结构即工程结构，**新增/移动文件夹无需手动改 `.pbxproj`**。Obj-C 的 `#import "X.h"` 经 header map 解析，与文件所在文件夹无关。
@@ -48,9 +48,10 @@ Fasting/
     PlanSelect/   FSTPlanSelectViewController + ListView/ChipPill/TagChips
   Modules/Daily/              Daily Tab：聚合页 + 历史 + 食物日记
     Timeline/ FastingHistory/ MealDiary/    各自 Controllers/ + Views/
-  Modules/Shared/             跨 Tab 复用的屏
+  Modules/Shared/             跨 Tab / 跨屏复用的屏与视图
     AddRecord/  完整补录（VC + RootView + HeaderView + InputCards/）+ QuickAdd（VC + RootView + TimeRowView）
     MealDetail/ WeightInput/
+    FastingRecordCard/  断食记录卡视图 FSTFastingRecordCardView：Timeline 顶卡 + FastingHistory 列表共用
   ```
   > 命名要名实相符：`Fasting/Idle` 是断食 Tab 主页（不是"计划"），故 VC 叫 `FSTFastingIdleViewController` 而非历史上的 `FSTDailyPlanViewController`；`Plan` 模块只保留真正的"选/确认方案"，归入 `Explore/`。
   > 一次性建视图 / 约束的方法统一命名 `setupSubviews` / `setupConstraints`（不要 `buildSubviews` 等别名）；UIView/UIControl 子类在 `initWithFrame:` 里按「数据 → 子视图 → 布局」顺序调用（见 `CLAUDE.md` R3 / R10）。

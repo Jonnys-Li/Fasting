@@ -4,7 +4,7 @@
 //
 
 #import "FSTFastingCardCell.h"
-#import "FSTFastingTimelineCardView.h"
+#import "FSTFastingRecordCardView.h"
 #import "FSTTheme.h"
 
 #pragma mark - Layout constants
@@ -13,7 +13,7 @@ static const CGFloat kVerticalInset = 10;
 static const CGFloat kSideInset     = 24;
 
 @interface FSTFastingCardCell ()
-@property (nonatomic, strong, readwrite) FSTFastingTimelineCardView *cardView;
+@property (nonatomic, strong) FSTFastingRecordCardView *cardView;
 @end
 
 @implementation FSTFastingCardCell
@@ -24,7 +24,7 @@ static const CGFloat kSideInset     = 24;
         self.contentView.backgroundColor = [UIColor clearColor];
         self.selectionStyle = UITableViewCellSelectionStyleNone;
 
-        _cardView = [[FSTFastingTimelineCardView alloc] initWithFrame:CGRectZero];
+        _cardView = [[FSTFastingRecordCardView alloc] initWithFrame:CGRectZero];
         _cardView.userInteractionEnabled = NO;
         [self.contentView addSubview:_cardView];
         [_cardView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -33,6 +33,10 @@ static const CGFloat kSideInset     = 24;
         }];
     }
     return self;
+}
+
+- (void)configureWithRecord:(FSTFastingRecord *)record {
+    [self.cardView configureWithRecord:record];
 }
 
 @end

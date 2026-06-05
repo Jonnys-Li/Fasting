@@ -8,7 +8,7 @@
 
 #import "FSTTimelineViewController.h"
 #import "FSTTimelineRootView.h"
-#import "FSTFastingTimelineCardView.h"
+#import "FSTFastingRecordCardView.h"
 #import "FSTTimelineModuleView.h"
 #import "FSTAppRouter.h"
 #import "FSTRecordsRepository.h"
@@ -16,7 +16,7 @@
 
 @interface FSTTimelineViewController ()
 @property (nonatomic, strong) FSTTimelineRootView *rootView;
-@property (nonatomic, strong) FSTFastingTimelineCardView *fastingModuleView;
+@property (nonatomic, strong) FSTFastingRecordCardView *fastingModuleView;
 @property (nonatomic, strong) FSTTimelineModuleView *mealModuleView;
 @property (nonatomic, strong, nullable) FSTMealRecord *latestMealRecord;
 @end
@@ -33,7 +33,7 @@
 }
 
 - (void)installRootView {
-    self.fastingModuleView = [[FSTFastingTimelineCardView alloc] init];
+    self.fastingModuleView = [[FSTFastingRecordCardView alloc] init];
     self.fastingModuleView.titleText = @"Fasting";
 
     self.mealModuleView = [[FSTTimelineModuleView alloc] init];

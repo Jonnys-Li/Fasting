@@ -10,7 +10,6 @@
 #import "FSTFastingHistoryRootView.h"
 #import "FSTAppRouter.h"
 #import "FSTFastingCardCell.h"
-#import "FSTFastingTimelineCardView.h"
 #import "FSTRecordsRepository.h"
 #import "FSTTheme.h"
 
@@ -101,7 +100,7 @@ static const CGFloat kRowHeight = 264;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     FSTFastingCardCell *cell = [tableView dequeueReusableCellWithIdentifier:@"card" forIndexPath:indexPath];
-    [cell.cardView configureWithRecord:self.records[indexPath.row]];
+    [cell configureWithRecord:self.records[indexPath.row]];
     return cell;
 }
 

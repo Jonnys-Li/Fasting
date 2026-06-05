@@ -1,19 +1,19 @@
 //
-//  FSTFastingTimelineCardView.m
+//  FSTFastingRecordCardView.m
 //  Fasting
 //
 
-#import "FSTFastingTimelineCardView.h"
+#import "FSTFastingRecordCardView.h"
 #import "FSTTheme.h"
 #import "UIImage+FSTHelpers.h"
 
-static CGFloat const kFSTFastingTimelineCardPadding = 20.0;
+static CGFloat const kFSTFastingRecordCardPadding = 20.0;
 
-static NSString *FSTTimelineCardLowercaseMeridiem(NSString *value) {
+static NSString *FSTFastingRecordCardLowercaseMeridiem(NSString *value) {
     return [[value stringByReplacingOccurrencesOfString:@" AM" withString:@" am"] stringByReplacingOccurrencesOfString:@" PM" withString:@" pm"];
 }
 
-static NSString *FSTTimelineCardFullTime(NSDate *date) {
+static NSString *FSTFastingRecordCardFullTime(NSDate *date) {
     if (!date) return @"";
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
@@ -22,14 +22,14 @@ static NSString *FSTTimelineCardFullTime(NSDate *date) {
         formatter.dateFormat = @"MMM d, h:mm a";
         formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
     });
-    return FSTTimelineCardLowercaseMeridiem([formatter stringFromDate:date]);
+    return FSTFastingRecordCardLowercaseMeridiem([formatter stringFromDate:date]);
 }
 
-static NSString *FSTTimelineCardEndTime(NSDate *startDate, NSDate *endDate) {
+static NSString *FSTFastingRecordCardEndTime(NSDate *startDate, NSDate *endDate) {
     if (!endDate) return @"";
     NSCalendar *calendar = [NSCalendar currentCalendar];
     if (startDate && ![calendar isDate:startDate inSameDayAsDate:endDate]) {
-        return FSTTimelineCardFullTime(endDate);
+        return FSTFastingRecordCardFullTime(endDate);
     }
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
@@ -38,18 +38,18 @@ static NSString *FSTTimelineCardEndTime(NSDate *startDate, NSDate *endDate) {
         formatter.dateFormat = @"hh:mm a";
         formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
     });
-    return FSTTimelineCardLowercaseMeridiem([formatter stringFromDate:endDate]);
+    return FSTFastingRecordCardLowercaseMeridiem([formatter stringFromDate:endDate]);
 }
 
 /// 把 record 的 feelingLevel 钳到合法范围并 cast 为 FSTFastingRating。
 /// 两个枚举数值含义已对齐（0=Hard / 1=Ok / 2=Easy），此函数只做防御性钳制。
-static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel) {
+static FSTFastingRating FSTFastingRecordRatingFromFeelingLevel(NSInteger feelingLevel) {
     if (feelingLevel <= FSTFastingRatingHard) return FSTFastingRatingHard;
     if (feelingLevel >= FSTFastingRatingEasy) return FSTFastingRatingEasy;
     return (FSTFastingRating)feelingLevel;
 }
 
-@interface FSTFastingTimelineCardView ()
+@interface FSTFastingRecordCardView ()
 @property (nonatomic, strong) UIImageView *badgeImageView;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UIImageView *streakImageView;
@@ -72,7 +72,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 @property (nonatomic, strong) UILabel *endValueLabel;
 @end
 
-@implementation FSTFastingTimelineCardView
+@implementation FSTFastingRecordCardView
 
 #pragma mark - 初始化 / 构建
 
@@ -176,7 +176,7 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
 
 - (void)installConstraints {
     [self.badgeImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.equalTo(self).offset(kFSTFastingTimelineCardPadding);
+        make.top.left.equalTo(self).offset(kFSTFastingRecordCardPadding);
         make.size.mas_equalTo(CGSizeMake(28, 28));
     }];
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -200,12 +200,12 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     }];
     [self.dividerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.badgeImageView.mas_bottom).offset(16);
-        make.left.right.equalTo(self).inset(kFSTFastingTimelineCardPadding);
+        make.left.right.equalTo(self).inset(kFSTFastingRecordCardPadding);
         make.height.equalTo(@1);
     }];
     [self.hoursValueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.dividerView.mas_bottom).offset(18);
-        make.left.equalTo(self).offset(kFSTFastingTimelineCardPadding);
+        make.left.equalTo(self).offset(kFSTFastingRecordCardPadding);
         make.width.greaterThanOrEqualTo(@18);
     }];
     [self.hoursUnitLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -233,9 +233,9 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     }];
     [self.timelinePanelView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.hoursValueLabel.mas_bottom).offset(18);
-        make.left.right.equalTo(self).inset(kFSTFastingTimelineCardPadding);
+        make.left.right.equalTo(self).inset(kFSTFastingRecordCardPadding);
         make.height.equalTo(@85);
-        make.bottom.lessThanOrEqualTo(self).offset(-kFSTFastingTimelineCardPadding);
+        make.bottom.lessThanOrEqualTo(self).offset(-kFSTFastingRecordCardPadding);
     }];
     [self.startDotView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.timelinePanelView).offset(18);
@@ -320,9 +320,9 @@ static FSTFastingRating FSTTimelineRatingFromFeelingLevel(NSInteger feelingLevel
     NSInteger totalMinutes = MAX(1, (NSInteger)llround(record.durationSeconds / 60.0));
     self.hoursText = [NSString stringWithFormat:@"%ld", (long)(totalMinutes / 60)];
     self.minutesText = [NSString stringWithFormat:@"%ld", (long)(totalMinutes % 60)];
-    self.startTimeText = FSTTimelineCardFullTime(record.startDate);
-    self.endTimeText = FSTTimelineCardEndTime(record.startDate, record.endDate);
-    self.rating = FSTTimelineRatingFromFeelingLevel(record.feelingLevel);
+    self.startTimeText = FSTFastingRecordCardFullTime(record.startDate);
+    self.endTimeText = FSTFastingRecordCardEndTime(record.startDate, record.endDate);
+    self.rating = FSTFastingRecordRatingFromFeelingLevel(record.feelingLevel);
 }
 
 #pragma mark - 事件

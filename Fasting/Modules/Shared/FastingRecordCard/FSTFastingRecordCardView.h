@@ -1,8 +1,8 @@
 //
-//  FSTFastingTimelineCardView.h
+//  FSTFastingRecordCardView.h
 //  Fasting
 //
-//  历史断食记录卡片 — Timeline / FastingHistory 列表里的单元。
+//  断食记录卡片 — Timeline 主页顶卡 + FastingHistory 列表共用的单元。
 //  - 触发场景：Timeline VC 顶卡（最近一次断食）+ FastingHistory 列表（每一行）。
 //  - 角色：UIControl 子类，整张卡可点击触发详情查看；右上角 "more" 三点用于二级操作（编辑/删除）。
 //  - 数据流：用 -configureWithRecord: 一次性推入 record；本视图把 record 字段拆解为多个 *Text 属性渲染。
@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 历史断食卡片上的难度评分（影响右上角 emoji 与配色）。
-/// 写入方：[FSTFastingTimelineCardView configureWithRecord:] 直接把 FSTFastingRecord.feelingLevel
+/// 写入方：[FSTFastingRecordCardView configureWithRecord:] 直接把 FSTFastingRecord.feelingLevel
 ///         cast 为本枚举（两者数值含义一致，无需翻转）。
 /// 读取方：本视图内部 — 用 emoji（😣/😐/😊）与配色映射给用户视觉反馈。
 ///
@@ -27,7 +27,7 @@ typedef NS_ENUM(NSInteger, FSTFastingRating) {
     FSTFastingRatingEasy,      ///< 简单 — 显示 😊 + 绿色调。
 };
 
-@interface FSTFastingTimelineCardView : UIControl
+@interface FSTFastingRecordCardView : UIControl
 
 /// 卡顶标题（plan name，如 "16-8 Fast"）。来自 record.planName。
 @property (nonatomic, copy, nullable) NSString *titleText;
