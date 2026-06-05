@@ -12,7 +12,6 @@
 
 #import "FSTFastingIdleViewController.h"
 #import "FSTFastingIdleRootView.h"
-#import "FSTPlanConfirmViewController.h"
 #import "FSTAppRouter.h"
 #import "FSTModalDialogViewController.h"
 #import "FSTFastingIdlePickerView.h"
@@ -480,8 +479,7 @@ static const CGFloat kResetCornerRadius = 19;
 }
 
 - (void)handlePlanTapped:(FSTPlan *)plan {
-    FSTPlanConfirmViewController *confirmViewController = [[FSTPlanConfirmViewController alloc] initWithPlan:plan];
-    [self.navigationController pushViewController:confirmViewController animated:YES];
+    [FSTAppRouter pushPlanConfirmFrom:self plan:plan];
 }
 
 @end

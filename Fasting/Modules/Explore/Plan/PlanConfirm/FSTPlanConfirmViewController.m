@@ -6,7 +6,6 @@
 #import "FSTPlanConfirmViewController.h"
 #import "FSTPlanConfirmRootView.h"
 #import "FSTPlanConfirmTimelineView.h"
-#import "FSTActiveFastingViewController.h"
 #import "FSTFastingIdleViewController.h"
 #import "FSTSessionManager.h"
 #import "FSTAppRouter.h"
@@ -139,8 +138,7 @@
         return;
     }
 
-    FSTActiveFastingViewController *activeFastingViewController = [[FSTActiveFastingViewController alloc] init];
-    [self.navigationController pushViewController:activeFastingViewController animated:YES];
+    [FSTAppRouter pushActiveFastingFrom:self promptForStartTime:NO];
 }
 
 @end

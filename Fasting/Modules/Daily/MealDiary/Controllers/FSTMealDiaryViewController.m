@@ -10,7 +10,7 @@
 #import "FSTMealDiaryRootView.h"
 #import "FSTMealDiaryTopBarView.h"
 #import "FSTMealDiaryEntryRowView.h"
-#import "FSTMealDetailViewController.h"
+#import "FSTAppRouter.h"
 #import "FSTRecordsRepository.h"
 #import "FSTFastingRecord.h"
 #import "FSTTheme.h"
@@ -139,9 +139,7 @@
 
 - (void)openMealRecord:(FSTMealRecord *)record {
     if (!record) return;
-    FSTMealDetailViewController *detailViewController = [[FSTMealDetailViewController alloc] initWithMealRecord:record];
-    detailViewController.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:detailViewController animated:YES];
+    [FSTAppRouter pushMealDetailFrom:self record:record returnsToTimeline:NO];
 }
 
 - (void)handleConfirmTapped {

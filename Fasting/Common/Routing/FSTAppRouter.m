@@ -68,6 +68,11 @@
     [vc presentViewController:nav animated:YES completion:nil];
 }
 
++ (void)pushPlanConfirmFrom:(UIViewController *)vc plan:(FSTPlan *)plan {
+    FSTPlanConfirmViewController *confirm = [[FSTPlanConfirmViewController alloc] initWithPlan:plan];
+    [vc.navigationController pushViewController:confirm animated:YES];
+}
+
 #pragma mark - 断食主页 push
 
 + (void)pushActiveFastingFrom:(UIViewController *)vc promptForStartTime:(BOOL)prompt {
@@ -82,7 +87,7 @@
     [vc.navigationController pushViewController:active animated:animated];
 }
 
-#pragma mark - 记录补录 / 历史 / 日记 / 详情 push
+#pragma mark - 记录补录 / 历史 / 日记 / 详情 / 反馈 push
 
 + (void)pushQuickAddRecordFrom:(UIViewController *)vc {
     FSTQuickAddRecordViewController *record = [[FSTQuickAddRecordViewController alloc] init];
@@ -126,13 +131,13 @@
     [vc.navigationController pushViewController:detail animated:YES];
 }
 
-#pragma mark - 反馈 / 分享 / 体重输入 present
-
 + (void)pushFeedbackFrom:(UIViewController *)vc {
     FSTSendFeedbackViewController *feedback = [[FSTSendFeedbackViewController alloc] init];
     feedback.hidesBottomBarWhenPushed = YES;
     [vc.navigationController pushViewController:feedback animated:YES];
 }
+
+#pragma mark - 分享 / 体重输入 present
 
 + (void)presentShareFrom:(UIViewController *)vc ringSnapshot:(UIImage *)ringSnapshot {
     FSTShareCardViewController *share = [[FSTShareCardViewController alloc] initWithRingSnapshot:ringSnapshot];
