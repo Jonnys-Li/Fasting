@@ -113,11 +113,12 @@
     NSDate *startDate = self.selectedStartDate ?: [NSDate date];
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
 
-    // 预选时间在未来 → 直接预约，不弹 picker
+    // 预选时间在未来 → 直接预约，不弹 picker（与 Active 页把 Start 改到未来一致）。
     if ([startDate compare:[NSDate date]] == NSOrderedDescending) {
         [sessionManager switchToPlanPreservingState:self.plan];
-        [sessionManager setNextFastingStartDate:startDate];
-        [sessionManager markScheduledReadyWithSource:FSTScheduledReadySourcePreStart anchorDate:[NSDate date]];
+        // 必须走原子方法：它内含 cancelActiveFasting，清掉可能残留的 active 起点。
+        // 否则 hasActiveFasting 仍为真，IdleVC 会 push Active 而非 Ready 倒计时环（bug：未来开始没进 Ready）。
+        [sessionManager scheduleFastingAtFutureDate:startDate source:FSTScheduledReadySourcePreStart];
         if (self.onFastingStarted) {
             self.onFastingStarted();
             return;

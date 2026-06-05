@@ -29,6 +29,10 @@ typedef NS_ENUM(NSInteger, FSTTabIndex) {
 /// updates 仅承担 session 数据变更（写记录 / 清 active 等），导航编排交给本方法。
 - (void)fst_finishFlowReturningToTimelineWithUpdates:(dispatch_block_t)updates;
 
+/// 切到 Fasting tab 并把其 nav 栈 popToRoot 到 IdleVC，使 IdleVC.viewWillAppear 重新分流
+/// （有 active 断食→push Active；scheduled-ready→Ready 倒计时环）。供 Plan 开始/预约完成后跨 tab 落点用。
+- (void)fst_switchToFastingTabRoutingOnAppear;
+
 @end
 
 NS_ASSUME_NONNULL_END

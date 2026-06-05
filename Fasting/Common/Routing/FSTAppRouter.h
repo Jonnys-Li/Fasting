@@ -29,8 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
                        onPick:(void (^_Nullable)(FSTPlan *plan))onPick;
 
 /// 触发：Explore tab tap → 去向：present「picker 套 nav」的完整浏览流；点 plan card 在模态内 push PlanConfirm，
-/// PlanConfirm 点 Start Fasting 触发 startFastingWithPlan 后 dismiss 模态，主 app 的 IdleVC 在 viewWillAppear
-/// 自动重定向到 ActiveFasting（与「plan card 普通路由」链路对齐）。
+/// PlanConfirm 点 Start Fasting 写入 session（startFastingWithPlan / scheduled-ready）后，先切到 Fasting tab
+/// 再 dismiss 模态，由该 tab 的 IdleVC 在 viewWillAppear 分流（立即开始→Active 环 / 未来预约→Ready 倒计时环）。
 + (void)presentPlanBrowserFrom:(UIViewController *)vc;
 
 /// 触发：Idle（自动重定向 / 预约到点 / ready start / 过去时间）、PlanConfirm 即时开始
@@ -71,6 +71,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)presentWeightInputFrom:(UIViewController *)vc
                       weightKg:(CGFloat)weightKg
                         onSave:(void (^)(CGFloat weightKg))onSave;
+
+/// 触发：Explore 模态 Plan 流「Start Fasting」完成 → 去向：选中 Fasting tab 并 popToRoot 到 IdleVC，
+/// 由其 viewWillAppear 分流（active→Active 环 / scheduled-ready→Ready 倒计时环）。供跨 tab 落点用。
++ (void)switchToFastingTabFrom:(UIViewController *)vc;
 
 /// 触发：AddRecord / QuickAdd / MealDetail 保存记录 → 去向：若 vc 处于 RootTabBarController 树下，
 /// 走特殊「切到 Timeline + popToRoot」动画；否则走 fallback（通常是 finishFasting + 普通 pop）。

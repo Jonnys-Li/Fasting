@@ -251,4 +251,30 @@
     XCTAssertEqual(future.presentationState, FSTDailyPlanReadyRingPresentationScheduledCountdown);
 }
 
+// 回归（bug：从进行中的断食在 Plan 流把开始时间预约到未来，应清掉 active 落到 Ready 倒计时，
+// 而非因 hasActiveFasting 残留为真而 push Active）。复刻 FSTPlanConfirmViewController 未来分支的 session 调用。
+- (void)testFutureScheduleAfterActiveFastClearsActiveAndShowsScheduledCountdown {
+    FSTSessionManager *session = [[FSTSessionManager alloc] init];
+    NSDate *now = [NSDate date];
+
+    // 先制造一个进行中的断食（模拟刚测完 bug1 仍 active 的现场）。
+    [session startFastingWithPlan:[self plan168] startDate:now];
+    XCTAssertTrue(session.hasActiveFasting);
+
+    // Plan 流「未来开始」分支（修复后）：选 plan + 原子化预约到未来。
+    [session switchToPlanPreservingState:[self plan168]];
+    [session scheduleFastingAtFutureDate:[now dateByAddingTimeInterval:3600.0] source:FSTScheduledReadySourcePreStart];
+
+    // 关键：active 起点被清——否则 IdleVC 会 push Active 而非 Ready 倒计时环。
+    XCTAssertFalse(session.hasActiveFasting);
+
+    FSTDailyPlanReadyDisplayState *state =
+        [FSTDailyPlanReadyDisplayState stateForSessionManager:session
+                                            recordsRepository:[self emptyRepository]
+                                                          now:now];
+    XCTAssertFalse(state.shouldAutoStartNow);
+    XCTAssertEqual(state.presentationState, FSTDailyPlanReadyRingPresentationScheduledCountdown);
+    XCTAssertEqual(state.primaryActionMode, FSTDailyPlanReadyPrimaryActionAbortPlan);
+}
+
 @end

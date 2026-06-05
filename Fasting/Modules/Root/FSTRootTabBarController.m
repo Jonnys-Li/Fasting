@@ -153,6 +153,17 @@ shouldSelectViewController:(UIViewController *)viewController {
     });
 }
 
+- (void)fst_switchToFastingTabRoutingOnAppear {
+    UINavigationController *fastingNav = nil;
+    if (self.viewControllers.count > FSTTabIndexFasting) {
+        UIViewController *vc = self.viewControllers[FSTTabIndexFasting];
+        if ([vc isKindOfClass:[UINavigationController class]]) fastingNav = (UINavigationController *)vc;
+    }
+    // popToRoot 保证 IdleVC 为 top（topViewController == self 成立），其 viewWillAppear 才会分流。
+    [fastingNav popToRootViewControllerAnimated:NO];
+    self.selectedIndex = FSTTabIndexFasting;
+}
+
 /// 递归清掉 self.view 子树残留的 layer 动画。**必须**跳过 self.tabBar——UITabBarItem 内部图标 swap 依赖
 /// 系统 layer 动画完成，中途 removeAllAnimations 会让 image 卡在 nil（曾出现"切回 Fasting tab 时 Daily 图标消失"bug）。
 - (void)fst_removeAnimationsInView:(UIView *)view {

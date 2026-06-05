@@ -55,11 +55,14 @@
     nav.navigationBarHidden = YES;
 
     __weak UINavigationController *weakNav = nav;
+    __weak UIViewController *weakPresenter = vc;
     picker.onPlanPicked = ^(FSTPlan *plan) {
         FSTPlanConfirmViewController *confirm = [[FSTPlanConfirmViewController alloc] initWithPlan:plan];
-        // Start Fasting 后已写入 session（startFastingWithPlan / markScheduledReady），
-        // dismiss 模态由这里收尾；主 app 的 IdleVC viewWillAppear 自动 push ActiveFasting。
+        // Start Fasting 后已写入 session（startFastingWithPlan / scheduled-ready）。
+        // 先切到 Fasting tab（仍在模态下方），再 dismiss——模态滑落即露出已分流的 Fasting tab：
+        // 立即开始→IdleVC.viewWillAppear push Active 环；未来预约→Ready 倒计时环。
         confirm.onFastingStarted = ^{
+            [FSTAppRouter switchToFastingTabFrom:weakPresenter];
             [weakNav dismissViewControllerAnimated:YES completion:nil];
         };
         [weakNav pushViewController:confirm animated:YES];
@@ -153,6 +156,15 @@
     weight.modalPresentationStyle = UIModalPresentationOverFullScreen;
     weight.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [vc presentViewController:weight animated:YES completion:nil];
+}
+
+#pragma mark - 跨 tab 落点
+
++ (void)switchToFastingTabFrom:(UIViewController *)vc {
+    FSTRootTabBarController *tab = (FSTRootTabBarController *)vc.tabBarController;
+    if ([tab isKindOfClass:[FSTRootTabBarController class]]) {
+        [tab fst_switchToFastingTabRoutingOnAppear];
+    }
 }
 
 #pragma mark - 完成断食 flow
