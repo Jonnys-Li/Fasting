@@ -63,9 +63,6 @@
     self.rootView.onStartTapped = ^{
         [weakSelf handleStartTapped];
     };
-    self.rootView.onChangePlanTapped = ^{
-        [weakSelf handleChangePlanTapped];
-    };
     self.timelineView.onEditStartTapped = ^{
         [weakSelf handleEditStartTapped];
     };
@@ -75,6 +72,7 @@
 
 - (void)refreshPlanLabels {
     self.titleLabel.text = self.plan.name;
+    [self.rootView setPlanFastingHours:self.plan.fastingHours eatingHours:self.plan.eatingHours];
     NSDate *startDate = self.selectedStartDate ?: [NSDate date];
     NSDate *endDate = [startDate dateByAddingTimeInterval:self.plan.fastingHours * 3600.0];
     self.timelineView.startDate = startDate;
@@ -85,16 +83,6 @@
 
 - (void)handleBackTapped {
     [self.navigationController popViewControllerAnimated:YES];
-}
-
-- (void)handleChangePlanTapped {
-    // 此处尚未开始断食，只换本地选中的 plan（不走 switchToPlanPreservingState:，那是 active session 用）。
-    __weak typeof(self) weakSelf = self;
-    [FSTAppRouter presentPlanPickerFrom:self onPick:^(FSTPlan *picked) {
-        if (!picked) return;
-        weakSelf.plan = picked;
-        [weakSelf refreshPlanLabels];
-    }];
 }
 
 - (void)handleEditStartTapped {
