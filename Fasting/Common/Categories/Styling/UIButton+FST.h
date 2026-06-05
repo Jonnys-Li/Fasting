@@ -58,6 +58,10 @@ typedef NS_ENUM(NSInteger, FSTPillButtonStyle) {
 
     /// 灰底停止款：buttonInactive 底 + textHeading 文字 + AvenirDemiBold 16 + FSTRadiusXL。用于 END FASTING。
     FSTPillButtonStyleInactive,
+
+    /// Reset 小胶囊：白底 + primaryGreen AvenirDemiBold 15 + 圆角 19（= 38pt 高的一半，正胶囊）。
+    /// 仅 Idle Ready 顶栏「Reset」按钮。圆角 19 刻意区别于 OutlineGreen 的 FSTRadiusCard(18)，不可合并。
+    FSTPillButtonStyleResetChip,
 };
 
 @interface UIButton (FST)

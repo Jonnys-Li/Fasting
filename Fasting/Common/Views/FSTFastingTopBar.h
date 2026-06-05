@@ -10,11 +10,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// 共享的粘性顶部导航栏。
 ///
 /// 视觉：白底从屏幕物理顶端铺到 safeArea.top + contentHeight；内部按钮锚到 safeArea.top
-/// 以避开灵动岛/状态栏。三个槽位（left / center / right），right 自右向左排列。
+/// 以避开灵动岛/状态栏。左 / 中 / 右三组槽位，right 自右向左排列。
+/// 左侧二选一：leftButton（按钮）或 leftContent（任意视图，如左对齐标题），同屏不同时用。
 ///
 /// 使用方式（caller 端）：
 ///     bar = [[FSTFastingTopBar alloc] init];
-///     bar.leftButton    = ...;            // 可空
+///     bar.leftButton    = ...;            // 可空（左侧按钮）
+///     bar.leftContent   = ...;            // 可空（左侧任意视图，如标题 label；与 leftButton 二选一）
 ///     bar.rightButtons  = @[...];         // 可空，按入参顺序从右向左排列
 ///     bar.centerContent = ...;            // 可空
 ///     bar.contentHeight = kFooHeight;     // 可不设，默认 56pt
@@ -31,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 左侧按钮（可空）。
 @property (nonatomic, strong, nullable) UIButton *leftButton;
+
+/// 左侧任意内容视图（可空，如左对齐标题 label）。与 leftButton 二选一。
+@property (nonatomic, strong, nullable) UIView *leftContent;
 
 /// 右侧按钮组，按入参顺序从右向左排列（首元素最右）。
 @property (nonatomic, copy, nullable) NSArray<UIButton *> *rightButtons;

@@ -113,6 +113,13 @@
                 @"font":       FSTFontAvenirDemiBold(16),
                 @"radius":     @(FSTRadiusXL),
             },
+
+            @(FSTPillButtonStyleResetChip): @{
+                @"bg":         [UIColor whiteColor],
+                @"titleColor": [UIColor fst_primaryGreen],
+                @"font":       FSTFontAvenirDemiBold(15),
+                @"radius":     @19,
+            },
         };
     });
     return specs;

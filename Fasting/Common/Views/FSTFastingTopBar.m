@@ -73,6 +73,14 @@ static const CGFloat kButtonSpacing        = 12;
         }];
     }
 
+    if (self.leftContent) {
+        [self.contentContainer addSubview:self.leftContent];
+        [self.leftContent mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.contentContainer).offset(kHorizontalInset);
+            make.centerY.equalTo(self.contentContainer);
+        }];
+    }
+
     UIView *previousRightButton = nil;
     for (UIButton *rightButton in self.rightButtons) {
         [self.contentContainer addSubview:rightButton];

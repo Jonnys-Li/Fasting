@@ -16,6 +16,7 @@
 #import "FSTModalDialogViewController.h"
 #import "FSTFastingIdlePickerView.h"
 #import "FSTFastingIdleReadyView.h"
+#import "FSTDailyPlanReadyDisplayState.h"
 #import "FSTSessionManager.h"
 #import "FSTRecordsRepository.h"
 #import "FSTPlan.h"
@@ -33,10 +34,9 @@ static const CGFloat kTopBarHeightReady  = 72;
 // NavButton
 static const CGFloat kNavButtonDiameter = 46;
 
-// ResetButton
+// ResetButton（样式走 FSTPillButtonStyleResetChip，这里只定尺寸）
 static const CGFloat kResetButtonWidth  = 72;
 static const CGFloat kResetButtonHeight = 38;
-static const CGFloat kResetCornerRadius = 19;
 
 @interface FSTFastingIdleViewController ()
 @property (nonatomic, strong) FSTFastingIdleRootView *rootView;
@@ -145,6 +145,7 @@ static const CGFloat kResetCornerRadius = 19;
     UIButton *waterButton = [self makeWaterButton];
 
     self.topBar = [[FSTFastingTopBar alloc] init];
+    self.topBar.leftContent   = titleLabel;
     self.topBar.rightButtons  = @[waterButton];
     self.topBar.contentHeight = kTopBarHeightPicker;
     [self.topBar installInViewController:self];
@@ -152,12 +153,6 @@ static const CGFloat kResetCornerRadius = 19;
 
     [waterButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(kNavButtonDiameter, kNavButtonDiameter));
-    }];
-
-    [self.topBar addSubview:titleLabel];
-    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.equalTo(self.topBar);
-        make.left.equalTo(self.topBar).offset(24);
     }];
 }
 
@@ -175,23 +170,7 @@ static const CGFloat kResetCornerRadius = 19;
 }
 
 - (void)installReadyTopBar {
-    UIButton *resetButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    resetButton.backgroundColor    = [UIColor whiteColor];
-    resetButton.layer.cornerRadius = kResetCornerRadius;
-    resetButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-    resetButton.contentVerticalAlignment   = UIControlContentVerticalAlignmentCenter;
-
-    NSMutableParagraphStyle *resetParagraphStyle = [[NSMutableParagraphStyle alloc] init];
-    resetParagraphStyle.alignment         = NSTextAlignmentCenter;
-    resetParagraphStyle.minimumLineHeight = 22;
-    resetParagraphStyle.maximumLineHeight = 22;
-    UIFont *resetFont = FSTFontAvenirDemiBold(15);
-    NSAttributedString *resetTitle =
-        [[NSAttributedString alloc] initWithString:@"Reset"
-                                        attributes:@{NSForegroundColorAttributeName: [UIColor fst_primaryGreen],
-                                                     NSFontAttributeName: resetFont,
-                                                     NSParagraphStyleAttributeName: resetParagraphStyle}];
-    [resetButton setAttributedTitle:resetTitle forState:UIControlStateNormal];
+    UIButton *resetButton = [UIButton fst_pillButtonWithTitle:@"Reset" style:FSTPillButtonStyleResetChip];
     [resetButton addTarget:self action:@selector(handleResetTapped) forControlEvents:UIControlEventTouchUpInside];
 
     UIButton *waterButton = [self makeWaterButton];
@@ -266,91 +245,38 @@ static const CGFloat kResetCornerRadius = 19;
 
 #pragma mark - Ready 态数据刷新与定时器
 
-/// 每秒触发：根据吃窗口 / 预约状态推导 ReadyView 字段并下发。
-/// 三态优先级：scheduledCountdown > readyAfterEating > 普通 eatingWindow。
-/// 已到预约时刻则原地 startFasting + push 到 Active 页。
+/// 每秒触发：把派生展示态算成 FSTDailyPlanReadyDisplayState 一次性推入 ReadyView。
+/// 预约到点（shouldAutoStartNow）则原地 startFasting + push 到 Active 页 —— 副作用留在 VC，值对象只判不做。
 - (void)refreshReadyState {
     if (!self.showingReadyState || !self.readyView) return;
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    FSTPlan *plan = sessionManager.currentPlan;
-    NSDate *now = [NSDate date];
-    NSDate *nextStartDate = [sessionManager nextFastingStartDate];
-
-    // 自动起始已预约的断食：scheduled && nextStartDate <= now && plan 存在。
-    BOOL scheduled = (sessionManager.scheduledReadySource != FSTScheduledReadySourceNone) && (nextStartDate != nil);
-    if (scheduled && plan != nil && [nextStartDate compare:now] != NSOrderedDescending) {
-        [sessionManager startFastingWithPlan:plan startDate:nextStartDate];
+    FSTDailyPlanReadyDisplayState *state =
+        [FSTDailyPlanReadyDisplayState stateForSessionManager:sessionManager
+                                            recordsRepository:[FSTRecordsRepository sharedRepository]
+                                                          now:[NSDate date]];
+    if (state.shouldAutoStartNow) {
+        [sessionManager startFastingWithPlan:sessionManager.currentPlan startDate:state.autoStartDate];
         if (self.navigationController.topViewController == self) {
             [FSTAppRouter pushActiveFastingFrom:self promptForStartTime:NO];
         }
         return;
     }
-
-    // 吃窗口推导 — 基于 plan.eatingHours / fastingHours 与 nextStart/latestEnd 时刻。
-    NSTimeInterval eatingHours  = plan.eatingHours  > 0 ? plan.eatingHours  : 10.0;
-    NSTimeInterval fastingHours = plan.fastingHours > 0 ? plan.fastingHours : 14.0;
-    NSTimeInterval eatingWindowSeconds  = MAX(1, eatingHours  * 3600.0);
-    NSTimeInterval fastingWindowSeconds = MAX(1, fastingHours * 3600.0);
-    NSDate *resolvedNextStart = nextStartDate ?: [now dateByAddingTimeInterval:eatingWindowSeconds];
-    NSDate *windowStartDate   = [resolvedNextStart dateByAddingTimeInterval:-eatingWindowSeconds];
-    NSDate *resolvedNextEnd   = [resolvedNextStart dateByAddingTimeInterval:fastingWindowSeconds];
-    NSTimeInterval elapsed    = MAX(0, [now timeIntervalSinceDate:windowStartDate]);
-    NSTimeInterval remaining  = MAX(0, [resolvedNextStart timeIntervalSinceDate:now]);
-    BOOL readyToStart         = remaining <= 0.0;
-    NSDate *latestFastEnd = [[FSTRecordsRepository sharedRepository] latestFastingEndDate] ?: windowStartDate;
-    // 可开始态以 nextStart 为基准衡量"已超时多久"；普通态以 latestFastEnd 为基准
-    NSTimeInterval timeSinceLastFast = readyToStart
-        ? MAX(0, [now timeIntervalSinceDate:resolvedNextStart])
-        : MAX(0, [now timeIntervalSinceDate:latestFastEnd]);
-    CGFloat windowProgress = (CGFloat)MIN(1.0, elapsed / eatingWindowSeconds);
-
-    // 三态：scheduledCountdown 优先（即便吃窗口耗尽也保留倒计时视觉）。
-    BOOL scheduledCountdown = scheduled && [nextStartDate compare:now] == NSOrderedDescending;
-    BOOL readyAfterEating = !scheduledCountdown && readyToStart;
-    BOOL compactLayout = scheduledCountdown || readyAfterEating;
-    NSDate *countdownAnchorDate = [sessionManager nextFastingStartCountdownAnchorDate];
-    BOOL usesManualCountdownProgress = !scheduledCountdown &&
-                                       countdownAnchorDate != nil &&
-                                       [resolvedNextStart compare:countdownAnchorDate] == NSOrderedDescending;
-    NSTimeInterval ringElapsed = usesManualCountdownProgress
-        ? MAX(0, [now timeIntervalSinceDate:countdownAnchorDate])
-        : elapsed;
-    CGFloat ringProgress = windowProgress;
-    if (usesManualCountdownProgress) {
-        NSTimeInterval countdownTotal = MAX(1.0, [resolvedNextStart timeIntervalSinceDate:countdownAnchorDate]);
-        ringProgress = (CGFloat)MIN(1.0, ringElapsed / countdownTotal);
-    }
-
-    self.readyView.titleText = scheduledCountdown ? @"Ready to start fasting!"
-                             : (readyAfterEating ? @"Ready to start fasting?" : @"Eating Time");
-    self.readyView.ringPresentationState = scheduledCountdown ? FSTDailyPlanReadyRingPresentationScheduledCountdown
-                                         : (readyAfterEating ? FSTDailyPlanReadyRingPresentationReadyToStartFasting
-                                                             : FSTDailyPlanReadyRingPresentationEatingWindow);
-    self.readyView.elapsedText           = FSTFormatHHMMSS(ringElapsed);
-    self.readyView.ringProgress          = scheduledCountdown
-        ? [self scheduledProgressForStartDate:nextStartDate referenceDate:now]
-        : ringProgress;
-    self.readyView.remainingText         = FSTFormatHHMMSS(scheduledCountdown
-        ? [nextStartDate timeIntervalSinceDate:now]
-        : remaining);
-    self.readyView.timeSinceLastFastText = FSTFormatHHMMSS(timeSinceLastFast);
-    self.readyView.nextFastStartText     = FSTFormatRelativeDateTime(resolvedNextStart);
-    self.readyView.nextFastEndText       = FSTFormatRelativeDateTime(resolvedNextEnd);
-    self.readyView.primaryActionMode     = scheduledCountdown ? FSTDailyPlanReadyPrimaryActionAbortPlan
-                                                              : FSTDailyPlanReadyPrimaryActionStartFasting;
-    [self.readyView applyReadyToStartLayout:compactLayout];
-    // Stage 文案：scheduledCountdown=Prepare；EatingWindow + ReadyToStartFasting 都映射 After。
-    FSTTipsFastingStage tipsStage = scheduledCountdown ? FSTTipsFastingStagePrepare : FSTTipsFastingStageAfter;
-    [self.readyView applyTipsStage:tipsStage];
+    [self applyReadyDisplayState:state];
 }
 
-/// ScheduledCountdown 圆环进度：从 anchorDate 到 startDate 的线性比例。
-- (CGFloat)scheduledProgressForStartDate:(NSDate *)startDate referenceDate:(NSDate *)referenceDate {
-    if (!startDate) return 0;
-    NSDate *anchorDate = [FSTSessionManager sharedManager].scheduledReadyAnchorDate ?: referenceDate;
-    NSTimeInterval total = MAX(1.0, [startDate timeIntervalSinceDate:anchorDate]);
-    NSTimeInterval elapsed = MAX(0, [referenceDate timeIntervalSinceDate:anchorDate]);
-    return (CGFloat)MIN(1.0, elapsed / total);
+/// 把派生展示态平铺推入 ReadyView —— 无任何分支（3 路状态判断全在值对象里），仅做机械格式化。
+- (void)applyReadyDisplayState:(FSTDailyPlanReadyDisplayState *)state {
+    self.readyView.titleText             = state.titleText;
+    self.readyView.ringPresentationState = state.presentationState;
+    self.readyView.ringProgress          = state.ringProgress;
+    self.readyView.elapsedText           = FSTFormatHHMMSS(state.elapsedSeconds);
+    self.readyView.remainingText         = FSTFormatHHMMSS(state.remainingSeconds);
+    self.readyView.timeSinceLastFastText = FSTFormatHHMMSS(state.timeSinceLastFastSeconds);
+    self.readyView.nextFastStartText     = FSTFormatRelativeDateTime(state.nextFastStartDate);
+    self.readyView.nextFastEndText       = FSTFormatRelativeDateTime(state.nextFastEndDate);
+    self.readyView.primaryActionMode     = state.primaryActionMode;
+    [self.readyView applyReadyToStartLayout:state.compactLayout];
+    [self.readyView applyTipsStage:state.tipsStage];
 }
 
 #pragma mark - 事件
