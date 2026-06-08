@@ -13,7 +13,6 @@ static const NSUInteger FSTChipDefaultColumnIndex = 1;
 @interface FSTPlanTagChipsBar ()
 @property (nonatomic, copy) NSArray<NSArray<NSString *> *> *rowTitles;
 @property (nonatomic, strong) NSMutableArray<UIButton *> *allChips;
-@property (nonatomic, weak) UIButton *selectedChip;
 @end
 
 @implementation FSTPlanTagChipsBar
@@ -96,7 +95,7 @@ static const NSUInteger FSTChipDefaultColumnIndex = 1;
     return chip;
 }
 
-#pragma mark - 选中态（按引用判断，不依赖 title — R9）
+#pragma mark - 选中态（使用 UIButton.selected 状态，不依赖 title — R9）
 
 - (void)applyDefaultSelection {
     [self selectChip:[self defaultChip]];
@@ -104,44 +103,38 @@ static const NSUInteger FSTChipDefaultColumnIndex = 1;
 
 - (nullable UIButton *)defaultChip {
     if (FSTChipDefaultRowIndex >= self.rowTitles.count) return nil;
+
+    NSArray<NSString *> *targetRow = self.rowTitles[FSTChipDefaultRowIndex];
+    if (FSTChipDefaultColumnIndex >= targetRow.count) return nil;
+
     NSUInteger flatIndex = FSTChipDefaultColumnIndex;
     for (NSUInteger row = 0; row < FSTChipDefaultRowIndex; row++) {
         flatIndex += self.rowTitles[row].count;
     }
+
     return flatIndex < self.allChips.count ? self.allChips[flatIndex] : nil;
 }
 
 - (void)selectChip:(nullable UIButton *)chip {
-    self.selectedChip = chip;
     for (UIButton *aChip in self.allChips) {
-        if (aChip == self.selectedChip) {
-            [self applySelectedStyle:aChip];
-        } else {
-            [self applyUnselectedStyle:aChip];
-        }
+        aChip.selected = (aChip == chip);
+        [self applyStyleForChip:aChip];
     }
 }
 
-- (void)applyUnselectedStyle:(UIButton *)chip {
-    chip.backgroundColor = [UIColor fst_chipBackground];
-    chip.layer.borderWidth = 0;
+- (void)applyStyleForChip:(UIButton *)chip {
+    chip.backgroundColor = chip.selected ? [UIColor whiteColor] : [UIColor fst_chipBackground];
+    chip.layer.borderWidth = chip.selected ? 1.5 : 0;
+    chip.layer.borderColor = chip.selected ? [UIColor fst_eatingTimeGreen].CGColor : nil;
     [chip setTitleColor:[UIColor fst_textHeading] forState:UIControlStateNormal];
 }
-
-- (void)applySelectedStyle:(UIButton *)chip {
-    chip.backgroundColor = [UIColor whiteColor];
-    chip.layer.borderWidth = 1.5;
-    chip.layer.borderColor = [UIColor fst_eatingTimeGreen].CGColor;
-    [chip setTitleColor:[UIColor fst_textHeading] forState:UIControlStateNormal];
-}
-
 #pragma mark - 事件
 
 - (void)handleChipTapped:(UIButton *)sender {
     [self selectChip:sender];
+
     if (self.onChipTapped) {
         self.onChipTapped(sender.currentTitle);
     }
 }
-
 @end
