@@ -30,6 +30,7 @@ static const CGFloat kChipHeight   = 34;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UIView *questionBadge;
 @property (nonatomic, strong) UIControl *chevronControl;
+@property (nonatomic, strong) UIImageView *chevronIcon;
 // 时间轴行
 @property (nonatomic, strong) UIView *entryContainer;
 @property (nonatomic, strong) UIView *dotView;
@@ -55,68 +56,31 @@ static const CGFloat kChipHeight   = 34;
     if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = FSTRadiusL;
-        [self buildHeader];
-        [self buildEntryRow];
-        [self buildFooter];
-        [self buildEmptyState];
+        [self setupSubviews];
+        [self setupConstraints];
         [self showEmptyState:YES];
     }
     return self;
 }
 
-#pragma mark - 头部：🍴 食物日记 ? >
+#pragma mark - 视图组装
 
-- (void)buildHeader {
+- (void)setupSubviews {
+    // 头部：🍴 食物日记 ? >
     self.forkIconLabel = [UILabel fst_labelWithText:@"🍴" font:FSTFontRegular(28) color:[UIColor blackColor]];
     self.titleLabel    = [UILabel fst_labelWithText:@"Food Diary" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
-    self.questionBadge = [self buildQuestionBadge];
+    self.questionBadge = [self questionBadgeView];
 
     self.chevronControl = [[UIControl alloc] init];
-    UIImageView *chevronIcon = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.right" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:16 weight:UIImageSymbolWeightSemibold]]];
-    chevronIcon.tintColor = [UIColor fst_textSecondary];
-    chevronIcon.userInteractionEnabled = NO;
-    [self.chevronControl addSubview:chevronIcon];
+    self.chevronIcon = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.right" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:16 weight:UIImageSymbolWeightSemibold]]];
+    self.chevronIcon.tintColor = [UIColor fst_textSecondary];
+    self.chevronIcon.userInteractionEnabled = NO;
+    [self.chevronControl addSubview:self.chevronIcon];
     [self.chevronControl addTarget:self action:@selector(handleChevronTapped) forControlEvents:UIControlEventTouchUpInside];
 
     [self fst_addSubviews:@[self.forkIconLabel, self.titleLabel, self.questionBadge, self.chevronControl]];
 
-    // 约束
-    [self.forkIconLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self).offset(kSideInset);
-        make.top.equalTo(self).offset(kHeaderTopInset);
-        make.size.mas_equalTo(CGSizeMake(34, 34));
-    }];
-    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.forkIconLabel.mas_right).offset(8);
-        make.centerY.equalTo(self.forkIconLabel);
-    }];
-    [self.questionBadge mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.titleLabel.mas_right).offset(8);
-        make.centerY.equalTo(self.forkIconLabel);
-        make.size.mas_equalTo(CGSizeMake(26, 26));
-    }];
-    [self.chevronControl mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self).offset(-kSideInset);
-        make.centerY.equalTo(self.forkIconLabel);
-        make.size.mas_equalTo(CGSizeMake(44, 44));
-    }];
-    [chevronIcon mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.center.equalTo(self.chevronControl);
-    }];
-}
-
-- (UIView *)buildQuestionBadge {
-    UIView *badge = [UIView fst_containerWithBackground:[[UIColor fst_mealDateText] colorWithAlphaComponent:0.15] radius:13];
-    UILabel *qLabel = [UILabel fst_labelWithText:@"?" font:FSTFontBold(15) color:[UIColor fst_mealDateText]];
-    qLabel.textAlignment = NSTextAlignmentCenter;
-    [badge addSubview:qLabel];
-    [qLabel mas_makeConstraints:^(MASConstraintMaker *make) { make.center.equalTo(badge); }];
-    return badge;
-}
-
-#pragma mark - 时间轴记录行
-
-- (void)buildEntryRow {
+    // 时间轴记录行
     self.entryContainer = [[UIView alloc] init];
     [self addSubview:self.entryContainer];
 
@@ -142,8 +106,8 @@ static const CGFloat kChipHeight   = 34;
     self.foodIconLabel.clipsToBounds = YES;
     self.foodIconLabel.userInteractionEnabled = NO;
 
-    self.categoryChipLabel = [self buildChipLabel];
-    self.dietChipLabel = [self buildChipLabel];
+    self.categoryChipLabel = [self chipLabel];
+    self.dietChipLabel = [self chipLabel];
     self.dietChipLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
     self.feelingImageView = [[UIImageView alloc] init];
@@ -153,7 +117,55 @@ static const CGFloat kChipHeight   = 34;
     [self.entryContainer fst_addSubviews:@[self.dotView, self.lineView, self.timeLabel, self.cardView]];
     [self.cardView fst_addSubviews:@[self.foodIconLabel, self.categoryChipLabel, self.dietChipLabel, self.feelingImageView]];
 
-    // 约束
+    // 底部：分割线 + 增加
+    self.separatorLine = [UIView fst_separatorLineWithColor:[UIColor fst_mealDiaryCardBorder]];
+    [self addSubview:self.separatorLine];
+
+    self.addButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    NSMutableAttributedString *addTitle = [[NSMutableAttributedString alloc]
+        initWithString:@"＋ "
+            attributes:@{NSFontAttributeName: FSTFontBold(18),
+                         NSForegroundColorAttributeName: [UIColor fst_mealDateText]}];
+    [addTitle appendAttributedString:[[NSAttributedString alloc]
+        initWithString:@"Add"
+            attributes:@{NSFontAttributeName: FSTFontBold(18),
+                         NSForegroundColorAttributeName: [UIColor fst_mealDateText]}]];
+    [self.addButton setAttributedTitle:addTitle forState:UIControlStateNormal];
+    [self.addButton addTarget:self action:@selector(handleAddTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:self.addButton];
+
+    // 空态
+    self.emptyLabel = [UILabel fst_labelWithText:@"No meal records today" font:FSTFontBody() color:[UIColor fst_textSecondary]];
+    self.emptyLabel.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:self.emptyLabel];
+}
+
+- (void)setupConstraints {
+    // 头部
+    [self.forkIconLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self).offset(kSideInset);
+        make.top.equalTo(self).offset(kHeaderTopInset);
+        make.size.mas_equalTo(CGSizeMake(34, 34));
+    }];
+    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.forkIconLabel.mas_right).offset(8);
+        make.centerY.equalTo(self.forkIconLabel);
+    }];
+    [self.questionBadge mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.titleLabel.mas_right).offset(8);
+        make.centerY.equalTo(self.forkIconLabel);
+        make.size.mas_equalTo(CGSizeMake(26, 26));
+    }];
+    [self.chevronControl mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self).offset(-kSideInset);
+        make.centerY.equalTo(self.forkIconLabel);
+        make.size.mas_equalTo(CGSizeMake(44, 44));
+    }];
+    [self.chevronIcon mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(self.chevronControl);
+    }];
+
+    // 时间轴记录行
     [self.entryContainer mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.forkIconLabel.mas_bottom).offset(16);
         make.left.equalTo(self).offset(kSideInset);
@@ -202,37 +214,8 @@ static const CGFloat kChipHeight   = 34;
         make.centerY.equalTo(self.cardView);
         make.size.mas_equalTo(CGSizeMake(kFeelingSize, kFeelingSize));
     }];
-}
 
-- (UILabel *)buildChipLabel {
-    UILabel *label = [UILabel fst_labelWithText:nil font:FSTFontBody() color:[UIColor fst_textPrimary]];
-    label.textAlignment = NSTextAlignmentCenter;
-    label.backgroundColor = [UIColor whiteColor];
-    label.layer.cornerRadius = FSTRadiusChip;
-    label.clipsToBounds = YES;
-    label.userInteractionEnabled = NO;
-    return label;
-}
-
-#pragma mark - 底部：分割线 + 增加
-
-- (void)buildFooter {
-    self.separatorLine = [UIView fst_separatorLineWithColor:[UIColor fst_mealDiaryCardBorder]];
-    [self addSubview:self.separatorLine];
-
-    self.addButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    NSMutableAttributedString *addTitle = [[NSMutableAttributedString alloc]
-        initWithString:@"＋ "
-            attributes:@{NSFontAttributeName: FSTFontBold(18),
-                         NSForegroundColorAttributeName: [UIColor fst_mealDateText]}];
-    [addTitle appendAttributedString:[[NSAttributedString alloc]
-        initWithString:@"Add"
-            attributes:@{NSFontAttributeName: FSTFontBold(18),
-                         NSForegroundColorAttributeName: [UIColor fst_mealDateText]}]];
-    [self.addButton setAttributedTitle:addTitle forState:UIControlStateNormal];
-    [self.addButton addTarget:self action:@selector(handleAddTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:self.addButton];
-
+    // 底部：分割线 + 增加
     [self.separatorLine mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.entryContainer.mas_bottom).offset(14);
         make.left.right.equalTo(self).inset(kSideInset);
@@ -244,21 +227,37 @@ static const CGFloat kChipHeight   = 34;
         make.height.equalTo(@(FSTControlHeightStandard));
         make.bottom.equalTo(self);
     }];
-}
 
-#pragma mark - 空态
-
-- (void)buildEmptyState {
-    self.emptyLabel = [UILabel fst_labelWithText:@"No meal records today" font:FSTFontBody() color:[UIColor fst_textSecondary]];
-    self.emptyLabel.textAlignment = NSTextAlignmentCenter;
-    [self addSubview:self.emptyLabel];
-
+    // 空态
     [self.emptyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.forkIconLabel.mas_bottom).offset(16);
         make.left.right.equalTo(self).inset(kSideInset);
         make.bottom.equalTo(self.separatorLine.mas_top).offset(-14);
     }];
 }
+
+#pragma mark - 工厂
+
+- (UIView *)questionBadgeView {
+    UIView *badge = [UIView fst_containerWithBackground:[[UIColor fst_mealDateText] colorWithAlphaComponent:0.15] radius:13];
+    UILabel *qLabel = [UILabel fst_labelWithText:@"?" font:FSTFontBold(15) color:[UIColor fst_mealDateText]];
+    qLabel.textAlignment = NSTextAlignmentCenter;
+    [badge addSubview:qLabel];
+    [qLabel mas_makeConstraints:^(MASConstraintMaker *make) { make.center.equalTo(badge); }];
+    return badge;
+}
+
+- (UILabel *)chipLabel {
+    UILabel *label = [UILabel fst_labelWithText:nil font:FSTFontBody() color:[UIColor fst_textPrimary]];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.backgroundColor = [UIColor whiteColor];
+    label.layer.cornerRadius = FSTRadiusChip;
+    label.clipsToBounds = YES;
+    label.userInteractionEnabled = NO;
+    return label;
+}
+
+#pragma mark - 空态
 
 - (void)showEmptyState:(BOOL)empty {
     self.entryContainer.hidden = empty;

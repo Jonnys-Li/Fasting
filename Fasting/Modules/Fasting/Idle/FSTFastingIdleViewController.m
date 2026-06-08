@@ -83,7 +83,7 @@ static const CGFloat kResetButtonHeight = 38;
 }
 
 - (void)refreshTimerDidFire {
-    [self refreshReadyState];
+    [self refreshUI];
 }
 
 #pragma mark - 状态切换
@@ -111,7 +111,7 @@ static const CGFloat kResetButtonHeight = 38;
                               && hasMeaningfulState);
     if (self.showingReadyState) {
         [self installReadyState];
-        [self refreshReadyState];
+        [self refreshUI];
         [self startRefreshTimer];
     } else {
         [self installPickerState];
@@ -247,7 +247,7 @@ static const CGFloat kResetButtonHeight = 38;
 
 /// 每秒触发：把派生展示态算成 FSTDailyPlanReadyDisplayState 一次性推入 ReadyView。
 /// 预约到点（shouldAutoStartNow）则原地 startFasting + push 到 Active 页 —— 副作用留在 VC，值对象只判不做。
-- (void)refreshReadyState {
+- (void)refreshUI {
     if (!self.showingReadyState || !self.readyView) return;
     FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
     FSTDailyPlanReadyDisplayState *state =
@@ -341,7 +341,7 @@ static const CGFloat kResetButtonHeight = 38;
         if (source != FSTScheduledReadySourceNone) {
             [sessionManager markScheduledReadyWithSource:source anchorDate:[NSDate date]];
         }
-        [self refreshReadyState];
+        [self refreshUI];
     }
 }
 

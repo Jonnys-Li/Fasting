@@ -13,7 +13,7 @@
 //  - 输出：导航跳转到 FSTPlanSelectViewController（选 plan）、FSTPlanConfirmViewController（确认开始）、
 //    FSTActiveFastingViewController（已开始的活跃断食）、FSTMealDetailViewController（LogMeal）。
 //  - 状态计算：[FSTDailyPlanReadyDisplayState stateForSessionManager:recordsRepository:now:] 把全部派生 UI
-//    字段（含 shouldAutoStartNow 副作用判定）算好一次性推入 ReadyView；refreshReadyState 只「算→推→执行副作用」。
+//    字段（含 shouldAutoStartNow 副作用判定）算好一次性推入 ReadyView；refreshUI 只「算→推→执行副作用」。
 //
 
 #import "FSTBaseViewController.h"

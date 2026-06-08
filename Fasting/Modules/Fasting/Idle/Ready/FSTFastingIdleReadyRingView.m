@@ -34,7 +34,7 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
     if ((self = [super initWithFrame:frame])) {
         _presentationState = FSTDailyPlanReadyRingPresentationEatingWindow;
         [self setupSubviews];
-        [self refreshDisplay];
+        [self refresh];
     }
     return self;
 }
@@ -43,17 +43,17 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
 
 - (void)setPresentationState:(FSTDailyPlanReadyRingPresentationState)presentationState {
     _presentationState = presentationState;
-    [self refreshDisplay];
+    [self refresh];
 }
 
 - (void)setElapsedText:(NSString *)elapsedText {
-    _elapsedText = [elapsedText copy]; [self refreshDisplay];
+    _elapsedText = [elapsedText copy]; [self refresh];
 }
 - (void)setRemainingText:(NSString *)remainingText {
-    _remainingText = [remainingText copy]; [self refreshDisplay];
+    _remainingText = [remainingText copy]; [self refresh];
 }
 - (void)setTimeSinceLastFastText:(NSString *)timeSinceLastFastText {
-    _timeSinceLastFastText = [timeSinceLastFastText copy]; [self refreshDisplay];
+    _timeSinceLastFastText = [timeSinceLastFastText copy]; [self refresh];
 }
 - (void)setPlanName:(NSString *)planName {
     _planName = [planName copy]; self.planChipPillView.planName = planName ?: @"";
@@ -61,7 +61,7 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
 
 - (void)setProgress:(CGFloat)progress {
     _progress = progress;
-    [self refreshDisplay];
+    [self refresh];
 }
 
 /// 构建：开口弧 + 顶部切换按钮 + 中央 caption/value + 计划胶囊
@@ -71,7 +71,7 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
     self.ringProgressView.trackColor     = [UIColor fst_ringTrackLight];
     self.ringProgressView.arrowHeadImage = [UIImage fst_templateImageNamed:@"ring_head"];
     self.ringProgressView.fillStyle      = FSTRingFillStyleForward;
-    // progressColor / arrowHeadTintColor 由 fst_applyStyle: 在 refreshDisplay 里设置。
+    // progressColor / arrowHeadTintColor 由 fst_applyStyle: 在 refresh 里设置。
     [self.ringProgressView setProgress:0 animated:NO];
     [self addSubview:self.ringProgressView];
 
@@ -127,7 +127,7 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
 - (void)handleToggleTapped {
     if (self.presentationState != FSTDailyPlanReadyRingPresentationEatingWindow) return;
     self.isShowingRemaining = !self.isShowingRemaining;
-    [self refreshDisplay];
+    [self refresh];
 }
 
 /// 把 panel 三态 enum 翻译到 ring 视觉态 enum。
@@ -140,7 +140,7 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
 }
 
 /// 根据当前模式填充 caption（百分比） + value（HH:MM:SS）+ 喂给圆环对应的 progress。
-- (void)refreshDisplay {
+- (void)refresh {
     CGFloat clampedProgress = MAX(0, MIN(1.0, self.progress));
     BOOL scheduledCountdown = self.presentationState == FSTDailyPlanReadyRingPresentationScheduledCountdown;
     BOOL readyToStart = self.presentationState == FSTDailyPlanReadyRingPresentationReadyToStartFasting;

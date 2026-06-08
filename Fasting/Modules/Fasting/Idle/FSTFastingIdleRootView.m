@@ -16,16 +16,15 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         self.backgroundColor = [UIColor fst_pageBackground];
-        [self buildScrollContainer];
+        [self setupSubviews];
+        [self setupConstraints];
     }
     return self;
 }
 
 #pragma mark - 视图组装
 
-/// 滚动容器：contentView edges 贴 scrollView 且等宽（竖直滚动）。
-/// scrollView 的四边留给 -anchorContentBelowTopBar: 在 topBar install 后补上。
-- (void)buildScrollContainer {
+- (void)setupSubviews {
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
@@ -33,7 +32,11 @@
 
     self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
+}
 
+/// 滚动容器：contentView edges 贴 scrollView 且等宽（竖直滚动）。
+/// scrollView 的四边留给 -anchorContentBelowTopBar: 在 topBar install 后补上。
+- (void)setupConstraints {
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.scrollView);
         make.width.equalTo(self.scrollView);

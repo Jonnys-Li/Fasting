@@ -38,7 +38,7 @@
     [self installRootView];
     [self bindCallbacks];
 
-    [self reloadDayRecords];
+    [self refreshUI];
     [self rebuildTimeline];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleRecordsChanged) name:FSTRecordsDidChangeNotification object:nil];
@@ -75,14 +75,14 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self reloadDayRecords];
+    [self refreshUI];
     [self rebuildTimeline];
 }
 
 #pragma mark - 数据加载
 
 /// 过滤所有饮食记录，挑出与 selectedDate 同一天的并按时间倒序。
-- (void)reloadDayRecords {
+- (void)refreshUI {
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *targetDate = self.selectedDate ?: [NSDate date];
     NSArray<FSTMealRecord *> *allRecords = [[FSTRecordsRepository sharedRepository] allMealRecords];
@@ -98,7 +98,7 @@
 }
 
 - (void)handleRecordsChanged {
-    [self reloadDayRecords];
+    [self refreshUI];
     [self rebuildTimeline];
 }
 
@@ -155,7 +155,7 @@
         NSDate *day = [calendar dateByAddingUnit:NSCalendarUnitDay value:-dayOffset toDate:today options:0];
         [actionSheet addAction:[UIAlertAction actionWithTitle:FSTFormatRelativeDay(day) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             self.selectedDate = day;
-            [self reloadDayRecords];
+            [self refreshUI];
             [self rebuildTimeline];
         }]];
     }

@@ -8,7 +8,7 @@
 //  圆环呈现态、环进度、主按钮模式、Tips 阶段、紧凑布局开关，以及原始秒数 / 日期（文案由 VC 格式化）。
 //  3 个 ready 子态（吃窗口进行 / 预约倒计时 / 可立即开始）收敛为单一 presentationState 轴，
 //  其余字段都由它 + 时间算术派生 —— 调用方（FSTFastingIdleViewController）不再持有任何
-//  3 路状态判断，refreshReadyState 收缩为「算 → 推 → 执行副作用」。
+//  3 路状态判断，refreshUI 收缩为「算 → 推 → 执行副作用」。
 //
 //  本对象保持纯净：不写 session、不做导航。预约到点该自动起始的判定以 shouldAutoStartNow /
 //  autoStartDate 暴露，由 VC 执行副作用（startFasting + push Active）。

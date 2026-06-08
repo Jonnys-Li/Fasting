@@ -52,24 +52,20 @@ static const CGFloat kSubmitRadius = 28;
         _chipTitles = @[@"Fasting guide", @"App tutorial", @"Feeling unwell",
                         @"Daily plan", @"Weekly plan", @"Others"];
         _chipViews = [NSMutableArray array];
-        [self buildBackButton];
-        [self buildScrollAndContent];
-        [self buildChipsInContainer:self.chipContainer];
+        [self setupSubviews];
         [self setupConstraints];
     }
     return self;
 }
 
-#pragma mark - Build
+#pragma mark - 视图组装
 
-- (void)buildBackButton {
+- (void)setupSubviews {
     self.backButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.backButton setImage:[UIImage fst_originalImageNamed:@"feedback_back"] forState:UIControlStateNormal];
     [self.backButton addTarget:self action:@selector(handleBackTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.backButton];
-}
 
-- (void)buildScrollAndContent {
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
@@ -113,19 +109,21 @@ static const CGFloat kSubmitRadius = 28;
     [self.contentView fst_addSubviews:@[self.envelopeLabel, self.titleLabel, self.chipContainer,
                                         self.moreLabel, self.textViewContainer,
                                         self.addPictureButton, self.pickedImageView, self.submitButton]];
+
+    [self setupChipsInContainer:self.chipContainer];
 }
 
 #pragma mark - Chips
 
-- (void)buildChipsInContainer:(UIView *)container {
+- (void)setupChipsInContainer:(UIView *)container {
     UIView *previousRow = nil;
     for (NSInteger row = 0; row < 3; row++) {
         UIView *rowView = [[UIView alloc] init];
         [container addSubview:rowView];
 
         NSInteger leftIdx = row * 2;
-        UIView *leftChip  = [self buildChipWithTitle:self.chipTitles[leftIdx]     index:leftIdx];
-        UIView *rightChip = [self buildChipWithTitle:self.chipTitles[leftIdx + 1] index:leftIdx + 1];
+        UIView *leftChip  = [self chipWithTitle:self.chipTitles[leftIdx]     index:leftIdx];
+        UIView *rightChip = [self chipWithTitle:self.chipTitles[leftIdx + 1] index:leftIdx + 1];
         [rowView fst_addSubviews:@[leftChip, rightChip]];
 
         [rowView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -147,7 +145,7 @@ static const CGFloat kSubmitRadius = 28;
     }
 }
 
-- (UIView *)buildChipWithTitle:(NSString *)title index:(NSInteger)index {
+- (UIView *)chipWithTitle:(NSString *)title index:(NSInteger)index {
     UIControl *chip = [[UIControl alloc] init];
     chip.backgroundColor = [UIColor fst_chipBackground];
     chip.layer.cornerRadius = kChipRadius;

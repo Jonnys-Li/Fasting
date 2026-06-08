@@ -29,7 +29,7 @@
     [super viewDidLoad];
     [self installRootView];
     [self bindCallbacks];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshHome) name:FSTRecordsDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshUI) name:FSTRecordsDidChangeNotification object:nil];
 }
 
 - (void)installRootView {
@@ -49,7 +49,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self refreshHome];
+    [self refreshUI];
 }
 
 #pragma mark - 回调接线
@@ -73,7 +73,7 @@
 #pragma mark - 数据刷新
 
 /// 根据 RecordsRepository 最近一条断食/饮食记录刷新两张模块卡的摘要。
-- (void)refreshHome {
+- (void)refreshUI {
     FSTRecordsRepository *repository = [FSTRecordsRepository sharedRepository];
     FSTFastingRecord *fastingRecord = [repository allRecords].firstObject;
     [self.fastingModuleView configureWithRecord:fastingRecord];

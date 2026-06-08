@@ -44,7 +44,7 @@
 
     [self installRootView];
     [self bindCallbacks];
-    [self refreshDisplay];
+    [self refreshUI];
 }
 
 - (void)installRootView {
@@ -84,17 +84,17 @@
     };
     self.startRow.onDateChanged = ^(NSDate *date) {
         weakSelf.startDate = date;
-        [weakSelf refreshDisplay];
+        [weakSelf refreshUI];
     };
     self.endRow.onDateChanged = ^(NSDate *date) {
         weakSelf.endDate = date;
-        [weakSelf refreshDisplay];
+        [weakSelf refreshUI];
     };
 }
 
 #pragma mark - 刷新显示
 
-- (void)refreshDisplay {
+- (void)refreshUI {
     self.startRow.pickerDate = self.startDate;
     self.endRow.pickerDate   = self.endDate;
 

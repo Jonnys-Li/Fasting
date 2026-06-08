@@ -34,8 +34,8 @@ static const CGFloat kRowHeight = 264;
     [super viewDidLoad];
     [self installRootView];
     [self bindCallbacks];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadRecords) name:FSTRecordsDidChangeNotification object:nil];
-    [self reloadRecords];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshUI) name:FSTRecordsDidChangeNotification object:nil];
+    [self refreshUI];
 }
 
 - (void)installRootView {
@@ -65,10 +65,10 @@ static const CGFloat kRowHeight = 264;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self reloadRecords];
+    [self refreshUI];
 }
 
-- (void)reloadRecords {
+- (void)refreshUI {
     self.records = [[FSTRecordsRepository sharedRepository] allRecords];
     [self.tableView reloadData];
     [self refreshDateHeader];
