@@ -16,7 +16,7 @@ static const NSUInteger FSTChipDefaultColumnIndex = 1;
 @end
 
 @implementation FSTPlanTagChipsBar
-
+// NOTE:view使用initwithframe，按照数据，试图排布，更新的顺序编排
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         [self prepareData];          // 数据
@@ -95,8 +95,8 @@ static const NSUInteger FSTChipDefaultColumnIndex = 1;
     return chip;
 }
 
-#pragma mark - 选中态（使用 UIButton.selected 状态，不依赖 title — R9）
-
+#pragma mark - 选中态
+// NOTE:使用 UIButton.selected 状态，不依赖 title — R9
 - (void)applyDefaultSelection {
     [self selectChip:[self defaultChip]];
 }

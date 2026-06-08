@@ -107,7 +107,7 @@
         make.size.mas_equalTo(CGSizeMake(28, 28));
     }];
 
-    // 「方案名 + chevron」整块做展开/收起详情卡的点击区：透明 UIControl 盖在上层，
+    // NOTE:「方案名 + chevron」整块做展开/收起详情卡的点击区：透明 UIControl 盖在上层，
     // titleLabel / chevron 默认 userInteractionEnabled = NO，触摸会落到本 control。
     self.disclosureControl = [[UIControl alloc] init];
     [self.disclosureControl addTarget:self action:@selector(handleToggleDetailTapped)

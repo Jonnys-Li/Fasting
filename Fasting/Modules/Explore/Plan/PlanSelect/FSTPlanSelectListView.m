@@ -40,8 +40,8 @@ static const CGFloat FSTPlanSelectCellSpacing = 16.0;
 
 #pragma mark - 子视图
 
-// 静态 4 张方案卡用竖直 stack 承载，不再套 UITableView——避免与外层 scrollView 嵌套滚动（R12），
-// 行高用图片宽高比约束表达，无需 layoutSubviews 手动 reload（R8）。
+// NOTE: 静态 4 张方案卡用竖直 stack 承载，不再套 UITableView——避免与外层 scrollView 嵌套滚动（R12），
+// NOTE: 行高用图片宽高比约束表达，不在 layoutSubviews 手动 reload（R8）。
 - (void)setupSubviews {
     self.backgroundColor = UIColor.clearColor;
 
@@ -66,7 +66,7 @@ static const CGFloat FSTPlanSelectCellSpacing = 16.0;
     row.tag = (NSInteger)index;
     [row addTarget:self action:@selector(handleRowTapped:) forControlEvents:UIControlEventTouchUpInside];
 
-    // 图片资源自带圆角，contentMode 为 AspectFit 不会溢出，不需要 clipsToBounds（R11）。
+    // NOTE:图片资源自带圆角，contentMode 为 AspectFit 不会溢出，不需要 clipsToBounds（R11）。
     UIImageView *imageView = [[UIImageView alloc] init];
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     imageView.image = [UIImage fst_originalImageNamed:self.assetNames[index]];

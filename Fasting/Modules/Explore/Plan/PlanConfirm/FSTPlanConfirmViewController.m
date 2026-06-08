@@ -31,7 +31,7 @@
     }
     return self;
 }
-
+// NOTE:使用viewdidload，不该self.view
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.selectedStartDate = [NSDate date];

@@ -9,8 +9,7 @@
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-/// 方案身份。区分内置方案一律用 type，不要拿 name 字符串判断（见 R9）。
+// NOTE:plan用type分类（R9）
 typedef NS_ENUM(NSInteger, FSTPlanType) {
     FSTPlanTypeCustom = 0,  ///< 非内置方案（自定义 / 历史脏数据兜底）
     FSTPlanType1410,        ///< 14-10
