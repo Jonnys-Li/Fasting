@@ -380,7 +380,7 @@ static const CGFloat kTopBarHeight = 80;
         [weakSelf refreshUI];
     }];
 }
-
+# pragma mark - 跳转问题解决
 - (void)showInitialStartTimePromptIfNeeded {
     // promptsForStartTimeOnFirstAppear 是一次性 token。优先在 viewDidLoad 装载 child overlay，
     // 让 picker 成为 ActiveFasting 首帧的一部分；viewDidAppear 只作为兜底，避免外部晚赋值时漏弹。
