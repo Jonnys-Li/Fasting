@@ -10,8 +10,7 @@
 #pragma mark - Layout constants
 
 static const CGFloat kHeaderHeight  = 310;
-static const CGFloat kHeaderOverlap = -34;  // 卡片区上拉与 header 视觉重叠的距离
-
+static const CGFloat kHeaderOverlap = 10;  // 卡片区上拉与 header 视觉重叠的距离
 static const CGFloat kCardSpacing       = 18;
 static const CGFloat kCardSideInset     = 22;
 static const CGFloat kCardBottomPadding = 28;
