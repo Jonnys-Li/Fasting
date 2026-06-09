@@ -135,7 +135,7 @@ static NSString * const FSTFastingTipsExpandedText =
 
     UILabel *title = [[UILabel alloc] init];
     title.attributedText = [self cellTitleAttributedString:@"Can I drink lemon water?"];
-    title.numberOfLines = 1;
+    title.numberOfLines = 0;
 
     UILabel *body = [[UILabel alloc] init];
     body.numberOfLines = 0;
@@ -157,7 +157,6 @@ static NSString * const FSTFastingTipsExpandedText =
         make.top.equalTo(card).offset(20);
         make.left.equalTo(card).offset(16);
         make.right.equalTo(card).offset(-16);
-        make.height.mas_equalTo(30);
     }];
     [body mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(title.mas_bottom).offset(20);
@@ -189,6 +188,7 @@ static NSString * const FSTFastingTipsExpandedText =
 
     UILabel *title = [[UILabel alloc] init];
     title.attributedText = [self cellTitleAttributedString:@"Fasting tips"];
+    title.numberOfLines = 0;
 
     self.qaChevron = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tips_chevron"]];
     self.qaChevron.contentMode = UIViewContentModeScaleAspectFit;
@@ -208,7 +208,6 @@ static NSString * const FSTFastingTipsExpandedText =
     [title mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.qaCard).offset(24);
         make.left.equalTo(self.qaCard).offset(FSTTipsCardInset);
-        make.height.mas_equalTo(30);
     }];
     [self.qaChevron mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.qaCard).offset(-FSTTipsCardInset);
