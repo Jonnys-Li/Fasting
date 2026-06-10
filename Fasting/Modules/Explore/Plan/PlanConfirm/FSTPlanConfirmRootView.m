@@ -82,12 +82,10 @@
     [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.mas_safeAreaLayoutGuideTop).offset(30);
         make.left.equalTo(self).offset(20);
-        make.size.mas_equalTo(CGSizeMake(34, 34));
     }];
     [self.shareButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.backButton);
         make.right.equalTo(self).offset(-28);
-        make.size.mas_equalTo(CGSizeMake(34, 34));
     }];
 }
 

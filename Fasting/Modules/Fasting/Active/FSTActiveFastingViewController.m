@@ -19,6 +19,7 @@
 #import "FSTFastingSegmentControl.h"
 #import "FSTFastingPhaseSummaryCard.h"
 #import "FSTFastingRingPanelView.h"
+#import "FSTRingProgressView.h"
 #import "FSTFastingTipsSectionView.h"
 #import "FSTFastingTopBar.h"
 #import "FSTFastingTimesRow.h"
@@ -133,12 +134,6 @@ static const CGFloat kTopBarHeight = 80;
     [self.topBar installInViewController:self];
     [self.rootView anchorContentBelowTopBar:self.topBar];
 
-    [shareButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kPlainIconSize, kPlainIconSize));
-    }];
-    [waterButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kNavButtonDiameter, kNavButtonDiameter));
-    }];
     [self.segment mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(kSegmentWidth, kSegmentHeight));
     }];
@@ -193,8 +188,7 @@ static const CGFloat kTopBarHeight = 80;
     CGFloat clampedFraction = MIN(1.0, fraction);
     BOOL targetReached  = safeElapsed >= safeTarget;
     BOOL inOvertime     = (NSInteger)floor(overtime) > 0;
-    NSInteger basePercent     = (NSInteger)lround(MAX(0, fraction) * 100.0);
-    NSInteger elapsedPercent  = targetReached ? MIN(100, MAX(0, basePercent)) : MIN(99, MAX(0, basePercent));
+    NSInteger elapsedPercent   = FSTRingElapsedPercent(fraction, targetReached);
     NSInteger remainingPercent = targetReached ? 0 : (100 - elapsedPercent);
     NSInteger overtimePercent  = inOvertime ? MAX(101, (NSInteger)ceil(fraction * 100.0)) : elapsedPercent;
 

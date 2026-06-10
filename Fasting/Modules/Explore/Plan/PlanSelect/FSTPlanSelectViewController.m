@@ -120,7 +120,6 @@ static const CGFloat FSTPlanSelectHeaderHeight = 162;  // 8pt 顶部 + 48pt 按�
         [closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(headerContentView).offset(24);
             make.top.equalTo(headerContentView).offset(8);
-            make.size.mas_equalTo(CGSizeMake(48, 48));
         }];
     }
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {

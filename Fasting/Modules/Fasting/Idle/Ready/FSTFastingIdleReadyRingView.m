@@ -10,13 +10,6 @@
 #import "FSTRingProgressView.h"
 #import "FSTPlanChipPillView.h"
 #import "FSTTheme.h"
-#import <math.h>
-
-/// 把已用/目标比例钳到 UI 百分比：未达标上限 99（避免 99.6% 被四舍五入到 100），达标允许 100。
-static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
-    NSInteger percent = (NSInteger)lround(MAX(0, fraction) * 100.0);
-    return targetReached ? MIN(100, MAX(0, percent)) : MIN(99, MAX(0, percent));
-}
 
 @interface FSTFastingIdleReadyRingView ()
 @property (nonatomic, strong) FSTRingProgressView *ringProgressView;

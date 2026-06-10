@@ -9,8 +9,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <math.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+/// 把已用/目标比例钳到 UI 百分比：未达标上限 99（避免 99.6% 被四舍五入到 100%），达标允许 100。
+/// 消费方：FSTFastingIdleReadyRingView.refresh、FSTActiveFastingViewController.refreshUI。
+FOUNDATION_STATIC_INLINE NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
+    NSInteger percent = (NSInteger)lround(MAX(0, fraction) * 100.0);
+    return targetReached ? MIN(100, MAX(0, percent)) : MIN(99, MAX(0, percent));
+}
 
 /// 圆环填充风格。`progress` 一律表示「已消耗比例 [0,1]」；箭头都位于 progress 对应的弧上位置，
 /// 区别仅在 bar 相对箭头的方向：

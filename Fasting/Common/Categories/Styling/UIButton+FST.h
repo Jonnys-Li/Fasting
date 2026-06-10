@@ -80,6 +80,8 @@ typedef NS_ENUM(NSInteger, FSTPillButtonStyle) {
 // MARK: - 导航圆形按钮
 
 /// 用 Asset Catalog 中的图片构建白色圆形导航按钮（原始渲染）。
+/// 尺寸约束在工厂内部锁定为 diameter×diameter——cornerRadius / imageEdgeInsets 都由 diameter
+/// 派生，按钮必须恰为该尺寸圆形才成立；调用方只负责摆位置，不要再加 size 约束。
 + (instancetype)fst_navCircleButtonWithImageNamed:(NSString *)imageName
                                          diameter:(CGFloat)diameter;
 
@@ -87,6 +89,7 @@ typedef NS_ENUM(NSInteger, FSTPillButtonStyle) {
 
 /// 通用裸图标按钮：透明背景 + 无阴影 + ScaleAspectFit + adjustsImageWhenHighlighted=NO。
 /// 适用于编辑铅笔、导航返回/分享等所有"贴一张图就能点"的场景。
+/// 尺寸约束在工厂内部锁定为 size；调用方只负责摆位置，不要再加 size 约束。
 /// - tintColor == nil：图片用 AlwaysOriginal，保留资源自带色（nav_back / nav_share 这类原色 icon）。
 /// - tintColor != nil：图片用 AlwaysTemplate + tintColor 染色（MealDiary 的 edit_pencil 染灰这类需求）。
 + (instancetype)fst_plainImageButtonWithImageNamed:(NSString *)imageName

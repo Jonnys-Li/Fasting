@@ -65,18 +65,14 @@ static const CGFloat kTableTopGap = 22;
 - (void)setupConstraints {
     [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.mas_safeAreaLayoutGuideTop).offset(kNavTopOffset);
-        make.left.equalTo(self).offset(kNavSideInset);
-        make.size.mas_equalTo(CGSizeMake(kNavButtonSize, kNavButtonSize));
-    }];
+        make.left.equalTo(self).offset(kNavSideInset);    }];
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.backButton);
         make.centerX.equalTo(self);
     }];
     [self.shareButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.backButton);
-        make.right.equalTo(self).offset(-kNavSideInset);
-        make.size.mas_equalTo(CGSizeMake(kNavButtonSize, kNavButtonSize));
-    }];
+        make.right.equalTo(self).offset(-kNavSideInset);    }];
     [self.todayLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.backButton.mas_bottom).offset(kTodayTopGap);
         make.centerX.equalTo(self);

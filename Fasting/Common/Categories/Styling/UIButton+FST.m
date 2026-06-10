@@ -182,6 +182,10 @@
     CGFloat inset = diameter * 0.26;
     button.imageEdgeInsets = UIEdgeInsetsMake(inset, inset, inset, inset);
     [self fst_applyCircleStyle:button diameter:diameter];
+    // cornerRadius / insets 均由 diameter 派生，尺寸偏离即破圆形——在工厂内锁定，调用方不再约束 size。
+    [button mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(diameter, diameter));
+    }];
     return button;
 }
 
@@ -202,7 +206,9 @@
     button.imageEdgeInsets = UIEdgeInsetsZero;
     button.imageView.contentMode = UIViewContentModeScaleAspectFit;
     button.adjustsImageWhenHighlighted = NO;
-    button.bounds = CGRectMake(0, 0, size.width, size.height);
+    [button mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(size);
+    }];
     return button;
 }
 

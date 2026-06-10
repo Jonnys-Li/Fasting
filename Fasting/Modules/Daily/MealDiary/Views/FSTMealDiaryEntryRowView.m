@@ -106,7 +106,6 @@ static const CGFloat kDotSize = 12;
     [self.editButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self);
         make.centerY.equalTo(self.timeLabel);
-        make.size.mas_equalTo(CGSizeMake(24, 24));
     }];
     [self.cardView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.timeLabel);

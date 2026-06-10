@@ -79,7 +79,6 @@ static const CGFloat kDotSize = 14;
     [editButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self).offset(-30);
         make.centerY.equalTo(startDotLabel);
-        make.size.mas_equalTo(CGSizeMake(44, 44));
     }];
     [self.startValueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(editButton.mas_left).offset(-12);

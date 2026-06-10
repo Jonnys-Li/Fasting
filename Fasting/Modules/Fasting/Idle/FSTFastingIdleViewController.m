@@ -149,10 +149,6 @@ static const CGFloat kResetButtonHeight = 38;
     self.topBar.contentHeight = kTopBarHeightPicker;
     [self.topBar installInViewController:self];
     [self.rootView anchorContentBelowTopBar:self.topBar];
-
-    [waterButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kNavButtonDiameter, kNavButtonDiameter));
-    }];
 }
 
 #pragma mark - 状态：准备开始
@@ -184,12 +180,6 @@ static const CGFloat kResetButtonHeight = 38;
 
     [resetButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(kResetButtonWidth, kResetButtonHeight));
-    }];
-    [waterButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kNavButtonDiameter, kNavButtonDiameter));
-    }];
-    [bellButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(kNavButtonDiameter, kNavButtonDiameter));
     }];
 }
 

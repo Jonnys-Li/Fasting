@@ -87,7 +87,6 @@
     [editButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.weightValueLabel.mas_right).offset(18);
         make.centerY.equalTo(self.weightValueLabel);
-        make.size.mas_equalTo(CGSizeMake(40, 40));
     }];
     [progressBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.weightValueLabel.mas_bottom).offset(24);

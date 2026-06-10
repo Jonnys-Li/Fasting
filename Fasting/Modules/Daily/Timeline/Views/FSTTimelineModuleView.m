@@ -122,15 +122,9 @@ static const CGFloat kChipHeight   = 34;
     [self addSubview:self.separatorLine];
 
     self.addButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    NSMutableAttributedString *addTitle = [[NSMutableAttributedString alloc]
-        initWithString:@"＋ "
-            attributes:@{NSFontAttributeName: FSTFontBold(18),
-                         NSForegroundColorAttributeName: [UIColor fst_mealDateText]}];
-    [addTitle appendAttributedString:[[NSAttributedString alloc]
-        initWithString:@"Add"
-            attributes:@{NSFontAttributeName: FSTFontBold(18),
-                         NSForegroundColorAttributeName: [UIColor fst_mealDateText]}]];
-    [self.addButton setAttributedTitle:addTitle forState:UIControlStateNormal];
+    [self.addButton setTitle:@"＋ Add" forState:UIControlStateNormal];
+    [self.addButton setTitleColor:[UIColor fst_mealDateText] forState:UIControlStateNormal];
+    self.addButton.titleLabel.font = FSTFontBold(18);
     [self.addButton addTarget:self action:@selector(handleAddTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.addButton];
 
