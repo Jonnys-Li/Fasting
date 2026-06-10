@@ -4,6 +4,7 @@
 //
 
 #import "FSTMealTasteCardView.h"
+#import "FSTMealPropertyCardSelection.h"
 #import "FSTTheme.h"
 
 @interface FSTMealTasteCardView ()
@@ -15,8 +16,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         _tasteLevel = 1;
-        self.backgroundColor = [UIColor whiteColor];
-        self.layer.cornerRadius = 20;
+        [self fst_applyMealCardStyle];
         [self setupSubviews];
         [self refresh];
     }
@@ -61,8 +61,6 @@
     UIControl *button = [[UIControl alloc] init];
     button.tag = tag;
     button.layer.cornerRadius = 16;
-    button.layer.borderWidth = 1.2;
-    button.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.28].CGColor;
     [button addTarget:self action:@selector(handleTasteTapped:) forControlEvents:UIControlEventTouchUpInside];
 
     UIImageView *faceImageView = [[UIImageView alloc] initWithImage:[UIImage fst_originalImageNamed:imageName]];
@@ -87,10 +85,7 @@
 
 - (void)refresh {
     for (UIControl *button in self.tasteButtons) {
-        BOOL isSelected = button.tag == self.tasteLevel;
-        button.alpha = isSelected ? 1.0 : 0.45;
-        button.layer.borderColor = (isSelected ? [UIColor fst_primaryGreen] : [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.28]).CGColor;
-        button.layer.borderWidth = isSelected ? 1.8 : 1.2;
+        FSTApplyMealCardSelectionStyle(button, button.tag == self.tasteLevel);
     }
 }
 

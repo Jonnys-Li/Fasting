@@ -4,6 +4,7 @@
 //
 
 #import "FSTMealDietCardView.h"
+#import "FSTMealPropertyCardSelection.h"
 #import "FSTTheme.h"
 
 @interface FSTMealDietCardView ()
@@ -70,8 +71,6 @@
     row.tag = tag;
     row.backgroundColor = [UIColor fst_inputBackground];
     row.layer.cornerRadius = FSTRadiusM;
-    row.layer.borderWidth = 1.2;
-    row.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.32].CGColor;
     [row addTarget:self action:@selector(handleRowTapped:) forControlEvents:UIControlEventTouchUpInside];
     [row mas_makeConstraints:^(MASConstraintMaker *make) {
         make.height.equalTo(@74);
@@ -101,10 +100,7 @@
 
 - (void)refresh {
     for (UIControl *row in self.dietRows) {
-        BOOL isSelected = (row.tag == self.dietType);
-        row.alpha = isSelected ? 1.0 : 0.48;
-        row.layer.borderColor = (isSelected ? [UIColor fst_primaryGreen] : [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.32]).CGColor;
-        row.layer.borderWidth = isSelected ? 1.8 : 1.2;
+        FSTApplyMealCardSelectionStyle(row, row.tag == self.dietType);
     }
 }
 
