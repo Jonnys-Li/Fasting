@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readwrite) BOOL hasCompletedOnboarding;
 @property (nonatomic, strong, readwrite, nullable) NSDate *activeStartDate;
 @property (nonatomic, strong, readwrite, nullable) NSDate *activeEndOverrideDate;
+// 下两条为纯私有属性（公开头未声明 readonly 版本），故不带 readwrite；带 readwrite 的是「重开公开 readonly」的属性。
 @property (nonatomic, strong, nullable) NSDate *eatingWindowAnchorDate;
 @property (nonatomic, assign) BOOL pendingActiveStartDatePrompt;
 @property (nonatomic, assign, readwrite) FSTScheduledReadySource scheduledReadySource;

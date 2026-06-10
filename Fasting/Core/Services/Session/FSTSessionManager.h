@@ -59,7 +59,6 @@ typedef NS_ENUM(NSInteger, FSTScheduledReadySource) {
 - (NSTimeInterval)elapsedSeconds;            // 从 activeStartDate 到 now
 - (CGFloat)elapsedFraction;                  // [0,+∞)，>=1 表示已完成
 - (NSDate * _Nullable)activeExpectedEndDate;
-- (BOOL)isActiveFastingAlignedWithPlan;
 
 - (void)startFastingWithPlan:(FSTPlan *)plan startDate:(NSDate *)date;
 - (void)cancelActiveFasting;

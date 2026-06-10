@@ -22,7 +22,6 @@
 #import "FSTFastingTipsSectionView.h"
 #import "FSTFastingTopBar.h"
 #import "FSTFastingTimesRow.h"
-#import "UIButton+FST.h"
 #import "UIViewController+FSTTimeEditor.h"
 #import "FSTTimeEditorSheetViewController.h"
 #import "UINavigationController+FSTHelpers.h"

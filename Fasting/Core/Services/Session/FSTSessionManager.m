@@ -83,10 +83,6 @@
     return [self.activeStartDate dateByAddingTimeInterval:target];
 }
 
-- (BOOL)isActiveFastingAlignedWithPlan {
-    return self.activeEndOverrideDate == nil;
-}
-
 #pragma mark - Lifecycle (mutation 全部委托给 FSTSessionLifecycleService)
 
 - (void)startFastingWithPlan:(FSTPlan *)plan startDate:(NSDate *)date {

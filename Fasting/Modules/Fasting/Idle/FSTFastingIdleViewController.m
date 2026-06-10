@@ -21,7 +21,6 @@
 #import "FSTRecordsRepository.h"
 #import "FSTPlan.h"
 #import "FSTFastingTopBar.h"
-#import "UIButton+FST.h"
 #import "UIViewController+FSTTimeEditor.h"
 #import "FSTTheme.h"
 
