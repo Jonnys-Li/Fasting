@@ -270,16 +270,22 @@ static const CGFloat kResetButtonHeight = 38;
 
 #pragma mark - 事件
 
+/// 确认弹窗统一走 FSTModalDialogViewController（同 ActiveFasting 的 stop 确认）；
+/// primary 是保守动作「不清除」，secondary 才执行清除——默认动作偏保守。
 - (void)handleResetTapped {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Change Plan"
-                                                                              message:@"Current progress will be cleared. Continue?"
-                                                                       preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+    __weak typeof(self) weakSelf = self;
+    FSTModalDialogViewController *dialog = [[FSTModalDialogViewController alloc] init];
+    dialog.iconKind       = FSTModalDialogIconKindSystemSymbol;
+    dialog.iconName       = @"flag.fill";
+    dialog.titleText      = @"Change Plan";
+    dialog.message        = @"Current progress will be cleared. Continue?";
+    dialog.primaryTitle   = @"Cancel";
+    dialog.secondaryTitle = @"Continue";
+    dialog.secondaryHandler = ^{
         [[FSTSessionManager sharedManager] clearCurrentPlan];
-        [self reloadRootContent];
-    }]];
-    [self presentViewController:alertController animated:YES completion:nil];
+        [weakSelf reloadRootContent];
+    };
+    [self presentViewController:dialog animated:YES completion:nil];
 }
 
 - (void)handleSoftChangePlanTapped {
@@ -359,15 +365,18 @@ static const CGFloat kResetButtonHeight = 38;
     [self presentViewController:dialog animated:YES completion:nil];
 }
 
+/// 同 handleResetTapped：项目自有弹窗，primary 保守（继续计划），secondary 执行放弃。
 - (void)handleAbortScheduledReadyTapped {
-    FSTSessionManager *sessionManager = [FSTSessionManager sharedManager];
-    FSTScheduledReadySource source = sessionManager.scheduledReadySource;
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Abort plan?"
-                                                                              message:@"Do you want to end this scheduled fast?"
-                                                                       preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleCancel handler:nil]];
+    FSTScheduledReadySource source = [FSTSessionManager sharedManager].scheduledReadySource;
     __weak typeof(self) weakSelf = self;
-    [alertController addAction:[UIAlertAction actionWithTitle:@"End" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+    FSTModalDialogViewController *dialog = [[FSTModalDialogViewController alloc] init];
+    dialog.iconKind       = FSTModalDialogIconKindSystemSymbol;
+    dialog.iconName       = @"flag.fill";
+    dialog.titleText      = @"Abort plan?";
+    dialog.message        = @"Do you want to end this scheduled fast?";
+    dialog.primaryTitle   = @"Continue";
+    dialog.secondaryTitle = @"End";
+    dialog.secondaryHandler = ^{
         FSTSessionManager *manager = [FSTSessionManager sharedManager];
         if (source == FSTScheduledReadySourcePreStart) {
             [manager clearCurrentPlan];
@@ -379,8 +388,8 @@ static const CGFloat kResetButtonHeight = 38;
             [manager clearScheduledReadyState];
         }
         [weakSelf reloadRootContent];
-    }]];
-    [self presentViewController:alertController animated:YES completion:nil];
+    };
+    [self presentViewController:dialog animated:YES completion:nil];
 }
 
 - (void)handleReadyStartTapped {
