@@ -94,7 +94,8 @@ static const CGFloat kPencilGap  = 6;
     }];
     [self.startEditButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.startTimeLabel.mas_right).offset(kPencilGap);
-        make.centerY.equalTo(self.startTimeLabel);        make.right.lessThanOrEqualTo(self.leftColumn);
+        make.centerY.equalTo(self.startTimeLabel);
+        make.right.lessThanOrEqualTo(self.leftColumn);
     }];
 
     [self.endCaptionLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -103,7 +104,8 @@ static const CGFloat kPencilGap  = 6;
     }];
     [self.endEditButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.rightColumn);
-        make.centerY.equalTo(self.endTimeLabel);    }];
+        make.centerY.equalTo(self.endTimeLabel);
+    }];
     [self.endTimeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.endEditButton.mas_left).offset(-kPencilGap);
         make.top.equalTo(self.endCaptionLabel.mas_bottom).offset(kCaptionTimeGap);
