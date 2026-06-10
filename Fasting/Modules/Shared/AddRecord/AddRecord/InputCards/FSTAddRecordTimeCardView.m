@@ -169,7 +169,9 @@
     self.endPickerOpen = isStartRow ? NO : !currentlyOpen;
     self.startPickerHeight.offset = self.startPickerOpen ? 220 : 0;
     self.endPickerHeight.offset = self.endPickerOpen ? 220 : 0;
-    [UIView animateWithDuration:0.22 animations:^{ [self layoutIfNeeded]; }];
+    [UIView animateWithDuration:0.22 animations:^{
+        [self layoutIfNeeded];
+    }];
 }
 
 - (void)handleStartDateChanged:(UIDatePicker *)datePicker {

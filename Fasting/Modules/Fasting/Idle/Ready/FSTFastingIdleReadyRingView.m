@@ -89,9 +89,7 @@ static NSInteger FSTRingElapsedPercent(CGFloat fraction, BOOL targetReached) {
                                            color:[UIColor fst_textPrimary]];
     self.valueLabel.textAlignment = NSTextAlignmentCenter;
 
-    for (UIView *subview in @[self.captionLabel, self.valueLabel]) {
-        [self addSubview:subview];
-    }
+    [self fst_addSubviews:@[self.captionLabel, self.valueLabel]];
 
     __weak typeof(self) weakSelf = self;
     self.planChipPillView = [[FSTPlanChipPillView alloc] init];

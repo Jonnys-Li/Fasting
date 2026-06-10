@@ -137,7 +137,9 @@
                                                       1, @"", NO);
 
     [FSTAppRouter finishFlowFrom:self
-                         updates:^{ [sm finishFastingWithRecord:record]; }
+                         updates:^{
+        [sm finishFastingWithRecord:record];
+    }
                         fallback:^{
         [sm finishFastingWithRecord:record];
         [self.navigationController popViewControllerAnimated:YES];

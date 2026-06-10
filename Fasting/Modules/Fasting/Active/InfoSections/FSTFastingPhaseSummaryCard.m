@@ -29,19 +29,17 @@
 - (void)setupSubviews {
     self.stageIconView = [[UIImageView alloc] init];
     self.stageIconView.contentMode = UIViewContentModeScaleAspectFit;
-    [self addSubview:self.stageIconView];
 
     self.levelLabel = [[UILabel alloc] init];
     self.levelLabel.textAlignment = NSTextAlignmentLeft;
-    [self addSubview:self.levelLabel];
 
     self.titleLabel = [[UILabel alloc] init];
-    [self addSubview:self.titleLabel];
 
     self.chevronIconView = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.right"]];
     self.chevronIconView.tintColor = [UIColor fst_eatingTimeGreen];
     self.chevronIconView.contentMode = UIViewContentModeScaleAspectFit;
-    [self addSubview:self.chevronIconView];
+
+    [self fst_addSubviews:@[self.stageIconView, self.levelLabel, self.titleLabel, self.chevronIconView]];
 
     [self.stageIconView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self).offset(10);

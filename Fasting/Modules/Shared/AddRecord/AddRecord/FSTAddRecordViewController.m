@@ -204,7 +204,9 @@
     }
 
     [FSTAppRouter finishFlowFrom:self
-                         updates:^{ [sessionManager finishFastingWithRecord:record]; }
+                         updates:^{
+        [sessionManager finishFastingWithRecord:record];
+    }
                         fallback:^{
         [sessionManager finishFastingWithRecord:record];
         [self.navigationController popToRootViewControllerAnimated:YES];

@@ -26,9 +26,10 @@
 }
 
 - (void)setDate:(NSDate *)date {
-    _date = date; [self refresh]; if (date) self.datePicker.date = date;
+    _date = date;
+    [self refresh];
+    if (date) self.datePicker.date = date;
 }
-
 
 - (void)setupSubviews {
     UILabel *titleLabel = [UILabel fst_labelWithText:@"Time" font:FSTFontTitle() color:[UIColor fst_textPrimary]];
@@ -80,7 +81,9 @@
 - (void)handleToggleTapped {
     self.datePickerExpanded = !self.datePickerExpanded;
     self.datePickerHeightConstraint.offset = self.datePickerExpanded ? 220 : 0;
-    [UIView animateWithDuration:0.22 animations:^{ [self.superview layoutIfNeeded]; }];
+    [UIView animateWithDuration:0.22 animations:^{
+        [self.superview layoutIfNeeded];
+    }];
 }
 
 - (void)handleDatePickerChanged:(UIDatePicker *)datePicker {

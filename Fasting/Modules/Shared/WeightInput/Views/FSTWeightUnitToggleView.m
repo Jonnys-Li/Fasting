@@ -87,7 +87,9 @@
     self.kgLabel.textColor = isKgActive ? [UIColor whiteColor] : [UIColor fst_textPrimary];
     self.lbLabel.textColor = isKgActive ? [UIColor fst_textPrimary] : [UIColor whiteColor];
     if (animated) {
-        [UIView animateWithDuration:0.22 animations:^{ [self layoutIfNeeded]; }];
+        [UIView animateWithDuration:0.22 animations:^{
+            [self layoutIfNeeded];
+        }];
     }
 }
 

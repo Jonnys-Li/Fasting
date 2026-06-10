@@ -202,7 +202,9 @@ static const CGFloat kFlameSize           = 52;  // 与 @3x 源图 1x 原生尺�
 + (UIImage *)flameActiveImage {
     static UIImage *image;
     static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{ image = [UIImage imageNamed:@"flame_active"]; });
+    dispatch_once(&onceToken, ^{
+        image = [UIImage imageNamed:@"flame_active"];
+    });
     return image;
 }
 
