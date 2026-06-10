@@ -9,38 +9,6 @@
 
 static CGFloat const kFSTFastingRecordCardPadding = 20.0;
 
-static NSString *FSTFastingRecordCardLowercaseMeridiem(NSString *value) {
-    return [[value stringByReplacingOccurrencesOfString:@" AM" withString:@" am"] stringByReplacingOccurrencesOfString:@" PM" withString:@" pm"];
-}
-
-static NSString *FSTFastingRecordCardFullTime(NSDate *date) {
-    if (!date) return @"";
-    static NSDateFormatter *formatter;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"MMM d, h:mm a";
-        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
-    });
-    return FSTFastingRecordCardLowercaseMeridiem([formatter stringFromDate:date]);
-}
-
-static NSString *FSTFastingRecordCardEndTime(NSDate *startDate, NSDate *endDate) {
-    if (!endDate) return @"";
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    if (startDate && ![calendar isDate:startDate inSameDayAsDate:endDate]) {
-        return FSTFastingRecordCardFullTime(endDate);
-    }
-    static NSDateFormatter *formatter;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"hh:mm a";
-        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
-    });
-    return FSTFastingRecordCardLowercaseMeridiem([formatter stringFromDate:endDate]);
-}
-
 /// 把 record 的 feelingLevel 钳到合法范围并 cast 为 FSTFastingRating。
 /// 两个枚举数值含义已对齐（0=Hard / 1=Ok / 2=Easy），此函数只做防御性钳制。
 static FSTFastingRating FSTFastingRecordRatingFromFeelingLevel(NSInteger feelingLevel) {
@@ -321,8 +289,8 @@ static FSTFastingRating FSTFastingRecordRatingFromFeelingLevel(NSInteger feeling
     NSInteger totalMinutes = MAX(1, (NSInteger)llround(record.durationSeconds / 60.0));
     self.hoursText = [NSString stringWithFormat:@"%ld", (long)(totalMinutes / 60)];
     self.minutesText = [NSString stringWithFormat:@"%ld", (long)(totalMinutes % 60)];
-    self.startTimeText = FSTFastingRecordCardFullTime(record.startDate);
-    self.endTimeText = FSTFastingRecordCardEndTime(record.startDate, record.endDate);
+    self.startTimeText = FSTFormatRecordFullTimeLowercase(record.startDate);
+    self.endTimeText = FSTFormatRecordEndTimeLowercase(record.startDate, record.endDate);
     self.rating = FSTFastingRecordRatingFromFeelingLevel(record.feelingLevel);
 }
 

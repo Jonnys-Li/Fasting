@@ -111,3 +111,37 @@ NSString *FSTFormatRelativeDay(NSDate *date) {
     });
     return [formatter stringFromDate:date];
 }
+
+/// " AM"/" PM" → " am"/" pm"。NSDateFormatter 无小写 meridiem 选项，只能后处理。
+static NSString *FSTLowercaseMeridiem(NSString *value) {
+    return [[value stringByReplacingOccurrencesOfString:@" AM" withString:@" am"]
+            stringByReplacingOccurrencesOfString:@" PM" withString:@" pm"];
+}
+
+NSString *FSTFormatRecordFullTimeLowercase(NSDate *date) {
+    if (!date) return @"";
+    static NSDateFormatter *formatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"MMM d, h:mm a";
+        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+    });
+    return FSTLowercaseMeridiem([formatter stringFromDate:date]);
+}
+
+NSString *FSTFormatRecordEndTimeLowercase(NSDate *startDate, NSDate *endDate) {
+    if (!endDate) return @"";
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    if (startDate && ![calendar isDate:startDate inSameDayAsDate:endDate]) {
+        return FSTFormatRecordFullTimeLowercase(endDate);
+    }
+    static NSDateFormatter *formatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"hh:mm a";
+        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+    });
+    return FSTLowercaseMeridiem([formatter stringFromDate:endDate]);
+}

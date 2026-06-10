@@ -62,7 +62,7 @@ extern const CGFloat FSTRadiusXL;    ///< 24 — 输入卡片/大按钮
 extern const CGFloat FSTPoundsPerKilogram; ///< 2.20462262 — lbs/kg 换算系数
 
 // MARK: - 时间格式化
-// App 内所有时间显示走这 5 个函数；保证全局一致并便于 localization。
+// App 内所有时间显示走这组函数；保证全局一致并便于 localization。
 
 /// "HH:MM:SS" 形如 "16:23:45"。用于圆环中央计时器、剩余时间。
 /// 负数会被钳到 0，超 99 小时也能正确显示（不强制 2 位）。
@@ -82,5 +82,12 @@ NSString *FSTFormatRecordDateLine(NSDate *date);
 /// 仅相对日 "Today" / "Yesterday" / "Tomorrow" / "May 12"。
 /// 用于日历类列表的分组标题（同一天的记录合并到一个 section 头部）。
 NSString *FSTFormatRelativeDay(NSDate *date);
+
+/// 小写 meridiem 全时间 "Mar 4, 9:30 am"（单位数小时不补零，区别于 FSTFormatRecordDateLine 的 "hh" + 大写）。
+/// 用于断食记录卡（FSTFastingRecordCardView）的 Start 行。
+NSString *FSTFormatRecordFullTimeLowercase(NSDate *_Nullable date);
+
+/// 记录卡 End 行：与 startDate 同日只显示 "09:30 pm"，跨日退化为 FSTFormatRecordFullTimeLowercase 全格式。
+NSString *FSTFormatRecordEndTimeLowercase(NSDate *_Nullable startDate, NSDate *_Nullable endDate);
 
 NS_ASSUME_NONNULL_END
