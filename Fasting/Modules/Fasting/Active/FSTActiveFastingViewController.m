@@ -53,11 +53,8 @@ static const CGFloat kTopBarHeight = 80;
 @property (nonatomic, strong) FSTFastingSegmentControl *segment;
 @property (nonatomic, assign) FSTRingDisplayMode displayMode;
 @property (nonatomic, assign) BOOL initialStartTimePromptDisplayed;
-// 缓存 phase dialog / stop button 的当前数据，避免 dialog 弹出时再算一次。
+// 缓存最近一次 refreshUI 判定的达标态；dialog / stop 等异步事件路径直接读，不再重算。
 @property (nonatomic, assign) BOOL cachedTargetReached;
-@property (nonatomic, copy, nullable) NSString *cachedPhaseDialogTitle;
-@property (nonatomic, copy, nullable) NSString *cachedPhaseDialogMessage;
-@property (nonatomic, copy, nullable) NSString *cachedPhaseDialogIcon;
 @end
 
 @implementation FSTActiveFastingViewController
@@ -238,13 +235,7 @@ static const CGFloat kTopBarHeight = 80;
     self.timesRow.startText = FSTFormatRelativeDateTime(startDate);
     self.timesRow.endText   = FSTFormatRelativeDateTime(endDate);
 
-    // 缓存 phase dialog / stop button 状态：dialog 弹出时直接读，不再算一次。
-    self.cachedTargetReached      = targetReached;
-    self.cachedPhaseDialogTitle   = targetReached ? @"Autophagy Starts!" : @"Blood Glucose Rise";
-    self.cachedPhaseDialogMessage = targetReached
-        ? @"Fasting goal reached. Your body is entering the autophagy phase."
-        : @"Blood sugar fluctuation is normal in early fasting. Keep going with your plan.";
-    self.cachedPhaseDialogIcon    = targetReached ? @"autophagy_stage" : @"blood_glucose_stage";
+    self.cachedTargetReached = targetReached;
 }
 
 #pragma mark - 事件
@@ -254,13 +245,16 @@ static const CGFloat kTopBarHeight = 80;
     [self refreshUI];
 }
 
+/// 文案 / 图标由达标态当场派生——refreshUI 只缓存 cachedTargetReached 一个判定，不缓存字符串。
 - (void)showPhaseDialog {
-    if (!self.cachedPhaseDialogIcon) return;  // refresh 尚未发生过的边缘场景
+    BOOL targetReached = self.cachedTargetReached;
     FSTModalDialogViewController *dialog = [[FSTModalDialogViewController alloc] init];
     dialog.iconKind     = FSTModalDialogIconKindAssetImage;
-    dialog.iconName     = self.cachedPhaseDialogIcon;
-    dialog.titleText    = self.cachedPhaseDialogTitle;
-    dialog.message      = self.cachedPhaseDialogMessage;
+    dialog.iconName     = targetReached ? @"autophagy_stage" : @"blood_glucose_stage";
+    dialog.titleText    = targetReached ? @"Autophagy Starts!" : @"Blood Glucose Rise";
+    dialog.message      = targetReached
+        ? @"Fasting goal reached. Your body is entering the autophagy phase."
+        : @"Blood sugar fluctuation is normal in early fasting. Keep going with your plan.";
     dialog.primaryTitle = @"Got it";
     [self presentViewController:dialog animated:YES completion:nil];
 }
