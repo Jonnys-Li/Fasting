@@ -84,16 +84,21 @@ static const CGFloat kPickerTopOffsetAligned = 22.0;
         make.left.right.equalTo(self).inset(48);
         make.height.equalTo(@32);
     }];
-    [self.datePicker mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.titleLabel.mas_bottom).offset(kPickerTopOffsetSimple);
-        make.left.right.equalTo(self).inset(26);
-        make.height.equalTo(@(kPickerHeightSimple));
-    }];
+    [self applySimpleDatePickerConstraints];
     [self.saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.datePicker.mas_bottom).offset(36);
         make.left.right.equalTo(self).inset(32);
         make.height.equalTo(@(FSTControlHeightStandard));
         make.bottom.equalTo(self.mas_safeAreaLayoutGuideBottom).offset(-34);
+    }];
+}
+
+/// datePicker 无 align chip 时的「简单布局」约束；setup 初装与移除 chip 回退两处共用。
+- (void)applySimpleDatePickerConstraints {
+    [self.datePicker mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(kPickerTopOffsetSimple);
+        make.left.right.equalTo(self).inset(26);
+        make.height.equalTo(@(kPickerHeightSimple));
     }];
 }
 
@@ -116,11 +121,7 @@ static const CGFloat kPickerTopOffsetAligned = 22.0;
         self.alignControl = nil;
         self.alignIconView = nil;
         self.alignLabel = nil;
-        [self.datePicker mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.titleLabel.mas_bottom).offset(kPickerTopOffsetSimple);
-            make.left.right.equalTo(self).inset(26);
-            make.height.equalTo(@(kPickerHeightSimple));
-        }];
+        [self applySimpleDatePickerConstraints];
     }
 }
 

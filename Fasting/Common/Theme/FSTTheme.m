@@ -69,14 +69,20 @@ NSString *FSTFormatHHMMSS(NSTimeInterval seconds) {
     return [NSString stringWithFormat:@"%02ld:%02ld:%02ld", (long)hoursComponent, (long)minutesComponent, (long)secondsComponent];
 }
 
+/// NSDateFormatter 创建样板收口：en_US locale + 指定格式。各调用点保留独立 dispatch_once 缓存。
+static NSDateFormatter *FSTMakeFormatter(NSString *format) {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = format;
+    formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+    return formatter;
+}
+
 NSString *FSTFormatTimeOnly(NSDate *date) {
     if (!date) return @"";
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"HH:mm";
-        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+        formatter = FSTMakeFormatter(@"HH:mm");
     });
     return [formatter stringFromDate:date];
 }
@@ -90,9 +96,7 @@ NSString *FSTFormatRecordDateLine(NSDate *date) {
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"MMM d, hh:mm a";
-        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+        formatter = FSTMakeFormatter(@"MMM d, hh:mm a");
     });
     return [formatter stringFromDate:date];
 }
@@ -105,9 +109,7 @@ NSString *FSTFormatRelativeDay(NSDate *date) {
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"MMM d";
-        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+        formatter = FSTMakeFormatter(@"MMM d");
     });
     return [formatter stringFromDate:date];
 }
@@ -123,9 +125,7 @@ NSString *FSTFormatRecordFullTimeLowercase(NSDate *date) {
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"MMM d, h:mm a";
-        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+        formatter = FSTMakeFormatter(@"MMM d, h:mm a");
     });
     return FSTLowercaseMeridiem([formatter stringFromDate:date]);
 }
@@ -139,9 +139,7 @@ NSString *FSTFormatRecordEndTimeLowercase(NSDate *startDate, NSDate *endDate) {
     static NSDateFormatter *formatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"hh:mm a";
-        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+        formatter = FSTMakeFormatter(@"hh:mm a");
     });
     return FSTLowercaseMeridiem([formatter stringFromDate:endDate]);
 }
