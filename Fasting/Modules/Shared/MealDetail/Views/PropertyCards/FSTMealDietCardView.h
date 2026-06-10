@@ -8,16 +8,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FSTMealTypes.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FSTMealDietCardView : UIView
 
-/// 当前选中的饮食类型字符串（与 FSTMealRecord.dietType 同义）。
-/// 取值约定（5 选 1）："生酮饮食" / "低碳饮食" / "混合式饮食" / "高碳饮食" / "我不确定"。
+/// 当前选中的饮食类型（与 FSTMealRecord.dietType 同义）。
 /// 写入方：上游 VC 用 record.dietType 推入初值；用户点行也会修改此值。
 /// ⚠️ 当前没有 onChanged 回调 — VC 在保存时从本属性读取最新值并写回 record 草稿。
-@property (nonatomic, copy) NSString *dietType;
+@property (nonatomic, assign) FSTDietType dietType;
 
 @end
 

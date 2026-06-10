@@ -8,15 +8,13 @@
 
 @interface FSTMealDietCardView ()
 @property (nonatomic, strong) NSArray<UIControl *> *dietRows;
-@property (nonatomic, strong) NSArray<NSString *> *dietNames;
 @end
 
 @implementation FSTMealDietCardView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        _dietType = @"Not sure";
-        _dietNames = @[@"Keto", @"Low-carb", @"Mixed", @"High-carb", @"Not sure"];
+        _dietType = FSTDietTypeNotSure;
         [self fst_applyMealCardStyle];
         [self setupSubviews];
         [self refresh];
@@ -24,8 +22,8 @@
     return self;
 }
 
-- (void)setDietType:(NSString *)dietType {
-    _dietType = [dietType copy]; [self refresh];
+- (void)setDietType:(FSTDietType)dietType {
+    _dietType = dietType; [self refresh];
 }
 
 - (void)setupSubviews {
@@ -37,16 +35,20 @@
     rowsStack.spacing = 12;
     [self addSubview:rowsStack];
 
+    // 行顺序 == FSTDietType rawValue 顺序；emoji / subtitle 是本卡片私有展示描述，标题走 FSTDietTypeDisplayName。
     NSArray *itemDescriptors = @[
-        @[@"🥑", @"Keto", @"High fat, moderate protein, very low carbs"],
-        @[@"🥩", @"Low-carb", @"High protein and fat, low carbs"],
-        @[@"🍱", @"Mixed", @"Balanced carbs, protein and fat"],
-        @[@"🍕", @"High-carb", @"High carbs, moderate protein, low fat"],
-        @[@"🍪", @"Not sure", @""],
+        @[@"🥑", @"High fat, moderate protein, very low carbs"],
+        @[@"🥩", @"High protein and fat, low carbs"],
+        @[@"🍱", @"Balanced carbs, protein and fat"],
+        @[@"🍕", @"High carbs, moderate protein, low fat"],
+        @[@"🍪", @""],
     ];
     NSMutableArray *collectedRows = [NSMutableArray array];
     for (NSInteger index = 0; index < itemDescriptors.count; index++) {
-        UIControl *row = [self rowWithIcon:itemDescriptors[index][0] title:itemDescriptors[index][1] subtitle:itemDescriptors[index][2] tag:index];
+        UIControl *row = [self rowWithIcon:itemDescriptors[index][0]
+                                     title:FSTDietTypeDisplayName((FSTDietType)index)
+                                  subtitle:itemDescriptors[index][1]
+                                       tag:index];
         [rowsStack addArrangedSubview:row];
         [collectedRows addObject:row];
     }
@@ -71,7 +73,9 @@
     row.layer.borderWidth = 1.2;
     row.layer.borderColor = [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.32].CGColor;
     [row addTarget:self action:@selector(handleRowTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [row mas_makeConstraints:^(MASConstraintMaker *make) { make.height.equalTo(@74); }];
+    [row mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.equalTo(@74);
+    }];
 
     UILabel *iconLabel = [UILabel fst_labelWithText:icon font:FSTFontRegular(32) color:[UIColor blackColor]];
     UILabel *titleLabel = [UILabel fst_labelWithText:title font:FSTFontBold(17) color:[UIColor fst_textPrimary]];
@@ -97,7 +101,7 @@
 
 - (void)refresh {
     for (UIControl *row in self.dietRows) {
-        BOOL isSelected = [self.dietNames[row.tag] isEqualToString:self.dietType];
+        BOOL isSelected = (row.tag == self.dietType);
         row.alpha = isSelected ? 1.0 : 0.48;
         row.layer.borderColor = (isSelected ? [UIColor fst_primaryGreen] : [[UIColor fst_primaryGreen] colorWithAlphaComponent:0.32]).CGColor;
         row.layer.borderWidth = isSelected ? 1.8 : 1.2;
@@ -105,7 +109,7 @@
 }
 
 - (void)handleRowTapped:(UIControl *)row {
-    self.dietType = self.dietNames[row.tag];
+    self.dietType = row.tag;
 }
 
 @end

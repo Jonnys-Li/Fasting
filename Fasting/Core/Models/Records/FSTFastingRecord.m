@@ -36,6 +36,14 @@ static const NSInteger kDifficultyMediumThreshold = 18;
 
 @implementation FSTMealRecord
 
+- (instancetype)init {
+    if ((self = [super init])) {
+        // FSTDietTypeNotSure 的 rawValue 非 0，零初始化会落到 Keto，必须显式设默认。
+        _dietType = FSTDietTypeNotSure;
+    }
+    return self;
+}
+
 - (id)copyWithZone:(NSZone *)zone {
     FSTMealRecord *copy = [[FSTMealRecord alloc] init];
     copy.recordID          = self.recordID;

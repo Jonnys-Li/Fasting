@@ -99,8 +99,9 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 
 - (void)pushStateIntoCards {
     self.timeCardView.date          = self.mealRecord.date ?: [NSDate date];
-    self.slotCardView.mealCategory  = self.mealRecord.mealCategory ?: @"Meal";
-    self.dietCardView.dietType      = self.mealRecord.dietType ?: @"Not sure";
+    // 新建入口 mealRecord 为 nil；对 nil 发 enum 消息返回 0（= Keto），必须显式分支取 NotSure 默认。
+    self.slotCardView.mealCategory  = self.mealRecord ? self.mealRecord.mealCategory : FSTMealCategoryMeal;
+    self.dietCardView.dietType      = self.mealRecord ? self.mealRecord.dietType : FSTDietTypeNotSure;
     self.tasteCardView.tasteLevel   = self.mealRecord.tasteLevel;
     self.detailCardView.imagePath   = self.imagePath;
     self.detailCardView.detailDescription = self.mealRecord.detailDescription ?: @"";

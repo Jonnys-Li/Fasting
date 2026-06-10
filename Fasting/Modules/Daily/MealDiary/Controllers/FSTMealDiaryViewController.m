@@ -120,8 +120,8 @@
     for (NSUInteger i = 0; i < self.dayRecords.count; i++) {
         FSTMealRecord *record = self.dayRecords[i];
         FSTMealDiaryEntryRowView *rowView = [[FSTMealDiaryEntryRowView alloc] init];
-        rowView.category   = record.mealCategory ?: @"Meal";
-        rowView.dietType   = record.dietType ?: @"Not sure";
+        rowView.category   = record.mealCategory;
+        rowView.dietType   = record.dietType;
         rowView.tasteLevel = record.tasteLevel;
         rowView.dateText   = FSTFormatRelativeDateTime(record.date ?: [NSDate date]);
         rowView.onCardTapped = ^{

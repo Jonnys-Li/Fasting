@@ -10,16 +10,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FSTMealTypes.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FSTMealDiaryEntryRowView : UIView
 
-/// 类别（Meal / Snack 之类），nil 视为 "Meal"。
-@property (nonatomic, copy, nullable) NSString *category;
+/// 餐次类别。
+@property (nonatomic, assign) FSTMealCategory category;
 
-/// 饮食类型，nil 视为 "Not sure"。
-@property (nonatomic, copy, nullable) NSString *dietType;
+/// 饮食类型。
+@property (nonatomic, assign) FSTDietType dietType;
 
 /// 0=Hard / 1=Ok / 2=Easy 的主观评分。
 @property (nonatomic, assign) NSInteger tasteLevel;

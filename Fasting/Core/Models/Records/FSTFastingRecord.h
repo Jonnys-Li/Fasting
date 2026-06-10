@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FSTMealTypes.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -59,8 +60,8 @@ static inline CGFloat FSTWeightOrDefault(CGFloat value, CGFloat fallback) {
 
 @property (nonatomic, copy) NSString *recordID;
 @property (nonatomic, strong, nullable) NSDate *date;
-@property (nonatomic, copy, nullable) NSString *mealCategory;      ///< "正餐" / "零食"
-@property (nonatomic, copy, nullable) NSString *dietType;          ///< "生酮饮食" / "低碳饮食" / …
+@property (nonatomic, assign) FSTMealCategory mealCategory;        ///< 餐次类别（默认 Meal）
+@property (nonatomic, assign) FSTDietType dietType;                ///< 饮食类型（默认 NotSure，-init 显式设置）
 @property (nonatomic, assign) NSInteger tasteLevel;                ///< 0=糟糕, 1=还可以, 2=美味
 @property (nonatomic, copy, nullable) NSString *detailDescription;
 @property (nonatomic, copy, nullable) NSString *imagePath;         ///< "MealImages/{UUID}.jpg"

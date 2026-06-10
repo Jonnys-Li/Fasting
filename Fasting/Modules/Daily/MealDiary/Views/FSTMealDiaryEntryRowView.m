@@ -61,7 +61,7 @@ static const CGFloat kDotSize = 12;
     [self.cardView addTarget:self action:@selector(emitCardTapped)
             forControlEvents:UIControlEventTouchUpInside];
 
-    self.foodIconLabel = [UILabel fst_labelWithText:@"\U0001F37D"
+    self.foodIconLabel = [UILabel fst_labelWithText:FSTMealCategoryIconText(FSTMealCategoryMeal)
                                                font:FSTFontRegular(34)
                                               color:[UIColor blackColor]];
     self.foodIconLabel.textAlignment = NSTextAlignmentCenter;
@@ -69,8 +69,8 @@ static const CGFloat kDotSize = 12;
     self.foodIconLabel.layer.cornerRadius = FSTRadiusM;
     self.foodIconLabel.clipsToBounds = YES;
 
-    self.categoryChipLabel = [self pillLabelWithText:@"Meal"];
-    self.dietChipLabel     = [self pillLabelWithText:@"Not sure"];
+    self.categoryChipLabel = [self pillLabelWithText:FSTMealCategoryDisplayName(FSTMealCategoryMeal)];
+    self.dietChipLabel     = [self pillLabelWithText:FSTDietTypeDisplayName(FSTDietTypeNotSure)];
 
     self.feelingImageView = [[UIImageView alloc] init];
     self.feelingImageView.contentMode = UIViewContentModeScaleAspectFit;
@@ -139,17 +139,15 @@ static const CGFloat kDotSize = 12;
 
 #pragma mark - 属性同步
 
-- (void)setCategory:(NSString *)category {
-    _category = [category copy];
-    NSString *categoryText = category.length > 0 ? category : @"Meal";
-    self.categoryChipLabel.text = [NSString stringWithFormat:@"  %@  ", categoryText];
-    self.foodIconLabel.text = [categoryText isEqualToString:@"Snack"] ? @"\U0001F34E" : @"\U0001F37D";
+- (void)setCategory:(FSTMealCategory)category {
+    _category = category;
+    self.categoryChipLabel.text = [NSString stringWithFormat:@"  %@  ", FSTMealCategoryDisplayName(category)];
+    self.foodIconLabel.text = FSTMealCategoryIconText(category);
 }
 
-- (void)setDietType:(NSString *)dietType {
-    _dietType = [dietType copy];
-    NSString *dietText = dietType.length > 0 ? dietType : @"Not sure";
-    self.dietChipLabel.text = [NSString stringWithFormat:@"  %@  ", dietText];
+- (void)setDietType:(FSTDietType)dietType {
+    _dietType = dietType;
+    self.dietChipLabel.text = [NSString stringWithFormat:@"  %@  ", FSTDietTypeDisplayName(dietType)];
 }
 
 - (void)setTasteLevel:(NSInteger)tasteLevel {

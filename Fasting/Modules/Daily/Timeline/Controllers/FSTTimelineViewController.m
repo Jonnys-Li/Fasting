@@ -80,10 +80,14 @@
 
     self.latestMealRecord = [repository allMealRecords].firstObject;
     FSTMealRecord *mr = self.latestMealRecord;
-    [self.mealModuleView updateWithCategory:mr.mealCategory
-                                   dietType:mr.dietType
-                                 tasteLevel:mr.tasteLevel
-                                   dateText:mr ? FSTFormatRelativeDateTime(mr.date ?: [NSDate date]) : nil];
+    if (mr) {
+        [self.mealModuleView updateWithMealCategory:mr.mealCategory
+                                           dietType:mr.dietType
+                                         tasteLevel:mr.tasteLevel
+                                           dateText:FSTFormatRelativeDateTime(mr.date ?: [NSDate date])];
+    } else {
+        [self.mealModuleView showEmptyMealState];
+    }
 }
 
 #pragma mark - 事件

@@ -243,7 +243,9 @@ static const CGFloat kChipHeight   = 34;
     UILabel *qLabel = [UILabel fst_labelWithText:@"?" font:FSTFontBold(15) color:[UIColor fst_mealDateText]];
     qLabel.textAlignment = NSTextAlignmentCenter;
     [badge addSubview:qLabel];
-    [qLabel mas_makeConstraints:^(MASConstraintMaker *make) { make.center.equalTo(badge); }];
+    [qLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(badge);
+    }];
     return badge;
 }
 
@@ -266,23 +268,24 @@ static const CGFloat kChipHeight   = 34;
 
 #pragma mark - 数据刷新
 
-- (void)updateWithCategory:(nullable NSString *)category
-                  dietType:(nullable NSString *)dietType
-                tasteLevel:(NSInteger)tasteLevel
-                  dateText:(nullable NSString *)dateText {
-    self.hasRecord = (category != nil);
-    if (!self.hasRecord) {
-        [self showEmptyState:YES];
-        return;
-    }
+- (void)updateWithMealCategory:(FSTMealCategory)category
+                      dietType:(FSTDietType)dietType
+                    tasteLevel:(NSInteger)tasteLevel
+                      dateText:(nullable NSString *)dateText {
+    self.hasRecord = YES;
     [self showEmptyState:NO];
 
     self.timeLabel.text = dateText ?: @"";
-    self.foodIconLabel.text = [category isEqualToString:@"Snack"] ? @"\U0001F34E" : @"\U0001F37D";
-    self.categoryChipLabel.text = [NSString stringWithFormat:@"  %@  ", category ?: @"Meal"];
-    self.dietChipLabel.text = [NSString stringWithFormat:@"  %@  ", dietType ?: @"Not sure"];
+    self.foodIconLabel.text = FSTMealCategoryIconText(category);
+    self.categoryChipLabel.text = [NSString stringWithFormat:@"  %@  ", FSTMealCategoryDisplayName(category)];
+    self.dietChipLabel.text = [NSString stringWithFormat:@"  %@  ", FSTDietTypeDisplayName(dietType)];
 
     self.feelingImageView.image = [UIImage fst_ratingImageForLevel:tasteLevel];
+}
+
+- (void)showEmptyMealState {
+    self.hasRecord = NO;
+    [self showEmptyState:YES];
 }
 
 #pragma mark - 事件
