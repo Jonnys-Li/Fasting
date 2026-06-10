@@ -93,7 +93,9 @@
         make.centerY.equalTo(valueBoxView.mas_bottom);
         make.size.mas_equalTo(CGSizeMake(12, 12));
     }];
-    [self.valueLabel mas_makeConstraints:^(MASConstraintMaker *make) { make.center.equalTo(valueBoxView); }];
+    [self.valueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(valueBoxView);
+    }];
     [self.unitSuffixLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(valueBoxView.mas_right).offset(10);
         make.bottom.equalTo(valueBoxView).offset(-12);

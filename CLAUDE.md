@@ -217,13 +217,16 @@ vc.primaryHandler = ^{ ... };
 
 R6 处理的是「两份并列长 init 仅首参数前缀不同」的细分 smell（用 enum 合并）。R3 是上位原则——即便 R6 合并完，单 init 仍 ≥3 参且大多是配置，就该按 R3 继续 property 化。本规则覆盖 R6 残留的"合并后仍过长"情况。
 
-### R4. block 回调不要写成单行花括号
+### R4. block 字面量不要写成单行花括号（含回调与 Masonry 约束 block）
+
+适用于一切 block 字面量——回调赋值、Masonry `mas_makeConstraints:` 等都算。最初只约束回调，后在清理中发现单行 Masonry block 与多行写法混排破坏扫读一致性，遂扩展为全量 block。
 
 **❌ 不要这么写：**
 
 ```objc
 self.readyView.onChangePlanTapped = ^{ [weakSelf handleSoftChangePlanTapped]; };
 self.pickerView.onPlanPicked = ^(FSTPlan *picked) { [weakSelf handlePlanTapped:picked]; };
+[iconLabel mas_makeConstraints:^(MASConstraintMaker *make) { make.center.equalTo(iconBox); }];
 ```
 
 **✅ 一律展开多行：**
@@ -236,6 +239,10 @@ self.readyView.onChangePlanTapped = ^{
 self.pickerView.onPlanPicked = ^(FSTPlan *picked) {
     [weakSelf handlePlanTapped:picked];
 };
+
+[iconLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    make.center.equalTo(iconBox);
+}];
 ```
 
 ### R5. 单例初始化副作用放 `-init`，禁止 `+sharedManager` 二段式装配

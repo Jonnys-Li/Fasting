@@ -66,8 +66,12 @@
         make.top.bottom.right.equalTo(self);
         make.width.equalTo(self).multipliedBy(0.5);
     }];
-    [self.kgLabel mas_makeConstraints:^(MASConstraintMaker *make) { make.center.equalTo(kgChipControl); }];
-    [self.lbLabel mas_makeConstraints:^(MASConstraintMaker *make) { make.center.equalTo(lbChipControl); }];
+    [self.kgLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(kgChipControl);
+    }];
+    [self.lbLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(lbChipControl);
+    }];
 }
 
 - (UILabel *)chipLabelWithText:(NSString *)text {
