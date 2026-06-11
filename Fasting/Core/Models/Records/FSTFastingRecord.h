@@ -43,7 +43,7 @@ static inline CGFloat FSTWeightOrDefault(CGFloat value, CGFloat fallback) {
 @property (nonatomic, copy, nullable) NSString *note;
 
 - (NSTimeInterval)durationSeconds;  ///< endDate - startDate
-- (NSInteger)difficultyLevel;       ///< 基于 fastingHours 反查 1~4
+- (NSInteger)difficultyLevel;       ///< 基于 fastingHours 反查 1~3（≥20→3，≥18→2，其余→1）
 
 @end
 
@@ -64,7 +64,7 @@ static inline CGFloat FSTWeightOrDefault(CGFloat value, CGFloat fallback) {
 @property (nonatomic, assign) FSTDietType dietType;                ///< 饮食类型（默认 NotSure，-init 显式设置）
 @property (nonatomic, assign) NSInteger tasteLevel;                ///< 0=糟糕, 1=还可以, 2=美味
 @property (nonatomic, copy, nullable) NSString *detailDescription;
-@property (nonatomic, copy, nullable) NSString *imagePath;         ///< "MealImages/{UUID}.jpg"
+@property (nonatomic, copy, nullable) NSString *imagePath;         ///< 照片文件名 "{UUID}.jpg"（目录 Documents/meal-images 由读取方拼接，勿存绝对路径——容器 UUID 随 App 更新变化）
 
 @end
 

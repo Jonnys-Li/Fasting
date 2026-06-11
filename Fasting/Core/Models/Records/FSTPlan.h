@@ -24,7 +24,7 @@ typedef NS_ENUM(NSInteger, FSTPlanType) {
 @property (nonatomic, copy) NSString *name;             ///< 展示名 "14-10" / "16-8" / "18-6" / "20-4"（仅展示，非身份）
 @property (nonatomic, assign) NSInteger fastingHours;    ///< 断食小时数
 @property (nonatomic, assign) NSInteger eatingHours;     ///< 吃窗口小时数，与 fastingHours 之和 = 24
-@property (nonatomic, assign) NSInteger difficultyLevel; ///< 难度 1~4
+@property (nonatomic, assign) NSInteger difficultyLevel; ///< 难度 1~3（内置方案为 1/1/2/3）
 
 /// 返回 4 个内置 daily plan（14-10 / 16-8 / 18-6 / 20-4）。每次调用返回新对象。
 + (NSArray<FSTPlan *> *)defaultDailyPlans;

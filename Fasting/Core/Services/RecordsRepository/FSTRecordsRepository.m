@@ -83,7 +83,7 @@ static NSString * const FSTMealRecordsKey = @"kFSTMealRecords";
     if (existingIndex != NSNotFound) {
         self.records[existingIndex] = record;
     } else {
-        [self.records insertObject:record atIndex:0];
+        [self.records addObject:record];
     }
     [self.records sortUsingComparator:^NSComparisonResult(FSTFastingRecord *a, FSTFastingRecord *b) {
         return [b.endDate compare:a.endDate];
@@ -118,7 +118,7 @@ static NSString * const FSTMealRecordsKey = @"kFSTMealRecords";
     if (existingIndex != NSNotFound) {
         self.mealRecords[existingIndex] = record;
     } else {
-        [self.mealRecords insertObject:record atIndex:0];
+        [self.mealRecords addObject:record];
     }
     [self.mealRecords sortUsingComparator:^NSComparisonResult(FSTMealRecord *a, FSTMealRecord *b) {
         return [b.date compare:a.date];

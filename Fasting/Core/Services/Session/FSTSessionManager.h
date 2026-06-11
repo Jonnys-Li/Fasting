@@ -7,14 +7,15 @@
 //  Session 字段族：
 //    - 计划：currentPlan + hasCompletedOnboarding
 //    - 进行中断食：activeStartDate + activeEndOverrideDate
-//    - 吃窗口：eatingWindowAnchorDate
+//    - 吃窗口：eatingWindowAnchorDate（仅零记录冷启动兜底，见 FSTNextFastService）
 //    - 预约：scheduledReadySource + scheduledReadyAnchorDate
 //    - 一次性 token：pendingActiveStartDatePrompt
 //
 //  历史记录（records / mealRecords）已搬到 [FSTRecordsRepository sharedRepository]，调用方直接用 repository。
 //  finishFastingWithRecord: 是跨域的：先写 record（转发到 repository）再清 active 状态，由本类编排。
 //
-//  写入约定：任何 mutation 都走 -persistAllState（统一持久化）。
+//  写入约定：任何 mutation 都走 -persistAllState（统一持久化）；
+//  唯一例外 preferredWeightUnit —— 自身 setter 直写 defaults，不在 saveAllForSession 范围内。
 //
 //  通知：records / mealRecords 增删通过 FSTRecordsDidChangeNotification（见 FSTRecordsRepository.h）；
 //  session 字段变更目前不发通知，VC 通过 refreshTimer + viewWillAppear + UIApplicationWillEnterForegroundNotification 自驱动。
@@ -78,7 +79,6 @@ typedef NS_ENUM(NSInteger, FSTScheduledReadySource) {
 @property (nonatomic, strong, readonly, nullable) NSDate *scheduledReadyAnchorDate;
 - (void)markScheduledReadyWithSource:(FSTScheduledReadySource)source anchorDate:(NSDate * _Nullable)anchorDate;
 - (void)clearScheduledReadyState;
-- (void)beginEatingWindowFromDate:(NSDate * _Nullable)date;
 
 /// 原子化"切到 scheduled-ready 态"：cancelActiveFasting + setNextFastingStartDate +
 /// markScheduledReadyWithSource 三步合一。调用方：在 active 中编辑 startDate 到未来、或

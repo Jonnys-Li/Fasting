@@ -12,9 +12,9 @@
 #import "../Fasting/Core/Services/Session/FSTFastingRecordBuilder.m"
 #import "../Fasting/Modules/Fasting/Idle/Ready/FSTDailyPlanReadyDisplayState.m"
 
-// Note: FSTFastingTimingService / FSTEatingWindowService 已在 MVC 重构中 inline 进
-// FSTActiveFastingViewController / FSTFastingIdleViewController（单一调用点）。
-// 这里只保留对 FSTRecordsRepository 排序 / upsert / delete 的回归测试。
+// Note: 本文件聚合 Core 全部测试类（Repository / DisplayState / NextFast / Lifecycle / Persistence / Builder）——
+// 测试 target 直接 #import 源 .m，拆成多文件会让同一 .m 在多个 TU 重复编译产生重复符号
+// （详见下方 FSTDailyPlanReadyDisplayStateTests 前的注释）。
 
 @interface FSTRecordsRepositoryTests : XCTestCase
 @end
@@ -390,11 +390,11 @@ static FSTPlan *FSTTestPlan168(void) {
                                meal.timeIntervalSince1970 + 8 * 3600.0, 0.001);
 }
 
-// 第 4 级：无 records 用 eatingWindowAnchorDate。
+// 第 4 级：无 records 用 eatingWindowAnchorDate（直接设私有字段——测试 TU 经 .m import 可见 Internal 扩展）。
 - (void)testUsesEatingWindowAnchorWhenNoRecords {
     FSTSessionManager *session = [self sessionWithPlan];
     NSDate *anchor = [NSDate dateWithTimeIntervalSince1970:3000000];
-    [session beginEatingWindowFromDate:anchor];
+    session.eatingWindowAnchorDate = anchor;
 
     XCTAssertEqualWithAccuracy([session nextFastingStartDate].timeIntervalSince1970,
                                anchor.timeIntervalSince1970 + 8 * 3600.0, 0.001);
@@ -746,7 +746,7 @@ static FSTPlan *FSTTestPlan168(void) {
     XCTAssertEqualObjects(record.note, @"");  // nil note → @""
 }
 
-// 钉住现状：无 plan 时 fallback 只兜 planName（@"14-10"），fastingHours 仍为 0。
+// 无 plan 时兜底到内置首方案 14-10：planName 与 fastingHours 同源，杜绝"14-10 但 0 小时"。
 - (void)testBuilderFallsBackTo1410WithoutPlan {
     NSDate *start = [NSDate dateWithTimeIntervalSince1970:1000000];
 
@@ -754,7 +754,7 @@ static FSTPlan *FSTTestPlan168(void) {
                                                      80.0, 82.0, 70.0, 1, nil, NO);
 
     XCTAssertEqualObjects(record.planName, @"14-10");
-    XCTAssertEqual(record.fastingHours, 0);
+    XCTAssertEqual(record.fastingHours, 14);
 }
 
 // existing 的身份字段（recordID / planName / fastingHours）不被覆盖；起止/体重/感受更新。

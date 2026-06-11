@@ -3,7 +3,7 @@
 //  Fasting
 //
 //  集中 SessionManager 所有 mutation：start / cancel / finish / clear / switch / scheduleReady /
-//  beginEatingWindow / schedule / edit start / edit end。每个方法直接改 session 字段后调用
+//  schedule / edit start / edit end。每个方法直接改 session 字段后调用
 //  -persistAllState。重点跨域逻辑（如 finish 写 record + 清字段）的注释保留。
 //
 
@@ -36,6 +36,8 @@
     [session persistAllState];
 }
 
+/// 取消进行中的断食（不写 record）。eatingWindowAnchorDate 拨到 now 只影响零记录兜底
+/// （NextFastService 第 4 级）；一旦有任何断食/餐食记录，下一次起点仍按最近记录推导。
 + (void)cancelSession:(FSTSessionManager *)session {
     session.activeStartDate = nil;
     session.activeEndOverrideDate = nil;
@@ -48,8 +50,8 @@
 ///   1) 先写 records — Repository 内部发 FSTRecordsDidChangeNotification，
 ///      History/Timeline/MealDiary 这些只关心列表的页面立即刷新；
 ///   2) 清空 active 字段；
-///   3) eatingWindowAnchorDate = endDate（或 now 兜底）— 作为吃窗口"0 分钟"起点，
-///      让 FSTEatingWindowService 的 elapsed 从结束时刻开始算；
+///   3) eatingWindowAnchorDate = endDate（或 now 兜底）— 仅维护零记录兜底锚点；
+///      吃窗口展示实际由 FSTDailyPlanReadyDisplayState 按 repository.latestFastingEndDate 推导；
 ///   4) 清 scheduledReady — 防止下一轮吃窗口继承上次的预约残留状态；
 ///   5) 统一 persist — DailyPlan VC 通过 viewWillAppear / refreshTimer 在切回时自动切到 Eating Time 视图。
 + (void)finishSession:(FSTSessionManager *)session record:(FSTFastingRecord *)record {
@@ -107,18 +109,7 @@ scheduledReadyWithSource:(FSTScheduledReadySource)source
     [session persistAllState];
 }
 
-#pragma mark - 吃窗口 / 预约未来起点
-
-+ (void)beginEatingWindowForSession:(FSTSessionManager *)session fromDate:(NSDate *)date {
-    session.activeStartDate = nil;
-    session.activeEndOverrideDate = nil;
-    session.eatingWindowAnchorDate = date ?: [NSDate date];
-    session.scheduledReadySource = FSTScheduledReadySourceNone;
-    session.scheduledReadyAnchorDate = nil;
-    session.hasCompletedOnboarding = YES;
-    [FSTSessionPersistenceService clearNextStartOverride];
-    [session persistAllState];
-}
+#pragma mark - 预约未来起点
 
 + (void)scheduleSession:(FSTSessionManager *)session
            atFutureDate:(NSDate *)futureDate

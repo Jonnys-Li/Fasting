@@ -2,7 +2,8 @@
 //  FSTSessionLifecycleService.h
 //  Fasting
 //
-//  集中 SessionManager 所有 mutation 入口。每个方法直接改 session 字段并触发持久化 + 通知。
+//  集中 SessionManager 所有 mutation 入口。每个方法直接改 session 字段并触发持久化
+//  （session 字段变更不发通知，VC 自驱动刷新 —— 见 FSTSessionManager.h 头注释）。
 //
 
 #import "FSTSessionManager.h"
@@ -22,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 scheduledReadyWithSource:(FSTScheduledReadySource)source
          anchorDate:(NSDate *_Nullable)anchorDate;
 + (void)clearScheduledReadyForSession:(FSTSessionManager *)session;
-+ (void)beginEatingWindowForSession:(FSTSessionManager *)session fromDate:(NSDate *_Nullable)date;
 + (void)scheduleSession:(FSTSessionManager *)session
            atFutureDate:(NSDate *)futureDate
                  source:(FSTScheduledReadySource)source;

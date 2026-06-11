@@ -8,7 +8,7 @@
 //       保存调 [[FSTRecordsRepository sharedRepository] addOrUpdateMealRecord:] 插入新记录。
 //    2) initWithMealRecord:record — "编辑"场景：用户在 MealDiary 点已有记录后 push 进来；
 //       保存同样走 [repository addOrUpdateMealRecord:]（recordID 已有，按 ID 替换）。
-//  - 图片：用户在 ContentCard 点拍照/选图 → [FSTMealImageService saveImage:] 落盘 → 路径写回 record.imagePath。
+//  - 图片：用户在 ContentCard 点拍照/选图 → FSTMealDetailSaveImage 落盘 → 文件名写回 record.imagePath。
 //
 
 #import "FSTBaseViewController.h"

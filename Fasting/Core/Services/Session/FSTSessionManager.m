@@ -113,10 +113,6 @@
     [FSTSessionLifecycleService clearScheduledReadyForSession:self];
 }
 
-- (void)beginEatingWindowFromDate:(NSDate *)date {
-    [FSTSessionLifecycleService beginEatingWindowForSession:self fromDate:date];
-}
-
 - (void)scheduleFastingAtFutureDate:(NSDate *)futureDate source:(FSTScheduledReadySource)source {
     [FSTSessionLifecycleService scheduleSession:self atFutureDate:futureDate source:source];
 }

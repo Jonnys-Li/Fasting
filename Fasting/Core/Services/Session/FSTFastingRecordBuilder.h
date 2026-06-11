@@ -4,7 +4,7 @@
 //
 //  把 AddRecord / QuickAddRecord 两个 VC 重复的「构造 FSTFastingRecord 草稿」逻辑抽到一处。
 //  默认值从 [FSTSessionManager sharedManager].currentPlan 派生（planName / fastingHours），
-//  recordID 缺省生成。
+//  无 plan 时兜底取 [FSTPlan defaultDailyPlans].firstObject（14-10）；recordID 缺省生成。
 //
 
 #import <Foundation/Foundation.h>

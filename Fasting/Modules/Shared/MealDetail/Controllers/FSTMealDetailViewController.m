@@ -17,7 +17,8 @@
 #import "FSTRecordsRepository.h"
 #import "FSTTheme.h"
 
-/// 把 UIImage 压缩到 0.82 质量并写入 Documents/meal-images/{UUID}.jpg；返回完整路径或 nil。
+/// 把 UIImage 压缩到 0.82 质量并写入 Documents/meal-images/{UUID}.jpg；返回文件名（"{UUID}.jpg"）或 nil。
+/// 只持久化文件名——容器路径随 App 更新变化，绝对路径落盘后必失效；读取方按目录自行拼接。
 /// 0.82 = 食物照片体积/画质的最优拐点（再高肉眼难分辨但文件大幅增长）。
 static NSString *FSTMealDetailSaveImage(UIImage *image) {
     if (!image) return nil;
@@ -25,8 +26,9 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
     if (!imageData) return nil;
     NSString *directory = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/meal-images"];
     [[NSFileManager defaultManager] createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:nil];
-    NSString *filePath = [directory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", [[NSUUID UUID] UUIDString]]];
-    return [imageData writeToFile:filePath atomically:YES] ? filePath : nil;
+    NSString *fileName = [NSString stringWithFormat:@"%@.jpg", [[NSUUID UUID] UUIDString]];
+    NSString *filePath = [directory stringByAppendingPathComponent:fileName];
+    return [imageData writeToFile:filePath atomically:YES] ? fileName : nil;
 }
 
 @interface FSTMealDetailViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
@@ -119,10 +121,10 @@ static NSString *FSTMealDetailSaveImage(UIImage *image) {
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey,id> *)info {
     UIImage *image = info[UIImagePickerControllerOriginalImage];
-    NSString *filePath = FSTMealDetailSaveImage(image);
-    if (filePath) {
-        self.imagePath = filePath;
-        self.detailCardView.imagePath = filePath;
+    NSString *fileName = FSTMealDetailSaveImage(image);
+    if (fileName) {
+        self.imagePath = fileName;
+        self.detailCardView.imagePath = fileName;
     }
     [picker dismissViewControllerAnimated:YES completion:nil];
 }

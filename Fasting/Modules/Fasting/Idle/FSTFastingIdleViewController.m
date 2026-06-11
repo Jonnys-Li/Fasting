@@ -382,7 +382,7 @@ static const CGFloat kResetButtonHeight = 38;
             [manager clearCurrentPlan];
         } else if (source == FSTScheduledReadySourceFromActiveSession) {
             // 与 PreStart 行为对齐：Abort plan 的语义就是"放弃这次计划"，应回到 Plan Picker，
-            // 而不是转入"普通进食窗口"（原 beginEatingWindowFromDate: 行为与设计意图不符）。
+            // 而不是转入"普通进食窗口"。
             [manager clearCurrentPlan];
         } else {
             [manager clearScheduledReadyState];
