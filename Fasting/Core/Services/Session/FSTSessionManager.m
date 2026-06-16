@@ -17,6 +17,11 @@
 #import "FSTSessionLifecycleService.h"
 #import "FSTNextFastService.h"
 
+@interface FSTSessionManager ()
+/// 所有会话字段的真正存储（R14）。公开只读 / +Internal readwrite 的字段属性全部转发到这里。
+@property (nonatomic, strong) FSTSessionState *state;
+@end
+
 @implementation FSTSessionManager
 
 + (instancetype)sharedManager {
@@ -32,18 +37,91 @@
 
 - (instancetype)init {
     if (self = [super init]) {
+        // state 必须先于 loadSession 建好：下面所有字段 setter 都转发到 self.state，
+        // 若此时 state 为 nil，load 写入会 message nil 而静默丢值。
+        self.state = [[FSTSessionState alloc] init];
         [FSTSessionPersistenceService loadSession:self];
     }
     return self;
 }
 
-- (void)setPreferredWeightUnit:(FSTWeightUnit)preferredWeightUnit {
-    _preferredWeightUnit = preferredWeightUnit;
-    [FSTSessionPersistenceService setPreferredWeightUnit:preferredWeightUnit];
-}
-
 - (void)persistAllState {
     [FSTSessionPersistenceService saveAllForSession:self];
+}
+
+#pragma mark - 字段存储转发（R14：真正存储在 FSTSessionState，本类只转发）
+
+- (FSTPlan *)currentPlan {
+    return self.state.currentPlan;
+}
+
+- (void)setCurrentPlan:(FSTPlan *)currentPlan {
+    self.state.currentPlan = currentPlan;
+}
+
+- (BOOL)hasCompletedOnboarding {
+    return self.state.hasCompletedOnboarding;
+}
+
+- (void)setHasCompletedOnboarding:(BOOL)hasCompletedOnboarding {
+    self.state.hasCompletedOnboarding = hasCompletedOnboarding;
+}
+
+- (NSDate *)activeStartDate {
+    return self.state.activeStartDate;
+}
+
+- (void)setActiveStartDate:(NSDate *)activeStartDate {
+    self.state.activeStartDate = activeStartDate;
+}
+
+- (NSDate *)activeEndOverrideDate {
+    return self.state.activeEndOverrideDate;
+}
+
+- (void)setActiveEndOverrideDate:(NSDate *)activeEndOverrideDate {
+    self.state.activeEndOverrideDate = activeEndOverrideDate;
+}
+
+- (NSDate *)eatingWindowAnchorDate {
+    return self.state.eatingWindowAnchorDate;
+}
+
+- (void)setEatingWindowAnchorDate:(NSDate *)eatingWindowAnchorDate {
+    self.state.eatingWindowAnchorDate = eatingWindowAnchorDate;
+}
+
+- (FSTScheduledReadySource)scheduledReadySource {
+    return self.state.scheduledReadySource;
+}
+
+- (void)setScheduledReadySource:(FSTScheduledReadySource)scheduledReadySource {
+    self.state.scheduledReadySource = scheduledReadySource;
+}
+
+- (NSDate *)scheduledReadyAnchorDate {
+    return self.state.scheduledReadyAnchorDate;
+}
+
+- (void)setScheduledReadyAnchorDate:(NSDate *)scheduledReadyAnchorDate {
+    self.state.scheduledReadyAnchorDate = scheduledReadyAnchorDate;
+}
+
+- (BOOL)pendingActiveStartDatePrompt {
+    return self.state.pendingActiveStartDatePrompt;
+}
+
+- (void)setPendingActiveStartDatePrompt:(BOOL)pendingActiveStartDatePrompt {
+    self.state.pendingActiveStartDatePrompt = pendingActiveStartDatePrompt;
+}
+
+- (FSTWeightUnit)preferredWeightUnit {
+    return self.state.preferredWeightUnit;
+}
+
+- (void)setPreferredWeightUnit:(FSTWeightUnit)preferredWeightUnit {
+    self.state.preferredWeightUnit = preferredWeightUnit;
+    [FSTSessionPersistenceService setPreferredWeightUnit:preferredWeightUnit];
 }
 
 #pragma mark - Active state (纯派生 getter，无副作用)

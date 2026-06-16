@@ -15,6 +15,7 @@ static const NSInteger kDefaultFeelingLevel = 1;
 + (instancetype)fst_recordWithDictionary:(NSDictionary *)dictionary {
     FSTFastingRecord *record = [[FSTFastingRecord alloc] init];
     record.recordID     = dictionary[@"recordID"] ?: [[NSUUID UUID] UUIDString];
+    record.planType     = (FSTPlanType)[dictionary[@"planType"] integerValue];  // 缺省 0 = FSTPlanTypeCustom（兜底旧数据）
     record.planName     = dictionary[@"planName"] ?: @"";
     record.fastingHours = [dictionary[@"fastingHours"] integerValue];
     NSNumber *startTimeInterval = dictionary[@"startTimeInterval"];
@@ -34,6 +35,7 @@ static const NSInteger kDefaultFeelingLevel = 1;
 - (NSDictionary *)fst_dictionaryRepresentation {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     dictionary[@"recordID"]           = self.recordID ?: [[NSUUID UUID] UUIDString];
+    dictionary[@"planType"]           = @(self.planType);
     dictionary[@"planName"]           = self.planName ?: @"";
     dictionary[@"fastingHours"]       = @(self.fastingHours);
     if (self.startDate) dictionary[@"startTimeInterval"] = @(self.startDate.timeIntervalSince1970);

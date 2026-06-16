@@ -21,7 +21,10 @@ FSTFastingRecord *FSTBuildFastingRecord(FSTFastingRecord *existing,
     FSTPlan *fallbackPlan = [FSTSessionManager sharedManager].currentPlan ?: [FSTPlan defaultDailyPlans].firstObject;
     FSTFastingRecord *record = existing ?: [[FSTFastingRecord alloc] init];
     record.recordID     = record.recordID.length ? record.recordID : [[NSUUID UUID] UUIDString];
-    record.planName     = record.planName.length ? record.planName : fallbackPlan.name;
+    // planType / planName 同源：新建（planName 为空）取 fallback，编辑则保留 record 既有身份（见 R13）。
+    BOOL hasPlanIdentity = record.planName.length > 0;
+    record.planType     = hasPlanIdentity ? record.planType : fallbackPlan.type;
+    record.planName     = hasPlanIdentity ? record.planName : fallbackPlan.name;
     record.fastingHours = record.fastingHours > 0 ? record.fastingHours : fallbackPlan.fastingHours;
     record.startDate    = startDate;
     record.endDate      = endDate;

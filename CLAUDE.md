@@ -470,6 +470,63 @@ imageView.clipsToBounds = YES;               // ✅ 与 cornerRadius 配套
 
 （注：本规则只针对「滚动视图嵌套」这一窄问题，不重提此前被回退的 RootView / 容器 autolayout 范式。）
 
+### R13. 持久化模型的「身份」字段用 enum type，不要用展示名字符串（R9 在模型层的延伸）
+
+R9 管「运行时判断别拿 name / title 字符串」；R13 把同一原则推到**持久化数据模型的存储**：一个 record / model 要表达「它是哪个方案 / 哪个类别」时，身份存 `XxxType` 枚举；展示名 `name` 只作展示，且**仅当存在自定义项、名字无法从枚举反推时才保留**。
+
+判定 smell：model 里出现 `NSString *xxxName` 承担「是哪一个」的身份职责（如 `FSTFastingRecord` 早期只存 `planName=@"16-8"`）。展示名会改、会本地化、不可拓展，不该当身份。
+
+范例（已是正确形态）：`FSTPlan`（`type` 身份 / `name` 仅展示）、`FSTMealRecord`（`mealCategory` / `dietType` 枚举 + `FSTMealCategoryDisplayName()` / `FSTDietTypeDisplayName()` 派生展示名）。
+
+**❌ 不要这么写：**
+
+```objc
+@property (nonatomic, copy, nullable) NSString *planName;   // 既当展示又当身份
+```
+
+**✅ 正确写法：**
+
+```objc
+@property (nonatomic, assign) FSTPlanType planType;         // 身份（持久化为整数；缺省 0 = Custom，兜底旧数据）
+@property (nonatomic, copy, nullable) NSString *planName;   // 仅展示（自定义方案名用户任取，故保留）
+```
+
+持久化时身份与展示名都写（`dictionary[@"planType"] = @(self.planType);`），读回时身份缺省落 `FSTXxxTypeCustom`。
+
+### R14. 单例 / 服务的状态字段收敛进数据 model，manager 只持有并转发
+
+判定 smell：一个 manager / service 顶部挂着一长串状态 property（plan、各种 date、各种 flag），想确认「这个状态到底存在哪」要在 manager 里翻；持久化映射又散在另一处。
+
+正确：把这组状态字段定义进 `Core/Models/` 下的一个**纯数据 model**（如 `FSTSessionState`），manager 持有一个实例并把公开 getter / setter **转发**给它——字段定义集中、易找、易持久化、易单测；manager 只做编排（生命周期、派生计算、委托 service），不再是字段仓库。两条配套约束：
+
+- **层级方向**：model 属 `Core/Models`，**不得反向 import 任何 Service**；相关 domain enum（如 `FSTScheduledReadySource`）随字段一起挪进 model 头文件，manager 头 `#import` 该 model 头以转发枚举与方法签名（外部引用零改动）。
+- **初始化顺序**：manager `-init` 必须**先建好 model 实例再 load / 装配**——否则转发 setter 在 model 为 nil 时 message nil 静默丢值。
+
+**❌ 不要这么写：**
+
+```objc
+// FSTSessionManager 上平铺 9 个状态 property，散落难找，持久化映射又在另一个文件
+@property (nonatomic, strong, readonly, nullable) FSTPlan *currentPlan;
+@property (nonatomic, strong, readonly, nullable) NSDate *activeStartDate;
+// … 另外 7 个
+```
+
+**✅ 正确写法：**
+
+```objc
+// 字段集中定义在 FSTSessionState（model）；manager 私有持有 state 并转发：
+@property (nonatomic, strong) FSTSessionState *state;   // class extension 私有
+
+- (FSTPlan *)currentPlan {
+    return self.state.currentPlan;
+}
+- (void)setCurrentPlan:(FSTPlan *)currentPlan {
+    self.state.currentPlan = currentPlan;
+}
+```
+
+公开 API 形状不变（仍是只读 property），故所有 VC / Service 调用方零改动；持久化 service 经转发属性收发，亦不感知。
+
 ---
 
 ## When adding files

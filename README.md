@@ -360,6 +360,8 @@ xcodebuild -workspace Fasting.xcworkspace -scheme Fasting \
 | **R10** | UIView / UIControl 子类重写 `initWithFrame:`（非 `-init`）；init 顺序「数据 → 子视图 → 布局/刷新」 | `9aaf5d0` |
 | **R11** | 没 cornerRadius、内容不溢出，就不要设 `clipsToBounds` / `masksToBounds` | `2722f6f` |
 | **R12** | 避免不必要的嵌套滚动视图；静态固定内容用 `UIStackView` 承载 | `2722f6f` |
+| **R13** | 持久化模型身份字段用 `XxxType` 枚举，展示名只作展示（R9 在模型层延伸）；`FSTFastingRecord` 加 `planType` | —（本次） |
+| **R14** | 单例 / 服务状态字段收敛进 `Core/Models` 纯数据 model，manager 持有并转发；`FSTSessionState` | —（本次） |
 
 ---
 

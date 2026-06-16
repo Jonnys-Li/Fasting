@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "FSTMealTypes.h"
+#import "FSTPlan.h"   // FSTPlanType（记录的方案身份，见 R13）
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,7 +32,8 @@ static inline CGFloat FSTWeightOrDefault(CGFloat value, CGFloat fallback) {
 @interface FSTFastingRecord : NSObject
 
 @property (nonatomic, copy) NSString *recordID;             ///< UUID 主键
-@property (nonatomic, copy, nullable) NSString *planName;   ///< 断食时使用的计划名（如 "16-8"）
+@property (nonatomic, assign) FSTPlanType planType;         ///< 断食所用方案的身份（区分内置方案用它，不要用 name；见 R13）
+@property (nonatomic, copy, nullable) NSString *planName;   ///< 方案展示名（如 "16-8"）；仅展示，身份见 planType。自定义方案名用户任取，故保留
 @property (nonatomic, assign) NSInteger fastingHours;       ///< 目标时长（小时），写入时 = FSTPlan.fastingHours
 @property (nonatomic, strong, nullable) NSDate *startDate;
 @property (nonatomic, strong, nullable) NSDate *endDate;

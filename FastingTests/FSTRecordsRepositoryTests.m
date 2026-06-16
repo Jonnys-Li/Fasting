@@ -4,6 +4,7 @@
 #import "../Fasting/Core/Models/Records/FSTMealRecord+Persistence.m"
 #import "../Fasting/Core/Models/Records/FSTPlan.m"
 #import "../Fasting/Core/Models/Records/FSTPlan+Persistence.m"
+#import "../Fasting/Core/Models/Session/FSTSessionState.m"
 #import "../Fasting/Core/Services/RecordsRepository/FSTRecordsRepository.m"
 #import "../Fasting/Core/Services/Session/FSTSessionLifecycleService.m"
 #import "../Fasting/Core/Services/Session/FSTSessionManager.m"
@@ -574,6 +575,7 @@ static FSTPlan *FSTTestPlan168(void) {
 - (void)testFastingRecordRoundTrip {
     FSTFastingRecord *record = [[FSTFastingRecord alloc] init];
     record.recordID = @"rid";
+    record.planType = FSTPlanType168;
     record.planName = @"16-8";
     record.fastingHours = 16;
     record.startDate = [NSDate dateWithTimeIntervalSince1970:1000000];
@@ -588,6 +590,7 @@ static FSTPlan *FSTTestPlan168(void) {
     FSTFastingRecord *decoded = [FSTFastingRecord fst_recordWithDictionary:[record fst_dictionaryRepresentation]];
 
     XCTAssertEqualObjects(decoded.recordID, @"rid");
+    XCTAssertEqual(decoded.planType, FSTPlanType168);
     XCTAssertEqualObjects(decoded.planName, @"16-8");
     XCTAssertEqual(decoded.fastingHours, 16);
     XCTAssertEqualWithAccuracy(decoded.startDate.timeIntervalSince1970, 1000000, 0.001);
@@ -604,6 +607,7 @@ static FSTPlan *FSTTestPlan168(void) {
     FSTFastingRecord *record = [FSTFastingRecord fst_recordWithDictionary:@{}];
 
     XCTAssertTrue(record.recordID.length > 0);  // 自动补 UUID
+    XCTAssertEqual(record.planType, FSTPlanTypeCustom);  // 缺省兜底
     XCTAssertEqualObjects(record.planName, @"");
     XCTAssertEqual(record.fastingHours, 0);
     XCTAssertNil(record.startDate);
@@ -740,6 +744,7 @@ static FSTPlan *FSTTestPlan168(void) {
 
     XCTAssertTrue(record.recordID.length > 0);
     XCTAssertEqualObjects(record.planName, @"16-8");
+    XCTAssertEqual(record.planType, FSTPlanType168);
     XCTAssertEqual(record.fastingHours, 16);
     XCTAssertEqualObjects(record.startDate, start);
     XCTAssertEqualObjects(record.endDate, end);
@@ -754,6 +759,7 @@ static FSTPlan *FSTTestPlan168(void) {
                                                      80.0, 82.0, 70.0, 1, nil, NO);
 
     XCTAssertEqualObjects(record.planName, @"14-10");
+    XCTAssertEqual(record.planType, FSTPlanType1410);
     XCTAssertEqual(record.fastingHours, 14);
 }
 
@@ -762,6 +768,7 @@ static FSTPlan *FSTTestPlan168(void) {
     [[FSTSessionManager sharedManager] switchToPlanPreservingState:FSTTestPlan168()];
     FSTFastingRecord *existing = [[FSTFastingRecord alloc] init];
     existing.recordID = @"keep-id";
+    existing.planType = FSTPlanType204;
     existing.planName = @"20-4";
     existing.fastingHours = 20;
 
@@ -772,6 +779,7 @@ static FSTPlan *FSTTestPlan168(void) {
     XCTAssertEqual(record, existing);  // 原对象被复用
     XCTAssertEqualObjects(record.recordID, @"keep-id");
     XCTAssertEqualObjects(record.planName, @"20-4");
+    XCTAssertEqual(record.planType, FSTPlanType204);  // existing 身份不被覆盖
     XCTAssertEqual(record.fastingHours, 20);
     XCTAssertEqualObjects(record.startDate, start);
     XCTAssertEqualWithAccuracy(record.weightKg, 79.0, 0.001);

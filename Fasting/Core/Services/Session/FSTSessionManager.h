@@ -22,31 +22,20 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FSTSessionState.h"   // 会话状态模型 + FSTScheduledReadySource 枚举（R14）
 #import "FSTPlan.h"
 #import "FSTFastingRecord.h"
 #import "FSTWeightUnit.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// 预约准备态来源标记 — 表示 Plan 页"已选未开始"但用户显式 Schedule 了一个未来开始时间。
-/// 写入方：[FSTSessionManager markScheduledReadyWithSource:anchorDate:]
-/// 读取方：
-///   - FSTDailyPlanReadyDisplayState 的工厂方法 — 决定 ringPresentationState 走 ScheduledCountdown 还是 EatingWindow；
-///   - 中止预约（abort）后回退逻辑 — source 决定 abort 后回到吃窗口普通态还是 ActiveFasting 页。
-typedef NS_ENUM(NSInteger, FSTScheduledReadySource) {
-    /// 非预约态（默认）。Plan 页按当前 plan 渲染普通 Eating Time。
-    FSTScheduledReadySourceNone = 0,
-    /// 断食前编辑 nextFastingStartDate 到未来触发。abort 时回退到 Eating 普通态。
-    FSTScheduledReadySourcePreStart,
-    /// 进行中改 Start 到未来触发（active session 被截断为已结束并转预约）。
-    /// abort 时也回到 Eating 普通态而非 ActiveFasting，因为原 session 已不存在。
-    FSTScheduledReadySourceFromActiveSession,
-};
+// FSTScheduledReadySource 枚举已随会话字段一起迁入 FSTSessionState.h（R14）。
 
 @interface FSTSessionManager : NSObject
 
 + (instancetype)sharedManager;
 
+// 以下会话字段的存储已收敛到 FSTSessionState（R14）：这里只保留对外只读访问，内部转发到 state。
 // 计划
 @property (nonatomic, strong, readonly, nullable) FSTPlan *currentPlan;
 @property (nonatomic, assign, readonly) BOOL hasCompletedOnboarding;
